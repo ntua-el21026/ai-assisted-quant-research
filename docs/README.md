@@ -1,23 +1,47 @@
 # Technical documentation index
 
-The [v0.6 specification](app/Autonomous_AI_Trading_Bot_SPEC_v0.6.md) is the current policy reference. Versioned earlier specifications, milestone narratives, AI research notes and recorded evidence preserve their historical role.
+**Endeavour v0.7 is an offline-first research framework under implementation.** No production deployment, paper-broker operation or live-trading readiness is a current goal. The v0.7 research specification supersedes the operating objectives of older documents, which remain available to explain historical implementation and tests.
 
-## Implementation and contracts
+## Authoritative research documentation
 
-- [Architecture](architecture.md): package boundaries and milestone-specific implementation notes.
-- [Temporal workflows](temporal_workflows.md): deterministic workflow/activity contracts and test-server scope.
-- [Risk](risk_policy.md), [execution](execution_policy.md) and [broker integration](broker_integration.md): deterministic authority, order/reconciliation and paper-adapter boundaries.
-- [AI intelligence](ai_intelligence.md): shortlist news analysis, schemas, request budgets and fallbacks.
-- [Database/audit ledger](database_audit_ledger.md) and [database runtime](database_runtime.md): local repositories and explicitly gated managed operations.
-- [Dashboard/control plane](dashboard_control_plane.md), [reporting](reporting.md) and [alerting](alerting.md): read models, safe controls and delivery boundaries.
+| Document | Purpose | Status |
+| --- | --- | --- |
+| [Research framework specification v0.7](app/Endeavour_Research_Framework_SPEC_v0.7.md) | Research questions, non-goals, safety, interfaces and completion criteria | **Governing specification** |
+| [Research protocol](research/RESEARCH_PROTOCOL.md) | Dataset provenance, causal semantics, time-aware experiments, metrics, uncertainty and reporting | Pre-implementation method |
+| [Research architecture](research/ARCHITECTURE.md) | Actual component inventory, proposed pipeline/CLI, local Temporal boundary | Planned additions distinguished from existing code |
+| [Design decision](superpowers/specs/2026-11-16-endeavour-research-framework-design.md) | Approved balanced AI/ML + systems direction and tradeoffs | Approved scope |
+| [Four-checkpoint implementation plan](superpowers/plans/2026-11-16-endeavour-research-framework.md) | Test-first R1–R4 task definitions and verification gates | **Ready for Codex execution; tasks not yet completed** |
+| [Four Codex prompts](research/CODEX_CHECKPOINT_PROMPTS.md) | Copy-ready R1–R4 implementation assignments to use sequentially after review | Prepared, not executed |
+| [Root contributor/agent guide](../AGENTS.md) | Repository safety constraints, instructions and current authority | Current |
+| [Main README](../README.md) | Portfolio-facing introduction and truthful implementation status | Current |
 
-## Validation and operational evidence
+### The four implementation checkpoints
 
-- [Validation plan](validation_plan.md) separates unit, integration, failure-path and replay checks.
-- [Paper dry-run orchestration](paper_dry_run_orchestration.md) describes the fake/local demonstration.
-- [Paper-trading runbook](paper_trading_runbook.md) and [operations runbook](operations_runbook.md) describe operator-controlled procedures.
-- [Frozen validation start](frozen_paper_validation_m45.md), [Day-1 audit](frozen_validation_day1_audit_m46.md), [runner](frozen_validation_runner_m47.md) and [durable-runner record](durable_runner_m47b.md) describe recorded milestones and their limits.
-- [evidence/](evidence/) retains machine-readable observations. A `GO` for a preparation step does not imply active deployment, completed acceptance or live-trading readiness.
-- [Level 4 readiness](level4_micro_live_readiness.md) records future operational gates; it does not enable live trading.
+1. **R1 — Data and simulation:** audited offline snapshots, signal generation, correct causal fills and local artifact contract.
+2. **R2 — Experiments and AI:** aligned benchmarks, walk-forward, cost/ablation/uncertainty analysis and frozen AI evaluation.
+3. **R3 — Local reliability:** real local Temporal research workflow, SQLite idempotency and recovery evidence.
+4. **R4 — Portfolio release:** verified results, research report, license-safe example, local presentation and reproducibility audit.
 
-Source review and fake/local tests need no provider credentials. Keep private configuration outside Git and retain failed-gate evidence.
+R1–R4 are **unimplemented targets** until their corresponding test and artifact evidence is committed. A synthetic example is not empirical performance evidence.
+
+## Historical implementation references — not v0.7 goals
+
+The documents in this section describe code, interfaces and operational ideas from the previous autonomous-bot project. They may still help when reusing components, but their references to the "current" v0.5/v0.6 spec, production services, paper schedules or Level 4 promotion are superseded.
+
+- [Legacy v0.6 agent instructions](history/AGENTS_legacy_v0.6.md) and [historical README](history/readme-before-portfolio-preparation.md).
+- [Legacy architecture](architecture.md), [Temporal workflows](temporal_workflows.md) and [validation plan](validation_plan.md).
+- [Strategy/risk](risk_policy.md), [execution](execution_policy.md) and [broker integration](broker_integration.md) for existing deterministic and paper-only module contracts.
+- [AI intelligence](ai_intelligence.md) for bounded shortlist news-analysis contracts and neutral fallbacks.
+- [Database/audit ledger](database_audit_ledger.md) and [database runtime](database_runtime.md) for SQLite/managed-db implementation history.
+- [Dashboard/control plane](dashboard_control_plane.md), [reporting](reporting.md) and [alerting](alerting.md) for historical presentation/read-model boundaries.
+- [Fake/local dry-run orchestration](paper_dry_run_orchestration.md) is an existing *safe local demonstration*, but is not the canonical v0.7 research run.
+- [Operational runbook](operations_runbook.md), [paper-trading runbook](paper_trading_runbook.md), [Level 4 readiness](level4_micro_live_readiness.md) and [legacy milestone prompts](prompts/README.md) are archival context, **not instructions for this research release**.
+- Earlier [specifications v0.2–v0.6](app/) remain preserved unchanged for traceability.
+
+## Historical evidence and interpretation
+
+- [Frozen-validation start](frozen_paper_validation_m45.md), [Day-1 audit](frozen_validation_day1_audit_m46.md), [runner](frozen_validation_runner_m47.md) and [durable-runner record](durable_runner_m47b.md) capture dated paper-validation milestones.
+- [Machine-readable evidence](evidence/) contains earlier observed results, failures and gates. It does **not** establish a complete 56-day validation, profitability, an active deployment or completion of the new research study.
+- The [old readiness documents](frozen_validation_readiness_m44.md) and checklists are retained to preserve engineering history, not as current release requirements.
+
+Default v0.7 tests and the future reference experiment must need **no provider credentials, broker connection or deployment**. Do not run legacy scripts that can place paper orders. Preserve historical failure evidence and accurately qualify all new findings.

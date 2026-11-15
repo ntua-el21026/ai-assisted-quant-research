@@ -1,5 +1,7 @@
 # Milestone Prompt Pack
 
+> **Historical v0.2–v0.6 implementation reference.** The [v0.7 research specification](../app/Endeavour_Research_Framework_SPEC_v0.7.md) now governs Endeavour. Any references below to a "current" or "latest" older specification, deployment, paper operations or Level 4 readiness describe the previous project scope, not present implementation goals. Existing safety restrictions remain binding.
+
 This directory contains ready-to-use Codex milestone prompts for the autonomous AI trading bot repository.
 
 These prompts are intended to be run sequentially unless the user explicitly decides otherwise. Each prompt requires Codex to read `AGENTS.md`, identify and read the latest versioned specification file, inspect relevant repository files, and stop for approval before any spec deviation.

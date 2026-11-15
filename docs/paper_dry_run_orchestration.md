@@ -1,5 +1,7 @@
 # Paper Dry-Run Orchestration
 
+> **Historical v0.2–v0.6 implementation reference.** The [v0.7 research specification](app/Endeavour_Research_Framework_SPEC_v0.7.md) now governs Endeavour. Any references below to a "current" or "latest" older specification, deployment, paper operations or Level 4 readiness describe the previous project scope, not present implementation goals. Existing safety restrictions remain binding.
+
 The latest source of truth is `docs/app/Autonomous_AI_Trading_Bot_SPEC_v0.5.md`.
 
 Milestone 16 adds a fake/local end-to-end paper dry-run path. It is operational rehearsal only. It

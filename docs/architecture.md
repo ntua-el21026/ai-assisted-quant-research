@@ -1,5 +1,7 @@
 # Architecture
 
+> **Historical v0.2–v0.6 implementation reference.** The [v0.7 research specification](app/Endeavour_Research_Framework_SPEC_v0.7.md) now governs Endeavour. Any references below to a "current" or "latest" older specification, deployment, paper operations or Level 4 readiness describe the previous project scope, not present implementation goals. Existing safety restrictions remain binding.
+
 This document describes the current foundation, data/backtest, database/audit-ledger, Temporal
 skeleton/activity, deterministic strategy, risk/execution-core, broker-reconciliation, AI/news
 intelligence, reporting/alerting, dashboard/control-plane, validation/testing, paper-operations,

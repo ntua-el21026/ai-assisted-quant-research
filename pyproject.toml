@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "ai-trading-bot"
 version = "0.1.0"
-description = "Spec-governed autonomous AI trading bot foundation."
+description = "Offline, reproducible AI-assisted quantitative research framework."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [

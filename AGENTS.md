@@ -1,521 +1,75 @@
-# AGENTS.md
+# AGENTS.md — Endeavour Research Framework
 
-## Project Context
+## Project identity and authority
 
-This repository contains an autonomous AI-assisted trading-bot system.
+Endeavour is an **offline-first, reproducible AI-assisted trading research framework**. It showcases quantitative research, bounded AI news-risk analysis, software correctness and local systems reliability for MSc applications. It is **not** a deployable autonomous trading system.
 
-The current intended product is a **Temporal-orchestrated, broker-reconciled US equities/ETF
-swing-trading bot** with long entries, paper-only broad-ETF shorts, and bounded long scale-ins
-for frozen paper validation:
+The authoritative scope and acceptance criteria are:
 
-- deterministic strategy, risk, execution, and reconciliation logic;
-- AI used only as a bounded news/catalyst/risk-intelligence layer;
-- autonomous execution through deterministic gates;
-- paper-first validation;
-- conservative Level 4 micro-live deployment before any expanded autonomy;
-- complete auditability through database logs, Temporal workflow history, raw data persistence, and reports.
+1. [`docs/app/Endeavour_Research_Framework_SPEC_v0.7.md`](docs/app/Endeavour_Research_Framework_SPEC_v0.7.md) — current product specification.
+2. [`docs/research/RESEARCH_PROTOCOL.md`](docs/research/RESEARCH_PROTOCOL.md) — data, experiment and reporting methodology.
+3. [`docs/research/ARCHITECTURE.md`](docs/research/ARCHITECTURE.md) — architectural boundaries.
+4. [`docs/superpowers/plans/2026-11-16-endeavour-research-framework.md`](docs/superpowers/plans/2026-11-16-endeavour-research-framework.md) — implementation tasks and gates.
+5. Existing code and tests, followed by the current user-approved task.
 
-The latest specification file is the source of truth for product behavior, system architecture, constraints, and acceptance criteria.
+The previous autonomous-trading specifications v0.2–v0.6, evidence, paper-broker milestones and operational runbooks are **historical**, not current acceptance criteria. The previous agent instructions are archived at [`docs/history/AGENTS_legacy_v0.6.md`](docs/history/AGENTS_legacy_v0.6.md). If documents conflict, use v0.7 and explicitly identify material ambiguity before implementing.
 
-At the time of writing, the latest expected spec is:
+## Non-negotiable boundaries
 
-```text
-Autonomous_AI_Trading_Bot_SPEC_v0.6.md
-```
+1. **No deployment**: do not deploy to Vercel, a VPS, Temporal Cloud, managed databases or any hosted service; do not activate schedules or a continuously running worker.
+2. **No broker writes**: do not place, cancel, replace or modify live or paper orders, flatten positions or perform cleanup on a real broker account. Historical smoke scripts that can write to Alpaca are out of scope and must not be run.
+3. **No credentials by default**: the research CLI, tests, local Temporal demos and published fixture must work without external API keys, broker accounts or network access. Never inspect or print private credentials.
+4. **No live authority**: keep live/autonomous execution flags disabled; no leverage, live shorting, AI broker authority or LLM-driven order placement. Do not loosen deterministic risk constraints.
+5. **No false research claims**: do not invent prices, dataset provenance, AI outputs, test results, statistical significance, positive performance or deployment proof. Synthetic, historical and local-reliability evidence must be labeled separately.
+6. **No silent scope changes**: changes to the research questions, execution timing, experiment splits, AI authority, risk policy or release gates require explicit review and a corresponding specification update.
+7. **Preserve history**: do not rewrite published Git history, remove historical v0.6 specifications/evidence, or redact them in ways that misrepresent past outcomes.
 
-If a newer spec exists, use the newest versioned spec file instead.
+## Research correctness requirements
 
----
+- Research inputs are frozen, manifest-verified local snapshots; optional provider acquisition is a separate explicit read-only operation and never part of the canonical offline run.
+- Features and decisions may use only data available by the declared decision timestamp. Completed EOD data for session `t` cannot cause a same-session already-observed close fill; use the next eligible session's execution convention.
+- Distinguish raw tradable and adjusted research prices, market calendars, corporate actions, missing sessions and point-in-time universe limitations. Fail or warn explicitly according to the spec.
+- The primary research baseline is unleveraged long-only. Paper-only short and long scale-in modules may be retained as optional simulations but are not release blockers.
+- AI is limited to frozen shortlist news-risk evidence, negative-only influence and neutral fallback on missing or invalid output. It cannot add orders or increase size.
+- Use time-aware splits, aligned benchmarks, versioned ablations, fixed seeds and reproducible statistics. Do not claim a holdout was untouched without checking historical design exposure.
+- A zero-trade experiment, inconclusive comparison or negative return can still be a successful research result if the methodology is correct and limitations are accurately described.
 
-## Core Rule
+## Working method for Codex
 
-Do not treat this repository as a generic trading-bot project.
+The user has requested work on **`main` only**. At the start of each checkpoint:
 
-Always treat it as a **spec-governed autonomous trading system** where correctness, safety, determinism, auditability, validation, and risk control are more important than speed of implementation or feature breadth.
+1. Check `git status`, `HEAD` and `origin/main`; preserve unrelated user modifications and stop if they conflict with the intended files.
+2. Read the governing v0.7 documents and the exact checkpoint in the implementation plan; do not resume a legacy production milestone.
+3. Identify affected modules and interfaces; use small cohesive tasks, failing tests first, and meaningful local verification.
+4. Keep fake/local execution safe by default and reject network or broker operations from canonical research entry points.
+5. Maintain compatibility where practical and document any intentional change to older tests or interfaces.
+6. Run the affected tests, static checks and deterministic fixture smoke before committing; do not weaken, skip or delete tests to create green output.
+7. Commit logically grouped changes to `main`, push only when authorized by the operating user/session, then verify the remote head and clean tree.
+8. Report exact commit IDs, changed files, commands, outcomes, open limitations, and readiness for the **next** checkpoint. Stop after the assigned checkpoint.
 
----
+Do not activate GitHub Actions/CI unless the user explicitly requests it. A locally executed test log is acceptable evidence; an unexecuted test is not.
 
-## Source of Truth Priority
+## Preferred implementation boundaries
 
-When deciding what to implement, follow this priority order:
+- Python **3.12+**, `uv.lock`, Pydantic, Pytest, Ruff and mypy; do not upgrade dependencies without a tested need.
+- Reuse `packages/data`, `packages/strategy`, `packages/risk`, `packages/execution`, `packages/ai`, `packages/backtesting`, `packages/ledger` and `packages/reporting` when possible.
+- Put canonical offline research orchestration, experiment validation and artifact generation in a small `packages/research` surface. Keep unrelated modules focused.
+- Keep the core research CLI independent of Temporal. Use the Temporal SDK **local test environment** only for the bounded systems track, with simulated side effects and SQLite persistence.
+- Keep generated artifacts under a documented result directory, with hashes, sorted records, config snapshot, warnings and explicit nondeterministic metadata. Do not commit large licensed data or raw private provider payloads.
+- Local results visuals must consume generated artifacts; do not turn the static dashboard into a live control plane.
+- Do not rename the repository or remove legacy deployment files without separate authorization.
 
-1. The latest versioned `SPEC*.md` file.
-2. Other project documentation explicitly referenced by the latest spec.
-3. Existing implementation in the repository.
-4. The current user prompt.
-5. Reasonable engineering judgment.
+## Four checkpoint gates
 
-If these conflict, do **not** silently choose one.
+| Checkpoint | Completion proof |
+| --- | --- |
+| **R1** Data and simulation | Offline manifest-backed fixture produces correct causal strategy/simulation results and deterministic artifact hashes |
+| **R2** Experiments and AI | Benchmarks, walk-forward, stress, ablations, uncertainty and frozen AI comparisons execute without future leakage |
+| **R3** Local systems reliability | A real local Temporal workflow, retry/replay, idempotent ledger and fault-recovery tests preserve reference state |
+| **R4** Portfolio research release | Verifiable experiments, report, optional static viewer, documented limitations, reproducibility instructions and full relevant checks |
 
-Instead:
+The research framework must remain labeled **in development** until all mandatory v0.7 gates have evidence. Live readiness, paper-trading operational readiness and positive investment performance are never v0.7 completion criteria.
 
-1. identify the conflict;
-2. explain the options;
-3. ask for permission or inspection;
-4. wait for the user's answer before implementing.
+## Documentation integrity
 
----
-
-## Repository Structure May Evolve
-
-The repository structure, module boundaries, filenames, package layout, configuration files, database schema, and documentation organization may change over time.
-
-Do not assume that the current structure is final.
-
-Before making non-trivial structural changes:
-
-1. inspect the current repository;
-2. compare the current structure against the latest spec;
-3. explain the proposed change;
-4. identify files affected;
-5. ask for approval if the change deviates from the latest spec or affects architecture.
-
-Minor additions that directly follow the latest spec may be implemented without asking, unless the user requested planning only.
-
----
-
-## Spec Alignment Requirement
-
-Every implementation change must be checked against the latest spec.
-
-Before modifying code, configuration, migrations, workflows, execution logic, risk logic, AI logic, or deployment files, determine whether the requested change is:
-
-```text
-A. already allowed by the latest spec;
-B. a clarification of the latest spec;
-C. a deviation from the latest spec;
-D. an unspecified new behavior;
-E. a contradiction of the latest spec.
-```
-
-Rules:
-
-- If A: proceed normally.
-- If B: proceed, and update documentation if useful.
-- If C, D, or E: do not implement immediately.
-- For C, D, or E, ask for permission and/or inspection first.
-- Wait for the user's answer before making the implementation change.
-
----
-
-## Spec Update Rule
-
-If the user approves a deviation, new behavior, architecture change, risk-parameter change, execution-policy change, AI-policy change, workflow change, database-schema change, or deployment-policy change, the latest spec must also be updated.
-
-The code and the spec must not diverge.
-
-When a change is approved, update the latest versioned spec file or create a new versioned spec file, depending on the size and importance of the change.
-
-Use this policy:
-
-```text
-Small clarification:
-    update the latest spec file in place if the user explicitly allows it.
-
-Material behavioral/architectural change:
-    create a new versioned spec file, e.g. SPEC_v0.4.md.
-
-Risk/execution/autonomy/security change:
-    create a new versioned spec file.
-
-Trading strategy/risk parameter change:
-    update the spec and config together.
-
-Temporary experiment:
-    document it as an experiment and keep it out of production defaults unless approved.
-```
-
-If the user asks for code only but the code changes behavior relative to the spec, stop and ask whether the spec should be updated first.
-
----
-
-## Approval Gate for Spec Deviations
-
-If a requested task would deviate from the latest spec, respond with a short blocking note like:
-
-```text
-This deviates from the latest spec because: <reason>.
-
-Proposed options:
-1. Keep the spec unchanged and implement only the compliant part.
-2. Update the spec first, then implement.
-3. Treat this as an experimental branch/config disabled by default.
-
-Please confirm which option you want.
-```
-
-Do not implement the deviation until the user confirms.
-
----
-
-## Prohibited Silent Changes
-
-Do not silently change any of the following:
-
-- autonomy level;
-- live-trading enablement;
-- broker execution behavior;
-- risk limits;
-- position sizing;
-- stop-loss policy;
-- trailing-stop policy;
-- kill-switch behavior;
-- allowed asset classes;
-- margin/leverage permissions;
-- short-selling permissions;
-- options/futures/crypto/prediction-market support;
-- AI authority boundaries;
-- Temporal workflow semantics;
-- order idempotency behavior;
-- broker reconciliation behavior;
-- database ledger semantics;
-- validation acceptance criteria;
-- production deployment architecture.
-
-Any change to these requires explicit approval and a corresponding spec update.
-
----
-
-## Trading Safety Invariants
-
-The following invariants must hold unless the user explicitly updates the spec:
-
-```text
-AI has no broker write permissions.
-AI cannot directly submit trades.
-AI cannot modify live orders.
-AI cannot override risk limits.
-AI cannot increase position size above deterministic caps.
-AI cannot disable kill switches.
-AI cannot mutate live strategy rules.
-```
-
-```text
-Execution authority belongs to the deterministic execution pipeline.
-Every live order requires a valid ExecutionIntent.
-Every new-risk order requires passed risk checks.
-Every live position requires a protective stop.
-Broker state must be reconciled before new-risk execution.
-Kill switch blocks new risk.
-Protective/risk-reducing exits may remain allowed.
-```
-
-```text
-v0.1 is long-only.
-v0.1 uses no leverage.
-v0.1 does not short.
-v0.1 does not trade options, futures, crypto, or prediction markets.
-v0.1 does not perform high-frequency trading or scalping.
-```
-
----
-
-## Temporal Requirements
-
-Temporal is part of the v0.1 architecture.
-
-Use Temporal for execution-critical orchestration, including:
-
-- scheduled workflows;
-- order lifecycle workflows;
-- fill monitoring;
-- stop placement;
-- partial-fill handling;
-- reconciliation workflows;
-- kill-switch workflows;
-- reporting workflows.
-
-Respect Temporal workflow determinism.
-
-Workflow code should orchestrate deterministic workflow state and call activities.
-
-Activity code should perform side effects, including:
-
-- broker API calls;
-- database writes;
-- AI API calls;
-- news/data API calls;
-- alert sending;
-- reading wall-clock time;
-- random or non-deterministic operations.
-
-Do not call external APIs directly from workflow code.
-
-Do not place broker orders outside the approved Temporal execution workflow path.
-
----
-
-## AI Layer Rules
-
-The AI layer is bounded and advisory.
-
-Allowed AI responsibilities:
-
-- summarize candidate-specific news;
-- extract catalysts;
-- classify risk events;
-- generate structured JSON;
-- provide explanations;
-- produce daily and weekly reports;
-- suggest hypotheses for manual review.
-
-Forbidden AI responsibilities:
-
-- scanning the full universe for direct trade ideas in v0.1;
-- direct broker access;
-- order submission;
-- order modification;
-- risk-limit changes;
-- live strategy mutation;
-- changing stop levels except through deterministic approved logic;
-- generating unstructured outputs for execution-critical paths.
-
-AI outputs must be schema-validated.
-
-Invalid AI output must fall back to neutral behavior unless the latest spec says otherwise.
-
-AI failure alone should not trigger a global kill switch unless repeated failures or missing required checks create a system-level safety issue defined by the spec.
-
----
-
-## Risk Engine Rules
-
-Risk logic is deterministic and non-bypassable.
-
-Before any new-risk order, enforce:
-
-- environment validity;
-- live/paper mode correctness;
-- autonomous execution flag;
-- approved symbol;
-- approved asset class;
-- fresh market data;
-- broker reconciliation;
-- kill-switch state;
-- max gross exposure;
-- max deployable capital;
-- max position size;
-- max risk per trade;
-- max open positions;
-- max sector exposure;
-- min cash buffer;
-- daily/weekly/monthly loss limits;
-- protective stop availability;
-- duplicate-intent prevention;
-- Temporal workflow consistency.
-
-If any critical risk check fails, reject the order, log the rejection, and notify according to severity.
-
----
-
-## Execution Rules
-
-Execution must be idempotent, auditable, and broker-reconciled.
-
-Required concepts:
-
-- `ExecutionIntent`;
-- `client_order_id`;
-- pre-submit reconciliation;
-- post-submit acknowledgement;
-- fill monitoring;
-- protective stop placement;
-- stop verification through stream and REST fallback;
-- partial-fill handling;
-- unfilled-order expiry;
-- order/fill/position persistence;
-- slippage/fill diagnostics;
-- incident creation on ambiguity.
-
-Do not create naked live positions intentionally.
-
-If a position exists without a confirmed protective stop beyond the configured threshold, follow the latest spec's stop-failure policy.
-
----
-
-## Data and Validation Rules
-
-Backtests must not be treated as proof of profitability.
-
-Paper trading must not be treated as proof of live profitability.
-
-Paper trading validates:
-
-- orchestration;
-- broker integration;
-- order lifecycle;
-- stop placement;
-- reconciliation;
-- logging;
-- kill switches;
-- reporting;
-- AI schema behavior.
-
-Paper trading does not fully validate:
-
-- live fill quality;
-- market impact;
-- queue position;
-- price improvement;
-- live slippage;
-- live profitability.
-
-Preserve raw data and audit records wherever required by the spec.
-
-If point-in-time universe data is unavailable, label stock-universe backtests as optimistic.
-
----
-
-## Documentation Update Expectations
-
-When implementing meaningful changes, update relevant documentation.
-
-Possible documentation files include:
-
-- latest versioned spec file;
-- `README.md`;
-- `docs/architecture.md`;
-- `docs/temporal_workflows.md`;
-- `docs/risk_policy.md`;
-- `docs/execution_policy.md`;
-- `docs/validation_plan.md`;
-- `docs/operations_runbook.md`;
-- `.env.example`;
-- config files under `config/`.
-
-Do not update documentation with claims that are not implemented or validated.
-
-Do not claim profitability.
-
----
-
-## Coding Standards
-
-Use clean, typed, production-oriented code.
-
-Preferred backend stack:
-
-```text
-Python 3.12+
-FastAPI
-Temporal Python SDK
-Postgres / Supabase
-SQLAlchemy or SQLModel
-Pydantic
-pandas / NumPy
-```
-
-Guidelines:
-
-- prefer explicit types;
-- prefer pure functions for strategy/risk calculations;
-- isolate side effects in adapters/activities;
-- keep broker-specific logic inside broker adapters;
-- keep Temporal workflow code deterministic;
-- keep AI prompts and schemas versioned;
-- keep config-driven parameters;
-- avoid hidden constants;
-- avoid global mutable state;
-- avoid silent exception swallowing;
-- log structured events;
-- write tests for risk, execution, reconciliation, and workflow failure paths.
-
----
-
-## Testing Requirements
-
-For non-trivial changes, add or update tests.
-
-Important test categories:
-
-- unit tests for feature calculations;
-- unit tests for regime logic;
-- unit tests for strategy signals;
-- unit tests for risk checks;
-- unit tests for position sizing;
-- unit tests for AI schema parsing;
-- unit tests for execution-intent construction;
-- Temporal workflow replay/determinism tests;
-- integration tests for broker paper adapter;
-- integration tests for reconciliation;
-- failure tests for stop placement, duplicate orders, stale data, invalid AI output, and kill-switch transitions.
-
-Do not reduce or bypass tests unless explicitly approved.
-
----
-
-## Environment and Secrets
-
-Never commit secrets.
-
-Never expose broker credentials to frontend code.
-
-Use `.env.example` for variable names only.
-
-Separate paper and live credentials.
-
-Use deployment-provider secret management for production.
-
-If a change touches secrets, broker credentials, deployment configuration, live trading flags, or production environment variables, ask for confirmation before implementation unless the user explicitly requested the exact change.
-
----
-
-## Prompt Handling Rules for Codex
-
-When receiving a user prompt:
-
-1. Read the prompt carefully.
-2. Inspect the relevant files before editing.
-3. Identify the latest versioned spec.
-4. Check whether the prompt is compliant with the spec.
-5. If compliant, implement cleanly.
-6. If not compliant, stop and ask for approval.
-7. If approved, update the spec as well as the implementation.
-8. Summarize exactly what changed.
-9. Mention any files that still need follow-up work.
-
-Do not over-implement beyond the prompt.
-
-Do not introduce new architecture unless requested or required by the latest spec.
-
-Do not make speculative improvements to risk/execution behavior without approval.
-
----
-
-## Response Style for Codex
-
-When reporting back, include:
-
-```text
-Summary:
-- What changed.
-
-Files changed:
-- path/to/file.py
-- path/to/config.yaml
-
-Spec impact:
-- Compliant with latest spec, or
-- Spec updated, or
-- Spec deviation requires approval.
-
-Tests:
-- Tests run.
-- Tests added.
-- Tests not run and why.
-
-Risks / follow-ups:
-- Any remaining issues.
-```
-
-Be precise and concise.
-
----
-
-## Final Governance Rule
-
-If implementation and specification disagree, the project is in an invalid state.
-
-Resolve the disagreement before continuing.
-
-The latest spec and the codebase must evolve together.
+Keep `README.md`, `docs/README.md`, the v0.7 specification, research protocol and architecture consistent with code **actually implemented**. Proposed commands and future experiments must be labeled as targets until verified. Preserve dates, original evidence and attribution. When preparing portfolio copy, favor concrete validated engineering contributions over promotional claims.
