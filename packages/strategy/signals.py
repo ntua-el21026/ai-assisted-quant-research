@@ -94,17 +94,25 @@ def evaluate_candidate(
     scale_in_candidate_symbols: Collection[str] = (),
     active_intent_symbols: Collection[str] = (),
     breakout_lookback: BreakoutLookback | None = None,
+    disabled_filters: Collection[str] = (),
 ) -> CandidateEvaluation:
     """Evaluate one feature row into an accepted/rejected long-only candidate record."""
 
     mode = universe_member.universe
+    if disabled_filters and mode != "research":
+        raise ValueError("ablation_controls_are_research_only")
+    if not set(disabled_filters).issubset({"regime", "volume", "relative_strength"}):
+        raise ValueError("unsupported_research_ablation")
     if feature.symbol != universe_member.symbol:
         raise ValueError("feature and universe member symbols must match")
     rejection_reasons: list[str] = []
     reason_codes: list[str] = ["side:long"]
 
     _append_universe_rejections(rejection_reasons, universe_member)
-    _append_regime_rejections(rejection_reasons, reason_codes, regime)
+    if "regime" not in disabled_filters:
+        _append_regime_rejections(rejection_reasons, reason_codes, regime)
+    else:
+        reason_codes.append("research_ablation:regime")
     _append_price_liquidity_rejections(
         rejection_reasons,
         feature,
@@ -158,18 +166,20 @@ def evaluate_candidate(
         feature.volume_ratio_20 is not None
         and feature.volume_ratio_20 >= strategy_config.volume_ratio_min
     )
-    if not volume_passed:
+    if not volume_passed and "volume" not in disabled_filters:
         rejection_reasons.append("volume_ratio_filter_failed")
-    else:
+    elif volume_passed:
         reason_codes.append("volume_ratio_filter_passed")
 
     rs_passed = feature.rs_63 is not None and feature.rs_63 > strategy_config.relative_strength_min
-    if not rs_passed:
+    if not rs_passed and "relative_strength" not in disabled_filters:
         rejection_reasons.append("rs63_filter_failed")
-    else:
+    elif rs_passed:
         reason_codes.append("rs63_filter_passed")
 
-    if mode == "research" and rs_percentile is not None:
+    if "relative_strength" in disabled_filters:
+        reason_codes.append("research_ablation:relative_strength")
+    elif mode == "research" and rs_percentile is not None:
         if rs_percentile < strategy_config.relative_strength_percentile_floor_research:
             rejection_reasons.append("rs_percentile_filter_failed")
         else:
@@ -187,6 +197,11 @@ def evaluate_candidate(
     else:
         reason_codes.append("atr_percent_filter_passed")
 
+    reason_codes.extend(
+        f"research_ablation:{name}"
+        for name in sorted(disabled_filters)
+        if f"research_ablation:{name}" not in reason_codes
+    )
     deduped_rejections = tuple(dict.fromkeys(rejection_reasons))
     accepted = not deduped_rejections
     return CandidateEvaluation(

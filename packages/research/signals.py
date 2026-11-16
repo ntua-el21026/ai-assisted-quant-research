@@ -75,7 +75,10 @@ def generate_research_signals(
     config: ResearchConfig,
     *,
     feature_cache: CausalFeatureCache | None = None,
+    disabled_filters: frozenset[str] = frozenset(),
 ) -> ResearchSignalSet:
+    if not disabled_filters.issubset({"regime", "relative_strength", "volume"}):
+        raise ValueError("unsupported_research_ablation")
     cache = feature_cache or CausalFeatureCache(
         snapshot,
         config.strategy.atr_period,
@@ -229,6 +232,7 @@ def generate_research_signals(
                 strategy_config=config.strategy,
                 research_universe_config=config.research_universe,
                 regime=regime,
+                disabled_filters=disabled_filters,
                 earnings=earnings,
                 prior_high_20=max(b.high for b in history[-21:-1]),
                 prior_high_55=max(b.high for b in history[-56:-1]),
@@ -260,7 +264,9 @@ def generate_research_signals(
                     account_equity=config.initial_cash,
                     entry_price=reference,
                     stop_price=stop,
-                    regime_size_multiplier=regime.size_multiplier,
+                    regime_size_multiplier=1.0
+                    if "regime" in disabled_filters
+                    else regime.size_multiplier,
                 ),
                 config.risk,
             )
