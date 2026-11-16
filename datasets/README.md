@@ -33,3 +33,14 @@ original arithmetic values, volume changes and a gap, not recorded market observ
 Its weekday calendar includes dates that may be exchange holidays and is explicitly
 not an exchange calendar. Symbols are illustrative and fixed, not historical membership.
 The fixture is dedicated under CC0-1.0; no provider data or third-party payload is included.
+
+## Explicit historical contract v2
+
+R4-A adds `packages.data.historical_snapshots.load_historical_snapshot` for
+`market-snapshot/v2`, with raw execution, cutoff-specific split feature views,
+corporate actions, security mappings, explicit query/calendar/revision/rights provenance
+and exact JSON Decimal values. V1 above remains unchanged; ordinary R1/R2 commands
+do not silently consume v2. [R4-A contracts](../docs/research/R4A_IMPLEMENTATION.md) and
+the [original synthetic v2 fixture](../tests/fixtures/historical_snapshot/manifest.json)
+document the separate boundary. Historical acquisition and empirical execution remain
+blocked pending rights/data qualification and separate authorization.

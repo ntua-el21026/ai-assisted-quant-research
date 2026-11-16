@@ -1,0 +1,37 @@
+[
+  {
+    "action_id": "split-4",
+    "availability_basis": "synthetic",
+    "available_at": "2024-03-07T12:00:00Z",
+    "denominator": 1,
+    "ex_date": "2024-03-11",
+    "kind": "split",
+    "numerator": 4,
+    "security_id": "synthetic:001",
+    "symbol": "SYN"
+  },
+  {
+    "action_id": "cash-1",
+    "availability_basis": "synthetic",
+    "available_at": "2024-03-07T12:00:00Z",
+    "cash_per_share": "1",
+    "currency": "USD",
+    "ex_date": "2024-03-12",
+    "kind": "cash_dividend",
+    "pay_date": "2024-03-14",
+    "security_id": "synthetic:001",
+    "share_basis": "post_split",
+    "symbol": "SYN"
+  },
+  {
+    "action_id": "split-10",
+    "availability_basis": "synthetic",
+    "available_at": "2024-03-12T12:00:00Z",
+    "denominator": 1,
+    "ex_date": "2024-03-13",
+    "kind": "split",
+    "numerator": 10,
+    "security_id": "synthetic:001",
+    "symbol": "SYN"
+  }
+]
