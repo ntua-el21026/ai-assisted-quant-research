@@ -11,7 +11,7 @@
 | [Research architecture](research/ARCHITECTURE.md) | Actual component inventory, offline research/matrix CLI, planned local Temporal boundary | Planned additions distinguished from existing code |
 | [Design decision](superpowers/specs/2026-11-16-ai-assisted-quant-research-design.md) | Approved balanced AI/ML + systems direction and tradeoffs | Approved scope |
 | [Four-checkpoint implementation plan](superpowers/plans/2026-11-16-ai-assisted-quant-research.md) | Test-first R1–R4 task definitions and verification gates | R1–R3 reviewed baseline; R4 empirical gate pending |
-| [Four Codex prompts](research/CODEX_CHECKPOINT_PROMPTS.md) | Copy-ready R1–R4 implementation assignments to use sequentially after review | R1 implementation completed; later prompts await review |
+| [Four Codex prompts](research/CODEX_CHECKPOINT_PROMPTS.md) | Original checkpoint assignments; later work follows explicit staged authorization | R1–R3 baseline reviewed; R4-A independent acceptance pending |
 | [Root contributor/agent guide](../AGENTS.md) | Repository safety constraints, instructions and current authority | Current |
 | [Main README](../README.md) | Portfolio-facing introduction and truthful implementation status | Current |
 

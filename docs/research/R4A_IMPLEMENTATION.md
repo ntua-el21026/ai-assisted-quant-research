@@ -33,6 +33,9 @@ metrics and R3 workflow/ledger remain unchanged. They do not silently dispatch v
 V2 is an explicit library boundary plus a synthetic qualification command; adapting
 causal strategy/risk execution to v2 requires a separately authorized phase and tests.
 The new artifact schema is not silently added as a new R3 workflow mode.
+Existing R3 experiment requests pin source/environment identity. A changed checkout
+therefore requires a new experiment identity/state, or the original qualified source
+to resume old evidence; no ledger migration or silent provenance replacement occurs.
 
 ## Snapshot v2
 
