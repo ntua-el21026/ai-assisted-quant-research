@@ -107,6 +107,73 @@ def test_next_open_fees_terminal_position_and_conservation() -> None:
     assert result.equity_curve[-1].equity - 10000 == pytest.approx(position.unrealized_pnl)
 
 
+def test_neutral_shadow_blocks_replacement_entries_at_execution() -> None:
+    from packages.backtesting.execution import run_causal_backtest
+
+    snapshot, config = case(symbols=("AAA", "BBB"))
+    config = config.model_copy(
+        update={"risk": config.risk.model_copy(update={"max_open_positions": 1})}
+    )
+    original = order(snapshot, symbol="AAA", id="original")
+    replacement = order(snapshot, symbol="BBB", index=1, id="replacement")
+    neutral = simulate(snapshot, config, original, replacement)
+    assert next(e for e in neutral.order_events if e.order_id == "replacement").reason == (
+        "max_open_positions_exceeded"
+    )
+    vetoed = original.model_copy(update={"accepted": False, "quantity": 0})
+    negative = run_causal_backtest(
+        snapshot,
+        ResearchSignalSet(decisions=(vetoed, replacement)),
+        config,
+        neutral_entry_fills=neutral.order_events,
+    )
+    assert not negative.open_positions
+    assert not [e for e in negative.order_events if e.status == "filled"]
+    assert next(e for e in negative.order_events if e.order_id == "replacement").reason == (
+        "neutral_shadow_entry_ineligible"
+    )
+    assert all(
+        n.gross_exposure <= c.gross_exposure
+        for n, c in zip(negative.equity_curve, neutral.equity_curve, strict=True)
+    )
+
+
+def test_neutral_shadow_bounds_entry_quantity_and_ignores_future_fills() -> None:
+    from packages.backtesting.execution import run_causal_backtest
+
+    snapshot, config = case()
+    original = order(snapshot, quantity=10)
+    neutral = simulate(snapshot, config, original)
+    reduced = run_causal_backtest(
+        snapshot,
+        ResearchSignalSet(decisions=(original.model_copy(update={"quantity": 5}),)),
+        config,
+        neutral_entry_fills=neutral.order_events,
+    )
+    assert reduced.open_positions[0].quantity == 5
+    for negative, control in zip(reduced.equity_curve, neutral.equity_curve, strict=True):
+        assert negative.gross_exposure == control.gross_exposure / 2
+    excessive = run_causal_backtest(
+        snapshot,
+        ResearchSignalSet(decisions=(original.model_copy(update={"quantity": 11}),)),
+        config,
+        neutral_entry_fills=neutral.order_events,
+    )
+    assert excessive.order_events[0].reason == "neutral_shadow_quantity_exceeded"
+    future_only = tuple(
+        e.model_copy(update={"session": snapshot.sessions[-1].date}) for e in neutral.order_events
+    )
+    blocked = run_causal_backtest(
+        snapshot,
+        ResearchSignalSet(decisions=(original,)),
+        config,
+        neutral_entry_fills=future_only,
+    )
+    assert not blocked.open_positions
+    assert blocked.order_events[0].session == snapshot.sessions[1].date
+    assert blocked.order_events[0].reason == "neutral_shadow_entry_ineligible"
+
+
 def test_routine_exit_has_next_open_costs_and_net_pnl() -> None:
     snapshot, config = case()
     result = simulate(

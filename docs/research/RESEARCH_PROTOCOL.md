@@ -1,7 +1,7 @@
 # Quantitative Trading Research Protocol
 
 - **Governing specification:** [Research Framework v0.7](../app/AI_Assisted_Quant_Research_SPEC_v0.7.md)
-- **Status:** R1 data/simulation implementation available; empirical studies, R2 statistics/AI and R3 reliability remain pending. No market findings are asserted here.
+- **Status:** R1 data/simulation and R2 statistics/frozen AI implemented; external R2 acceptance, empirical studies and R3 reliability remain pending. No market findings are asserted here.
 
 ## 1. Scientific objective
 
@@ -71,6 +71,15 @@ Primary comparisons, contingent on source coverage and consistent price/dividend
 Predeclared ablations should use identical data, costs and splits. Candidate factors from v0.6 include regime gate, relative strength, volume filter, fail-fast exit, time stop, breakout lookback and ATR stop/trailing coefficients. Distinguish *remove one factor* experiments from parameter selection; do not select a winning ablation after opening the final holdout and then re-label it as predeclared.
 
 The AI overlay comparison must also report changed exposure and trade counts; improved drawdown from simply avoiding risk is not by itself evidence of superior prediction. Retain rejected-candidate and news-coverage counts.
+
+The implemented execution bound uses the neutral portfolio as a causal opening-session
+shadow: an AI entry must match a neutral executable entry's ID, symbol and session, with
+no larger quantity. Reduced or vetoed entries cannot fund substitute trades. The session
+exposure invariant is gross marked USD notional, also enforced against the paired control;
+equity-normalized ratios are descriptive and use each portfolio's own equity denominator.
+This distinction is necessary because avoiding a profitable trade can lower equity even
+while reducing shares and USD exposure. Decisions remain timestamp-causal; the shadow is
+consulted only during execution, after the corresponding session open becomes available.
 
 ## 6. Costs, scenarios and uncertainty
 

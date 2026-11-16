@@ -157,6 +157,7 @@ class ExperimentMatrixResult(ResearchModel):
     selection_policy: str = "fixed_registered_parameters_no_fitting_or_ranking"
     warnings: tuple[str, ...]
     evidence_sha256: str | None
+    resolved_evidence_sha256: str
 
 
 def load_matrix_config(path: Path) -> MatrixResearchConfig:
@@ -212,7 +213,16 @@ def build_walk_forward_folds(
     folds = []
     for start in range(settings.initial_train_sessions, final_index, settings.evaluation_sessions):
         end = min(start + settings.evaluation_sessions, final_index) - 1
-        folds.append(_fold(dates, start, end, settings.warmup_sessions, "rolling_oos_development"))
+        folds.append(
+            _fold(
+                dates,
+                start,
+                end,
+                settings.warmup_sessions,
+                "rolling_oos_development",
+                history_start=sessions[0],
+            )
+        )
     if include_final:
         if settings.final_start is None or settings.final_end is None:
             raise ValueError("final_evaluation_not_registered")
@@ -224,6 +234,7 @@ def build_walk_forward_folds(
                 dates.index(settings.final_end),
                 settings.warmup_sessions,
                 "final_evaluation",
+                history_start=sessions[0],
             )
         )
     if not folds:
@@ -231,12 +242,21 @@ def build_walk_forward_folds(
     return tuple(folds)
 
 
-def _fold(dates: tuple[date, ...], start: int, end: int, warmup: int, role: str) -> WalkForwardFold:
+def _fold(
+    dates: tuple[date, ...],
+    start: int,
+    end: int,
+    warmup: int,
+    role: str,
+    *,
+    history_start: date,
+) -> WalkForwardFold:
     fields = {
         "role": role,
         "train_start": dates[0],
         "train_end": dates[start - 1],
-        "warmup_start": dates[0],
+        # Recursive features use the full snapshot prefix before configured training.
+        "warmup_start": history_start,
         "minimum_warmup_start": dates[max(0, start - warmup)],
         "warmup_end": dates[start - 1],
         "evaluation_start": dates[start],
@@ -351,6 +371,11 @@ def run_experiment_matrix(
                         }
                     )
                 ).hexdigest()
+                # Neutral execution is a causal shadow at each eligible opening.
+                # It never filters or modifies earlier candidate decisions. With
+                # unchanged prices/stops and reduced units, negative-only entries
+                # are a subset of the control's executable entry identities.
+                neutral_result = run_causal_backtest(snapshot, signals, base)
                 for policy in sorted(config.matrix.ai_policies):
                     replay = replay_ai_evidence(
                         signals,
@@ -358,13 +383,29 @@ def run_experiment_matrix(
                         snapshot.session_by_date[fold.evaluation_end].decision_at,
                         neutral_control=policy == "AI_NEUTRAL",
                     )
-                    result = run_causal_backtest(snapshot, replay.signals, base)
+                    if replay.signals == signals:
+                        result = neutral_result
+                    else:
+                        result = run_causal_backtest(
+                            snapshot,
+                            replay.signals,
+                            base,
+                            neutral_entry_fills=neutral_result.order_events,
+                        )
+                        if any(
+                            n.gross_exposure > c.gross_exposure + 1e-8
+                            for n, c in zip(
+                                result.equity_curve, neutral_result.equity_curve, strict=True
+                            )
+                        ):
+                            raise ValueError("ai_neutral_shadow_notional_exposure_exceeded")
                     case_id = hashlib.sha256(
                         canonical_json(
                             {
                                 "pair_id": pair_id,
                                 "ai_policy": policy,
                                 "evidence_sha256": frozen.manifest_sha256,
+                                "resolved_evidence_sha256": frozen.resolved_sha256,
                                 "matrix": config.matrix.model_dump(mode="json"),
                                 "seed": config.seed,
                             }
@@ -408,4 +449,5 @@ def run_experiment_matrix(
             )
         ),
         evidence_sha256=frozen.manifest_sha256,
+        resolved_evidence_sha256=frozen.resolved_sha256,
     )

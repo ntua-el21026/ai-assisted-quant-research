@@ -44,7 +44,25 @@ def run_causal_backtest(
     snapshot: DatasetSnapshot,
     signals: ResearchSignalSet,
     config: ResearchConfig,
+    *,
+    neutral_entry_fills: tuple[ResearchOrderEvent, ...] | None = None,
 ) -> BacktestResult:
+    """Simulate, optionally bounding AI entries by the paired neutral opening phase.
+
+    The shadow gate is consulted only at the eligible opening session, never by
+    feature/decision generation. It reads only that session's executable entry
+    quantity. Later shadow fills cannot authorize an earlier order. The default
+    remains the R1 execution contract.
+    """
+    shadow_limits = (
+        {
+            (e.session, e.order_id, e.symbol): e.quantity
+            for e in neutral_entry_fills
+            if e.action == "buy" and e.status == "filled"
+        }
+        if neutral_entry_fills is not None
+        else None
+    )
     calendar = snapshot.session_by_date
     dates = tuple(s.date for s in snapshot.sessions)
     active_dates = tuple(d for d in dates if config.date_start <= d <= config.date_end)
@@ -219,6 +237,14 @@ def run_causal_backtest(
             if d.symbol not in config.approved_symbols:
                 event(d, "rejected", "symbol_not_approved", session)
                 continue
+            if shadow_limits is not None:
+                limit = shadow_limits.get((session, d.decision_id, d.symbol), 0)
+                if limit == 0:
+                    event(d, "rejected", "neutral_shadow_entry_ineligible", session)
+                    continue
+                if d.quantity > limit:
+                    event(d, "rejected", "neutral_shadow_quantity_exceeded", session)
+                    continue
             fill = bar.open * (1 + config.execution.entry_slippage_bps / 10000)
             notional = d.quantity * fill
             fee = notional * config.execution.fee_bps_per_side / 10000

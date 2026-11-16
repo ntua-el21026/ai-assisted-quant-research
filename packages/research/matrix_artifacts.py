@@ -87,6 +87,7 @@ field is not used as an R2 statistical report. Backtests are not proof of profit
                 ),
                 "cost_id": case.cost_id,
                 "ai_policy": case.ai_policy,
+                "ai_execution_policy": "neutral-shadow-entry/v1",
                 "metrics": config.matrix.metrics.model_dump(mode="json"),
                 "resampling": config.matrix.resampling.model_dump(mode="json"),
             }
@@ -106,6 +107,9 @@ field is not used as an R2 statistical report. Backtests are not proof of profit
             {
                 "schema_version": "research-ai-replay/v1",
                 "policy": case.ai_policy,
+                "execution_policy": "neutral-shadow-entry/v1",
+                "resolved_evidence_sha256": identity["ai_resolved_evidence_sha256"],
+                "evidence_resolution": identity["ai_evidence_resolution"],
                 "diagnostics": [d.model_dump(mode="json") for d in case.ai_diagnostics],
             }
         ),
@@ -128,6 +132,8 @@ field is not used as an R2 statistical report. Backtests are not proof of profit
             "registration_sha256": config.registration_sha256,
             "dataset_manifest_sha256": identity["dataset_manifest_sha256"],
             "ai_evidence_sha256": identity["ai_evidence_sha256"],
+            "ai_resolved_evidence_sha256": identity["ai_resolved_evidence_sha256"],
+            "ai_evidence_resolution": identity["ai_evidence_resolution"],
             "metric_settings": config.matrix.metrics.model_dump(mode="json"),
             "artifacts_sha256": content_hashes(files),
         }
@@ -230,6 +236,7 @@ def matrix_artifacts(
             "final_evaluation_included": matrix.final_evaluation_included,
             "warnings": matrix.warnings,
             "evidence_sha256": matrix.evidence_sha256,
+            "resolved_evidence_sha256": matrix.resolved_evidence_sha256,
         }
     )
     files["comparisons.json"] = canonical_json(
@@ -276,8 +283,11 @@ explicit ablations change only the registered filter component (regime ablation 
 its sizing multiplier), preserving numerical portfolio safeguards and stops.
 
 AI can only remove or reduce existing deterministic candidates. Paired control runs use the
-same data, weights, budgets and costs. Later portfolio eligibility may differ after a block;
-realized exposure/trade counts are measured, not assumed monotone. These comparisons do not
+same data, weights, budgets and costs. A neutral execution shadow gates entries at the
+eligible opening, preventing replacement trades after a veto. Executed entry identities
+are a subset of the control, with no greater quantity or session gross USD exposure.
+Equity-normalized exposure ratios can differ because each portfolio has its own equity
+denominator; they are reported separately from this notional constraint. These comparisons do not
 establish AI predictive benefit. The public reference news/model outputs are hand-authored synthetic
 illustrations, not real provider or model observations. No external services are called.
 

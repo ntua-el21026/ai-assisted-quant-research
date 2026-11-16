@@ -26,6 +26,7 @@ from packages.ai.models import (
 )
 from packages.ai.parser import parse_ai_trade_research_or_fallback
 from packages.ai.scoring import apply_deterministic_ai_policy
+from packages.research.artifacts import canonical_json
 from packages.research.models import ResearchDecision, ResearchModel, ResearchSignalSet
 
 
@@ -113,12 +114,41 @@ class LoadedAIRecord(ResearchModel):
     issue: str | None = None
 
 
+class FrozenAIFileResolution(ResearchModel):
+    """A logical constituent's actual resolution during this immutable load."""
+
+    reference: str
+    file: FrozenAIFile
+    status: Literal["verified", "missing"]
+    verified_sha256: str | None = None
+    verified_size_bytes: int | None = None
+
+
 class FrozenAIEvidence(ResearchModel):
     manifest: FrozenAIManifest | None = None
     manifest_sha256: str | None = None
     articles: tuple[LoadedAIArticle, ...] = ()
     records: tuple[LoadedAIRecord, ...] = ()
+    file_resolutions: tuple[FrozenAIFileResolution, ...] = ()
     warnings: tuple[str, ...] = ()
+
+    @property
+    def resolved_sha256(self) -> str:
+        """Fingerprint declared provenance plus actual, path-independent file resolution."""
+        return hashlib.sha256(
+            canonical_json(
+                {
+                    "schema_version": "resolved-ai-evidence/v1",
+                    "manifest_sha256": self.manifest_sha256,
+                    "files": [
+                        resolution.model_dump(mode="json")
+                        for resolution in sorted(
+                            self.file_resolutions, key=lambda resolution: resolution.reference
+                        )
+                    ],
+                }
+            )
+        ).hexdigest()
 
 
 class AIReplayDiagnostic(ResearchModel):
@@ -144,7 +174,12 @@ class AIReplayResult(ResearchModel):
     warnings: tuple[str, ...] = ()
 
 
-def _read_verified(root: Path, file: FrozenAIFile) -> bytes | None:
+def _read_verified(
+    root: Path,
+    file: FrozenAIFile,
+    reference: str,
+    resolutions: list[FrozenAIFileResolution],
+) -> bytes | None:
     relative = Path(file.path)
     if relative.is_absolute() or ".." in relative.parts:
         raise FrozenAIIntegrityError(f"unsafe_local_path:{file.path}")
@@ -154,11 +189,22 @@ def _read_verified(root: Path, file: FrozenAIFile) -> bytes | None:
     try:
         raw = path.read_bytes()
     except FileNotFoundError:
+        resolutions.append(FrozenAIFileResolution(reference=reference, file=file, status="missing"))
         return None
     except OSError as exc:
         raise FrozenAIIntegrityError(f"unreadable_local_file:{file.path}") from exc
-    if len(raw) != file.size_bytes or hashlib.sha256(raw).hexdigest() != file.sha256:
+    digest = hashlib.sha256(raw).hexdigest()
+    if len(raw) != file.size_bytes or digest != file.sha256:
         raise FrozenAIIntegrityError(f"file_integrity_mismatch:{file.path}")
+    resolutions.append(
+        FrozenAIFileResolution(
+            reference=reference,
+            file=file,
+            status="verified",
+            verified_sha256=digest,
+            verified_size_bytes=len(raw),
+        )
+    )
     return raw
 
 
@@ -179,8 +225,13 @@ def load_frozen_ai_evidence(path: Path) -> FrozenAIEvidence:
     except (ValueError, ValidationError) as exc:
         raise FrozenAIIntegrityError("invalid_manifest") from exc
     root = path.parent.resolve()
-    for descriptor in (manifest.model, manifest.prompt, manifest.output_schema):
-        if _read_verified(root, descriptor.file) is None:
+    resolutions: list[FrozenAIFileResolution] = []
+    for reference, descriptor in (
+        ("model", manifest.model),
+        ("prompt", manifest.prompt),
+        ("output_schema", manifest.output_schema),
+    ):
+        if _read_verified(root, descriptor.file, reference, resolutions) is None:
             raise FrozenAIIntegrityError(f"missing_provenance_file:{descriptor.file.path}")
 
     warnings: list[str] = []
@@ -193,8 +244,11 @@ def load_frozen_ai_evidence(path: Path) -> FrozenAIEvidence:
             warnings.append("duplicate_article")
             continue
         article_metadata[metadata.article_id] = metadata
-        raw_article = _read_verified(root, metadata.file)
+        raw_article = _read_verified(
+            root, metadata.file, f"article:{metadata.article_id}", resolutions
+        )
         if raw_article is None:
+            warnings.append(f"missing_article:{metadata.file.path}")
             articles.append(LoadedAIArticle(metadata=metadata, issue="missing_article"))
             continue
         try:
@@ -221,8 +275,15 @@ def load_frozen_ai_evidence(path: Path) -> FrozenAIEvidence:
             warnings.append("duplicate_record")
             continue
         record_metadata[record.record_id] = record
-        raw_output = _read_verified(root, record.output) if record.output is not None else None
+        raw_output = (
+            _read_verified(root, record.output, f"record:{record.record_id}:output", resolutions)
+            if record.output is not None
+            else None
+        )
         if raw_output is None:
+            warnings.append(
+                f"missing_output:{record.output.path if record.output else record.record_id}"
+            )
             records.append(LoadedAIRecord(metadata=record, issue="missing_output"))
             continue
         try:
@@ -236,6 +297,7 @@ def load_frozen_ai_evidence(path: Path) -> FrozenAIEvidence:
         manifest_sha256=hashlib.sha256(raw_manifest).hexdigest(),
         articles=tuple(articles),
         records=tuple(records),
+        file_resolutions=tuple(sorted(resolutions, key=lambda resolution: resolution.reference)),
         warnings=tuple(sorted(set(warnings))),
     )
 

@@ -315,12 +315,17 @@ def evaluate_research(
         "dataset_manifest_sha256": snapshot.manifest_sha256,
         "dataset_provenance": snapshot.manifest.model_dump(mode="json"),
         "ai_evidence_sha256": evidence.manifest_sha256,
+        "ai_resolved_evidence_sha256": evidence.resolved_sha256,
+        "ai_evidence_resolution": [
+            resolution.model_dump(mode="json") for resolution in evidence.file_resolutions
+        ],
         "declared_ai_evidence_sha256": config.matrix.ai_manifest_sha256,
         "ai_provenance": evidence.manifest.model_dump(mode="json") if evidence.manifest else None,
         "seed": config.seed,
         "final_evaluation_requested": include_final,
         "execution_model": "research-execution/v1",
         "metrics_version": "research-metrics/v2",
+        "ai_execution_policy": "neutral-shadow-entry/v1",
     }
     run_id = hashlib.sha256(canonical_json(identity)).hexdigest()
     matrix = run_experiment_matrix(snapshot, config, include_final=include_final, evidence=evidence)

@@ -629,3 +629,133 @@ def test_research_fixture_freezes_causal_synthetic_provenance_and_complete_basel
         "comparison": ["AI_NEUTRAL", "AI_NEGATIVE_ONLY"],
         "neutral_control_changes_non_ai_settings": False,
     }
+
+
+def test_resolved_evidence_fingerprint_distinguishes_missing_constituents_and_reproduces(
+    bundle: Path, tmp_path: Path
+) -> None:
+    module = _module()
+    complete = module.load_frozen_ai_evidence(bundle)
+    output_bytes = _output(bundle).read_bytes()
+    _output(bundle).unlink()
+    missing_output = module.load_frozen_ai_evidence(bundle)
+    output_repeat = module.load_frozen_ai_evidence(bundle)
+    _output(bundle).write_bytes(output_bytes)
+    (bundle.parent / "article.json").unlink()
+    missing_article = module.load_frozen_ai_evidence(bundle)
+    relocated = tmp_path / "relocated"
+    shutil.copytree(bundle.parent, relocated)
+    article_repeat = module.load_frozen_ai_evidence(relocated / "manifest.json")
+
+    assert (
+        complete.manifest_sha256
+        == missing_output.manifest_sha256
+        == missing_article.manifest_sha256
+    )
+    assert (
+        len(
+            {
+                complete.resolved_sha256,
+                missing_output.resolved_sha256,
+                missing_article.resolved_sha256,
+            }
+        )
+        == 3
+    )
+    assert missing_output.resolved_sha256 == output_repeat.resolved_sha256
+    assert missing_article.resolved_sha256 == article_repeat.resolved_sha256
+    assert any("missing_output" in warning for warning in missing_output.warnings)
+    assert any("missing_article" in warning for warning in missing_article.warnings)
+    for evidence, missing_path in (
+        (missing_output, "negative-output.json"),
+        (missing_article, "article.json"),
+    ):
+        resolution = next(row for row in evidence.file_resolutions if row.file.path == missing_path)
+        assert resolution.status == "missing"
+        assert resolution.verified_sha256 is None
+        replayed = module.replay_ai_evidence(_signals(), evidence, CUTOFF)
+        assert replayed.signals.model_dump_json() == _signals().model_dump_json()
+    for resolution in complete.file_resolutions:
+        assert resolution.status == "verified"
+        assert resolution.verified_sha256 == resolution.file.sha256
+        assert resolution.verified_size_bytes == resolution.file.size_bytes
+
+
+def test_resolved_evidence_changes_root_case_identity_and_published_provenance(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from packages.research import runner
+
+    module = _module()
+    root = tmp_path / "evidence"
+    shutil.copytree(FIXTURE / "research", root)
+    manifest_path = root / "manifest.json"
+    registration = yaml.safe_load(Path("experiments/configs/ablations.yaml").read_bytes())
+    registration["baseline_config"] = str(Path("experiments/configs/baseline.yaml").absolute())
+    registration["matrix"]["ai_manifest"] = str(manifest_path)
+    # Keep the real causal generator/simulation path with both affected candidates,
+    # without repeating unrelated matrix axes.
+    registration["matrix"]["ablations"] = registration["matrix"]["ablations"][:1]
+    registration["matrix"]["costs"] = registration["matrix"]["costs"][:1]
+    config_path = tmp_path / "matrix.yaml"
+    config_path.write_text(yaml.safe_dump(registration))
+    captures: list[dict[str, bytes]] = []
+
+    def capture(_output: Path, files: dict[str, bytes], _runtime: bytes) -> None:
+        captures.append(files)
+
+    # Hold source provenance fixed to isolate evidence resolution from concurrent
+    # source development; capture publication at the real writer boundary.
+    monkeypatch.setattr(runner, "_source_identity", lambda: {"sha256": "fixed-test-source"})
+    monkeypatch.setattr(runner, "publish_artifacts", capture)
+
+    def evaluate(label: str) -> tuple[Any, dict[str, bytes]]:
+        summary = runner.evaluate_research(
+            config_path, Path("tests/fixtures/market_snapshot/manifest.json"), tmp_path / label
+        )
+        return summary, captures[-1]
+
+    complete, complete_files = evaluate("complete")
+    raw_output = (root / "output-200.json").read_bytes()
+    (root / "output-200.json").unlink()
+    output_missing, output_files = evaluate("missing-output")
+    output_repeat, output_repeat_files = evaluate("missing-output-repeat")
+    output_evidence = module.load_frozen_ai_evidence(manifest_path)
+    (root / "output-200.json").write_bytes(raw_output)
+    (root / "article-200.json").unlink()
+    article_missing, article_files = evaluate("missing-article")
+    article_repeat, article_repeat_files = evaluate("missing-article-repeat")
+    article_evidence = module.load_frozen_ai_evidence(manifest_path)
+
+    assert len({complete.run_id, output_missing.run_id, article_missing.run_id}) == 3
+    assert output_missing.run_id == output_repeat.run_id
+    assert output_missing.deterministic_sha256 == output_repeat.deterministic_sha256
+    assert output_files == output_repeat_files
+    assert article_missing.run_id == article_repeat.run_id
+    assert article_missing.deterministic_sha256 == article_repeat.deterministic_sha256
+    assert article_files == article_repeat_files
+    case_sets = [
+        {row["case_id"] for row in json.loads(files["matrix.json"])["cases"]}
+        for files in (complete_files, output_files, article_files)
+    ]
+    assert case_sets[0].isdisjoint(case_sets[1])
+    assert case_sets[0].isdisjoint(case_sets[2])
+    assert case_sets[1].isdisjoint(case_sets[2])
+    for files, fingerprint, missing_path in (
+        (output_files, output_evidence.resolved_sha256, "output-200.json"),
+        (article_files, article_evidence.resolved_sha256, "article-200.json"),
+    ):
+        parent = json.loads(files["manifest.json"])
+        matrix = json.loads(files["matrix.json"])
+        assert parent["ai_resolved_evidence_sha256"] == fingerprint
+        assert matrix["resolved_evidence_sha256"] == fingerprint
+        missing = next(
+            row for row in parent["ai_evidence_resolution"] if row["file"]["path"] == missing_path
+        )
+        assert missing["status"] == "missing"
+        assert missing["verified_sha256"] is None
+        assert any(missing_path in warning for warning in matrix["warnings"])
+        for case in matrix["cases"]:
+            manifest = json.loads(files[case["artifact_path"] + "/manifest.json"])
+            assert manifest["ai_resolved_evidence_sha256"] == fingerprint
+            assert manifest["ai_evidence_resolution"] == parent["ai_evidence_resolution"]
