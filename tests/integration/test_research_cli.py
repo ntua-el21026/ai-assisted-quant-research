@@ -181,3 +181,30 @@ def test_artifacts_preserve_signal_rationale_and_closed_trade_pnl(tmp_path: Path
     assert float(entry["stop_price"]) == pytest.approx(164.62857142857143)
     metrics = json.loads((output / "metrics.json").read_text())
     assert metrics["accounting"]["closed_trades"][0]["pnl"] == pytest.approx(-19.5168864)
+
+
+def test_runner_freezes_config_bytes_before_concurrent_input_change(
+    tmp_path: Path, monkeypatch
+) -> None:
+    from packages.research.runner import run_research
+
+    config_path = tmp_path / "changing.yaml"
+    original_bytes = CONFIG.read_bytes()
+    config_path.write_bytes(original_bytes)
+    altered = yaml.safe_load(original_bytes)
+    altered["experiment_id"] = "changed-during-run"
+    real_read = Path.read_bytes
+
+    def racing_read(path: Path) -> bytes:
+        result = real_read(path)
+        if path == config_path:
+            config_path.write_text(yaml.safe_dump(altered))
+        return result
+
+    monkeypatch.setattr(Path, "read_bytes", racing_read)
+    output = tmp_path / "frozen"
+    run_research(config_path, DATASET, output)
+    effective = json.loads((output / "config.snapshot.json").read_text())
+    manifest = json.loads((output / "manifest.json").read_text())
+    assert effective["experiment_id"] == "r1-synthetic-baseline"
+    assert manifest["config_input_sha256"] == hashlib.sha256(original_bytes).hexdigest()

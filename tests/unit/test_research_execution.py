@@ -291,3 +291,75 @@ def test_trailing_stop_computed_at_close_is_effective_next_session() -> None:
     assert not result.trades
     assert result.open_positions[0].stop_price > 96
     assert result.open_positions[0].quantity == 10
+
+
+def test_open_gap_price_cannot_seed_a_close_derived_trailing_stop() -> None:
+    snapshot, config = case()
+    sessions = load_dataset_snapshot(Path("tests/fixtures/market_snapshot/manifest.json")).sessions[
+        :17
+    ]
+    bars = []
+    for i, session in enumerate(sessions):
+        prices = (110, 111, 99, 100) if i == 15 else (100, 101, 99, 100)
+        bars.append(
+            AdjustedDailyBar(
+                symbol="QQQ",
+                date=session.date,
+                open=prices[0],
+                high=prices[1],
+                low=prices[2],
+                close=prices[3],
+                volume=1000000,
+                adjusted=False,
+            )
+        )
+    snapshot = replace(
+        snapshot,
+        sessions=sessions,
+        feature_bars_by_symbol={"QQQ": tuple(bars)},
+        execution_bars_by_symbol={"QQQ": tuple(bars)},
+        availability_by_key={("QQQ", s.date): s.close_at + timedelta(seconds=30) for s in sessions},
+    )
+    config = config.model_copy(update={"date_end": sessions[-1].date})
+    result = simulate(snapshot, config, order(snapshot, index=14, stop=95))
+    assert not result.trades
+    assert result.open_positions[0].stop_price == 95
+
+
+def test_stop_fill_event_records_the_active_trailing_level() -> None:
+    snapshot, config = case()
+    sessions = load_dataset_snapshot(Path("tests/fixtures/market_snapshot/manifest.json")).sessions[
+        :17
+    ]
+    bars = []
+    for i, session in enumerate(sessions):
+        prices = (100, 111, 96, 110) if i == 15 else (100, 101, 99, 100)
+        bars.append(
+            AdjustedDailyBar(
+                symbol="QQQ",
+                date=session.date,
+                open=prices[0],
+                high=prices[1],
+                low=prices[2],
+                close=prices[3],
+                volume=1000000,
+                adjusted=False,
+            )
+        )
+    snapshot = replace(
+        snapshot,
+        sessions=sessions,
+        feature_bars_by_symbol={"QQQ": tuple(bars)},
+        execution_bars_by_symbol={"QQQ": tuple(bars)},
+        availability_by_key={("QQQ", s.date): s.close_at + timedelta(seconds=30) for s in sessions},
+    )
+    config = config.model_copy(update={"date_end": sessions[-1].date})
+    result = simulate(snapshot, config, order(snapshot, index=14, stop=95))
+    exit_event = next(e for e in result.order_events if e.reason == "gap_stop")
+    # ATR after the wide 15th-index bar: (2*13+15)/14 = 41/14.
+    # Close-derived trailing level: 110 - 2.5*(41/14) = 102.67857142857143.
+    assert exit_event.stop_price == pytest.approx(102.67857142857143, abs=1e-8)
+    assert exit_event.parent_entry_id == "entry"
+    assert exit_event.decision_session == sessions[15].date
+    assert exit_event.decision_at == sessions[15].decision_at
+    assert exit_event.eligible_session == sessions[16].date

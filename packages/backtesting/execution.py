@@ -36,6 +36,7 @@ class _Position:
     stop: float
     initial_risk: float
     highest_close: float
+    stop_decision: ResearchDecision
     held: int = 0
 
 
@@ -68,6 +69,7 @@ def run_causal_backtest(
         fill: float | None = None,
         fee: float = 0,
         quantity: int | None = None,
+        parent_entry_id: str | None = None,
     ) -> None:
         qty = d.quantity if quantity is None else quantity
         events.append(
@@ -81,6 +83,7 @@ def run_causal_backtest(
                     eligible_session=d.eligible_session,
                     session=session,
                     quantity=qty,
+                    parent_entry_id=parent_entry_id,
                     decision_accepted=d.accepted,
                     decision_reason_codes=d.reason_codes,
                     reference_price=d.reference_price,
@@ -165,10 +168,10 @@ def run_causal_backtest(
                 return_pct=pnl / (p.entry_price * p.quantity),
             )
         )
-        d = decision or p.decision.model_copy(
+        d = decision or p.stop_decision.model_copy(
             update={"action": "sell", "decision_id": f"{p.decision.decision_id}:stop:{session}"}
         )
-        event(d, "filled", reason, session, base, fill, fee, p.quantity)
+        event(d, "filled", reason, session, base, fill, fee, p.quantity, p.decision.decision_id)
 
     day_start_equity = config.initial_cash
     week_start_equity = config.initial_cash
@@ -253,7 +256,15 @@ def run_causal_backtest(
             assert d.stop_price is not None
             cash -= notional + fee
             positions[d.symbol] = _Position(
-                d, session, d.quantity, fill, fee, d.stop_price, fill - d.stop_price, fill
+                d,
+                session,
+                d.quantity,
+                fill,
+                fee,
+                d.stop_price,
+                fill - d.stop_price,
+                0.0,
+                d.model_copy(update={"action": "sell", "reason_codes": ("protective_stop",)}),
             )
             event(d, "filled", "next_session_open", session, bar.open, fill, fee)
         # Intraday proceeds are available only after all opening orders were processed.
@@ -321,12 +332,27 @@ def run_causal_backtest(
                     )
             atr = features[-1].atr_14
             if atr is not None:
-                p.stop = trailing_stop_price(
+                new_stop = trailing_stop_price(
                     old_stop=p.stop,
                     highest_close_since_entry=p.highest_close,
                     atr_14=atr,
                     multiplier=config.strategy.trailing_stop_atr_multiplier,
                 )
+                if new_stop > p.stop:
+                    p.stop = new_stop
+                    p.stop_decision = ResearchDecision(
+                        decision_id=f"{p.decision.decision_id}:trail:{session}",
+                        symbol=symbol,
+                        action="sell",
+                        decision_session=session,
+                        decision_at=calendar[session].decision_at,
+                        eligible_session=next_session,
+                        accepted=True,
+                        quantity=p.quantity,
+                        reference_price=history[-1].close,
+                        stop_price=new_stop,
+                        reason_codes=("trailing_stop_update",),
+                    )
         prior_day = session
     terminal = tuple(
         OpenResearchPosition(

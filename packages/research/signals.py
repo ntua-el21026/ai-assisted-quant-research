@@ -104,11 +104,19 @@ def generate_research_signals(
             regime = classify_regime(
                 observations,
                 config.regime,
-                previous_state=previous_state,
+                previous_state="RISK_OFF" if cooldown > 0 else previous_state,
                 cooldown_days_remaining=cooldown,
             )
             previous_state = regime.state
-            cooldown = max(0, regime.cooldown_days_remaining - 1)
+            # A risk-off session starts a cooldown of subsequent calendar sessions.
+            # Preserve it through CAUTION and incomplete/non-confirming recovery states.
+            cooldown = (
+                config.regime.risk_off_cooldown_days
+                if regime.state == "RISK_OFF"
+                else max(0, cooldown - 1)
+            )
+        else:
+            cooldown = max(0, cooldown - 1)
         if not config.date_start <= session.date <= config.date_end:
             continue
         features: dict[str, tuple[FeatureRow, ...]] = {}
@@ -172,11 +180,25 @@ def generate_research_signals(
                     ),
                     key=lambda e: (e.available_at, e.earnings_date),
                 )
-                earnings = evaluate_earnings_blackout(
-                    as_of=session.date,
-                    earnings_date=known[-1].earnings_date if known else None,
-                    trading_calendar=all_dates,
+                evaluations = tuple(
+                    evaluate_earnings_blackout(
+                        as_of=session.date,
+                        earnings_date=e.earnings_date,
+                        trading_calendar=all_dates,
+                    )
+                    for e in known
                 )
+                if not evaluations:
+                    earnings = evaluate_earnings_blackout(
+                        as_of=session.date, earnings_date=None, trading_calendar=all_dates
+                    )
+                else:
+                    # v1 announcements are additive facts, not implicit revisions.
+                    # Every known event can block; a later date cannot erase a blackout.
+                    earnings = next(
+                        (e for e in evaluations if e.status == "blackout"),
+                        next((e for e in evaluations if not e.allow_entries), evaluations[-1]),
+                    )
             own_rank = ranks.get(symbol)
             percentile = (
                 (100 * sum(v <= own_rank for v in ranks.values() if v is not None) / len(ranks))

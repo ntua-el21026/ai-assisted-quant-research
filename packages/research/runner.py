@@ -20,7 +20,7 @@ from packages.research.artifacts import (
     content_hashes,
     publish_artifacts,
 )
-from packages.research.config import load_research_config
+from packages.research.config import parse_research_config
 from packages.research.signals import generate_research_signals
 
 
@@ -57,7 +57,7 @@ def run_research(
     if output_dir.exists() or output_dir.is_symlink():
         raise FileExistsError(f"output_exists: {output_dir.name}")
     raw_config = config_path.read_bytes()
-    config = load_research_config(config_path)
+    config = parse_research_config(raw_config)
     snapshot = load_dataset_snapshot(dataset_manifest_path)
     if snapshot.manifest_sha256 != config.dataset_manifest_sha256:
         raise ValueError("dataset_manifest_hash_mismatch")
@@ -198,6 +198,7 @@ Warnings and limitations:
                 "quantity",
                 "status",
                 "reason",
+                "parent_entry_id",
                 "decision_accepted",
                 "decision_reason_codes",
                 "reference_price",

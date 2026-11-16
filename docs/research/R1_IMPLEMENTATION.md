@@ -28,7 +28,11 @@ metadata are declared assumptions, not reconstructed point-in-time membership.
 
 Existing candidate/regime/earnings helpers and position sizing are reused. Unknown equity
 earnings block entries; ETF exemptions are explicit. Earnings announcements have availability
-timestamps. Decision quantity uses initial capital and the as-of regime multiplier; it never
+timestamps. Version 1 treats declarations as additive event facts: every known blackout
+can block an entry; a later record cannot implicitly revise or cancel another event.
+Risk-off cooldowns count the configured subsequent calendar sessions, including blocked
+sessions with incomplete proxy observations, and survive intermediate CAUTION states.
+Decision quantity uses initial capital and the as-of regime multiplier; it never
 uses a future fill price or future portfolio state. Actual portfolio capacity is checked at
 execution. Accepted means eligible for simulation, not guaranteed filled. Every evaluated
 symbol/session has an accepted or rejected decision with reasons.
@@ -97,7 +101,8 @@ The output path must be new. It contains `manifest.json`, `config.snapshot.json`
 The CSV named `trades.csv` is the complete order-event stream, including strategy rejections,
 accepted fills, exit fills and unfilled orders. Closed round-trip P&L and terminal positions
 are available in metrics; each fill includes decision/session timestamps, quantity, base/fill
-price, fee, modeled slippage and reason. Results are generated and ignored, not hand-edited.
+price, fee, modeled slippage and reason. Stop fills carry the parent entry ID and the
+active stop level, update cutoff and eligible session. Results are generated and ignored, not hand-edited.
 
 JSON uses sorted keys, UTF-8, finite numbers and fixed newlines; CSV uses fixed columns/order
 and LF. Run identity hashes effective/input configuration, snapshot manifest, complete Python

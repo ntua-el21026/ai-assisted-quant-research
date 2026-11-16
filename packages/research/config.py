@@ -10,7 +10,14 @@ from packages.research.models import ResearchConfig
 
 def load_research_config(path: Path) -> ResearchConfig:
     try:
-        values = yaml.safe_load(path.read_bytes())
-        return ResearchConfig.model_validate(values)
-    except (OSError, yaml.YAMLError, ValidationError) as exc:
+        return parse_research_config(path.read_bytes())
+    except OSError as exc:
+        raise ValueError(f"invalid_config: {exc}") from exc
+
+
+def parse_research_config(data: bytes) -> ResearchConfig:
+    """Validate exactly the frozen bytes used for input provenance."""
+    try:
+        return ResearchConfig.model_validate(yaml.safe_load(data))
+    except (yaml.YAMLError, ValidationError) as exc:
         raise ValueError(f"invalid_config: {exc}") from exc
