@@ -1,7 +1,7 @@
 # Quantitative Trading Research Architecture — v0.7
 
 - **Authority:** [Research Framework Specification v0.7](../app/AI_Assisted_Quant_Research_SPEC_v0.7.md)
-- **Status:** R1–R3 implemented; R2 external engineering review passed, R3 independent acceptance and R4 remain pending
+- **Status:** R1–R3 reviewed baseline; R4-A synthetic infrastructure implemented, independent acceptance and empirical R4 pending
 
 ## 1. System boundary
 
@@ -200,3 +200,23 @@ The active documentation and research CLI must clearly identify them as out of s
 | R4: Release | Actual executed results, report, preview, full test logs | Claim accuracy, reproducibility, link/secret review, no deployment |
 
 The final README and CV/project descriptions must be evidence-led. If any required component fails a gate, the project remains in development rather than receiving a cosmetic "complete" label.
+
+## 9. R4-A historical infrastructure boundary
+
+The separately authorized R4-A adds `market-snapshot/v2`, explicit query/revision/rights
+provenance, exact raw observations and cutoff-specific split feature views. Typed Alpaca
+GET transport and normalization are optional and tested through mocks; no acquisition
+command, credentials discovery or provider request is part of the offline path.
+
+Isolated action models/accounting handle quantities, basis, stop/pending levels,
+ex-date receivables and payment cash. Separate analytical benchmarks declare price,
+cash-total-return and payment-open-reinvested conventions. A synthetic qualification
+command exercises those components through the existing deterministic atomic publisher.
+It does not simulate strategy/risk orders. The accepted v1 runner, simulator, benchmark,
+artifact and R3 workflow contracts remain unchanged; v2 is never silently substituted.
+
+[R4-A contracts](R4A_IMPLEMENTATION.md), [provider boundary](R4A_ACQUISITION.md) and
+[verification](R4A_VERIFICATION.md) describe supported/restricted modes and executed tests.
+Historical strategy integration, acquisition, data qualification and empirical study
+require later authorization. Written Alpaca entitlement/retention/publication clarification
+is pending. This infrastructure does not close the historical research/release gate.

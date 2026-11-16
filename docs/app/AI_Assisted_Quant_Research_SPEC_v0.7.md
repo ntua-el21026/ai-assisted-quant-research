@@ -1,7 +1,7 @@
 # AI-Assisted Quantitative Trading Research Framework
 
 - **Specification:** v0.7 (research-scope transition)
-- **Status:** R1–R3 implemented; R2 external engineering review passed, R3 independent acceptance and R4 empirical/release work pending
+- **Status:** R1–R3 reviewed baseline; R4-A synthetic infrastructure implemented, independent acceptance pending; historical research/release pending
 - **Owner:** Michail Athanasios Peppas
 - **Target audience:** MSc Computer Science, Data Science, AI/ML and quantitative-finance reviewers
 - **Execution environment:** Local, offline-first Python research software; no deployment
@@ -11,9 +11,11 @@
 This document is the **current source of truth** for the research framework's intended behavior, architecture, non-goals and completion criteria. It supersedes the operational objectives of [`Autonomous_AI_Trading_Bot_SPEC_v0.6.md`](Autonomous_AI_Trading_Bot_SPEC_v0.6.md), which remains unchanged as a historical specification. Earlier milestone reports, broker evidence, runbooks, deployment manifests and frozen-validation records likewise remain historical. Their old `GO`/`NO_GO` outcomes do not establish v0.7 research completeness.
 
 The v0.7 change is a **product-scope change**. R1–R2 now implement the offline research
-pipeline, and R3 adds optional local Temporal/SQLite reliability. The owner reports
-independent external R2 engineering acceptance at `9b3678b`; R3 awaits independent
-acceptance. Historical studies and overall release remain incomplete. See
+pipeline, and R3 adds optional local Temporal/SQLite reliability. The owner identifies
+`60dd250` as the independently reviewed R1–R3 baseline. R4-A adds a separately authorized,
+synthetic-only historical-data/action foundation; [its contracts](../research/R4A_IMPLEMENTATION.md)
+and [verification](../research/R4A_VERIFICATION.md) do not establish empirical acceptance.
+Historical studies and overall release remain incomplete. See
 [the architecture](../research/ARCHITECTURE.md), [the research protocol](../research/RESEARCH_PROTOCOL.md),
 [R3 verification](../research/R3_VERIFICATION.md) and [the implementation plan](../superpowers/plans/2026-11-16-ai-assisted-quant-research.md).
 

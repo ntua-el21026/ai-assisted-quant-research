@@ -1,7 +1,7 @@
 # Quantitative Trading Research Protocol
 
 - **Governing specification:** [Research Framework v0.7](../app/AI_Assisted_Quant_Research_SPEC_v0.7.md)
-- **Status:** R1–R3 implemented; R2 passed external engineering review. R3 independent acceptance and empirical studies remain pending. No market findings are asserted here.
+- **Status:** R1–R3 reviewed baseline; R4-A synthetic infrastructure implemented, independent acceptance pending. Historical studies remain pending. No market findings are asserted here.
 
 ## 1. Scientific objective
 
@@ -21,11 +21,17 @@ Do not claim causal benefit, statistical significance or generalization without 
 
 ### Market data
 
-- Preferred starting source: a licensed, user-provided Tiingo EOD snapshot compatible with the repository's existing adapter; alternative provider snapshots are permitted only with documented schema and coverage.
+- Preferred candidate after the accepted R4-0 preflight: Alpaca historical SIP, conditional on written entitlement/storage/retention/publication clarification and full data qualification. Previously authorized inputs and alternative licensed sources remain possible; R4-A uses only synthetic/existing fixtures and mocked transport.
 - Public example: small synthetic, hand-audited OHLCV fixtures committed under `tests/fixtures/` or a clearly labeled equivalent, with no proprietary redistribution.
 - One frozen manifest per dataset: source and license, retrieval/freeze UTC timestamp, date coverage, symbol universe, raw/adjusted basis, corporate actions, timezone, calendar, schema version, per-file SHA-256, normalization version, missing-data exclusions and survivorship caveat.
 - Validate unique `(symbol, session)` keys, sorted sessions, nonnegative volume, finite valid OHLC, consistent fields and adequate feature warm-up; reject malformed data or produce explicit exclusion records according to the versioned policy.
 - Do not forward-fill missing tradable prices into order execution. Market closures, corporate actions and delisted/absent symbols must be documented rather than hidden.
+
+R4-A provides an explicit v2 contract and isolated action/benchmark accounting, documented
+in [R4-A contracts](R4A_IMPLEMENTATION.md). Its synthetic checks do not approve historical
+inputs, establish first-publication timestamps, change the proposed dates below, or
+execute a strategy study. Payment-open reinvestment is a declared analytical assumption;
+empirical comparison conventions must be registered and supported by the eventual data.
 
 ### AI/news evidence
 

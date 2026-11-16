@@ -6,7 +6,7 @@ This repository contains a Python research framework for studying deterministic 
 
 - **Maintainer:** Michail Athanasios Peppas
 - **Project direction:** v0.7 research framework (Option B)
-- **Current status:** **R3 local reliability implemented — independent acceptance pending; research in development**
+- **Current status:** **R1–R3 reviewed baseline; R4-A synthetic historical-data infrastructure implemented — independent acceptance pending; empirical research pending**
 
 > **No deployment, live trading or broker-connected paper trading is part of this project scope.** The canonical research path runs locally and offline. The synthetic demonstration verifies software behavior; it is not a historical-market study or an investment recommendation.
 
@@ -22,11 +22,11 @@ The evaluation is designed to report negative or inconclusive findings as faithf
 
 | Area | Current codebase | v0.7 research completion target |
 | --- | --- | --- |
-| Market data | Hash-verified local snapshots, explicit calendar/availability, quality gates and synthetic fixture | Properly licensed historical snapshots with supported action/price assumptions |
+| Market data | Compatible v1 snapshots plus explicit v2 raw/action/identity/revision contract; mocked Alpaca SIP acquisition boundary | Properly licensed and independently qualified historical snapshots |
 | Strategy and risk | Causal features, regime/candidates, full research cooldown, registered filter ablations and numerical safeguards | Historical validation with audited design exposure |
-| Backtesting | Next-session simulator, costs/stops, accounting, aligned price benchmarks and verified research statistics; preserved legacy API | Licensed action/dividend-aware historical comparisons |
+| Backtesting | Preserved next-session simulator; isolated split/dividend accounting and three explicit analytical return conventions | Authorized v2 strategy integration and historical comparisons |
 | AI/news | Offline as-of frozen replay, provenance, neutral fallback and paired execution bounds | Credible frozen historical news evidence and inconclusive/negative findings retained |
-| Persistence and workflows | Optional local Temporal research workflow, SQLite experiment ledger, retry/replay and verified publication reconciliation | External R3 acceptance; no production durability claim |
+| Persistence and workflows | Optional local Temporal research workflow, SQLite experiment ledger, retry/replay and verified publication reconciliation | Preserve reviewed local guarantees; no production durability claim |
 | Validation and reporting | Chronological matrix, fixed-seed uncertainty, cost stresses and deterministic nested artifacts; static historical preview | Empirical report and local research-results presentation |
 
 The research CLI connects deterministic strategy/risk logic to simulated accounting. Its R2
@@ -56,10 +56,18 @@ replay and reconciliation across separate database and filesystem commits.
 | --- | --- | --- |
 | **R1 — Data and simulation** | Auditable offline snapshot, causal strategy-to-simulation path and verified arithmetic | Implemented; reviewed cooldown correction included |
 | **R2 — Experiments and AI** | Benchmarks, time-aware splits, cost/ablation/uncertainty tests, frozen AI comparison | Independent external engineering review passed at `9b3678b` |
-| **R3 — Local reliability** | Real local Temporal workflow, idempotent checkpoints and fault-recovery tests | Implemented; independent acceptance pending |
-| **R4 — Portfolio release** | Reproducible example, available-data results, technical report, limitations and local presentation | Planned |
+| **R3 — Local reliability** | Real local Temporal workflow, idempotent checkpoints and fault-recovery tests | Reviewed baseline at `60dd250` |
+| **R4 — Portfolio release** | Reproducible example, available-data results, technical report, limitations and local presentation | R4-A infrastructure implemented; independent acceptance and empirical release pending |
 
 Implementation is organized into these **four** bounded Codex checkpoints. The detailed task-by-task plan is available below; no deployment step is included.
+
+R4 is proceeding in separately authorized phases. **R4-A uses only original synthetic
+fixtures and mocked HTTP**: [contracts and limitations](docs/research/R4A_IMPLEMENTATION.md),
+[acquisition interfaces](docs/research/R4A_ACQUISITION.md) and
+[verification](docs/research/R4A_VERIFICATION.md). Alpaca is the preferred candidate,
+but written entitlement/storage/retention/publication clarification is pending.
+No historical acquisition or empirical R4 execution has begun. The separate synthetic
+qualification command does not replace the existing research CLI or activate R3 workers.
 
 ## Documentation and research design
 
