@@ -65,19 +65,13 @@ Implementation is organized into these **four** bounded Codex checkpoints. The d
 
 ## Try the **existing** safe local foundation
 
-**Repository naming transition:** the intended GitHub repository name is
-`ntua-el21026/ai-assisted-quant-research`. GitHub Settings renaming is pending
-the owner's authenticated action. The clone URL below is the **currently
-verified** location; Codex R1 must verify the rename and update this URL
-before implementing research features.
-
 These commands exercise existing tests and a fake/local demonstration; they **do not yet execute the planned v0.7 research pipeline**.
 
 Prerequisites: Python **3.12+** and [uv](https://docs.astral.sh/uv/).
 
 ```bash
-git clone https://github.com/ntua-el21026/ai-trading-bot.git
-cd ai-trading-bot
+git clone https://github.com/ntua-el21026/ai-assisted-quant-research.git
+cd ai-assisted-quant-research
 uv sync --locked --group dev
 uv run --group dev pytest tests/unit -m "not integration"
 uv run python scripts/run_paper_dry_run.py --mode fake-local

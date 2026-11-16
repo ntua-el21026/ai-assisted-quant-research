@@ -17,12 +17,11 @@ git status, local HEAD, origin/main, remote URL and repository instructions.
 If the tree is unexpectedly dirty or remote main has diverged, stop and
 report rather than overwriting changes.
 
-Before implementing R1, verify the GitHub repository has actually been
-renamed to ntua-el21026/ai-assisted-quant-research. Verify the canonical
-GitHub repository name, not merely an old URL that may redirect. If GitHub
-still reports ai-trading-bot as its canonical slug, STOP and ask the owner
-to complete the GitHub Settings rename. Update the documented clone URL
-and local origin after the rename is confirmed.
+Before implementing R1, verify the canonical GitHub repository name is
+ntua-el21026/ai-assisted-quant-research, rather than relying on redirects
+from its former slug. Confirm local origin and the README clone command
+use the canonical URL; correct any active stale references. If the name
+does not match or authorization is missing, STOP and report the blocker.
 
 Conduct an exhaustive, case-insensitive name/remnant audit using rg across
 active docs, metadata, local scripts, configs, and references. Search for
