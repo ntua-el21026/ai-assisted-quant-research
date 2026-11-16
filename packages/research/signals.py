@@ -107,6 +107,21 @@ def generate_research_signals(
                 previous_state="RISK_OFF" if cooldown > 0 else previous_state,
                 cooldown_days_remaining=cooldown,
             )
+            # Legacy classification blocks cooldown only on confirmed RISK_ON recovery.
+            # Research enforces no new entries throughout the independent interval,
+            # including non-confirming CAUTION, without changing operational callers.
+            if cooldown > 0 and regime.state != "RISK_OFF":
+                regime = regime.model_copy(
+                    update={
+                        "state": "CAUTION",
+                        "new_entries_allowed": False,
+                        "size_multiplier": 0.0,
+                        "cooldown_days_remaining": cooldown,
+                        "reason_codes": tuple(
+                            dict.fromkeys((*regime.reason_codes, "risk_off_cooldown_active"))
+                        ),
+                    }
+                )
             previous_state = regime.state
             # A risk-off session starts a cooldown of subsequent calendar sessions.
             # Preserve it through CAUTION and incomplete/non-confirming recovery states.

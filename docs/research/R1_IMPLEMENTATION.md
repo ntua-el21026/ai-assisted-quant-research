@@ -37,6 +37,24 @@ uses a future fill price or future portfolio state. Actual portfolio capacity is
 execution. Accepted means eligible for simulation, not guaranteed filled. Every evaluated
 symbol/session has an accepted or rejected decision with reasons.
 
+### Research CAUTION and cooldown policy
+
+The mandatory pre-R2 correction enforces every configured **subsequent calendar session**
+after observed RISK_OFF as a no-entry interval, including non-confirming CAUTION and confirmed
+RISK_ON recovery. A repeated observed RISK_OFF resets the interval. A session with unavailable
+proxy history blocks decisions and consumes one elapsed calendar session; it does not infer a
+new RISK_OFF from unavailable data. Cooldowns 0, 1 and 3 have explicit boundary regressions.
+The research adapter supplies this gate; the historical operational classifier is unchanged.
+
+Outside cooldown, the implemented baseline permits CAUTION entries through the same fixed
+candidate filters and numerical portfolio caps, with a **0.5 decision-sizing multiplier**
+and integer-share flooring. It does not implement the historical v0.6 proposal's FinalScore
+80 threshold or half gross-exposure cap. This is a disclosed R1 baseline simplification,
+not a parameter change in R2. RISK_ON uses multiplier 1; RISK_OFF blocks entries. Missing
+regime inputs block entries. Any stronger CAUTION score/cap policy requires an explicitly
+registered future experiment; this correction introduces no strategy tuning. Persistent
+RISK_OFF does not force a flatten; the existing protective and routine exits remain active.
+
 The simulation risk adapter reuses numerical checks for positions, gross/deployable/sector
 exposure, cash buffer, protective stops, risk per trade and daily/weekly/monthly loss limits.
 Operational broker/autonomy/Temporal gates retain their existing semantics and are not
