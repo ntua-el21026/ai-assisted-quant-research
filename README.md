@@ -6,9 +6,9 @@ This repository contains a Python research framework for studying deterministic 
 
 - **Maintainer:** Michail Athanasios Peppas
 - **Project direction:** v0.7 research framework (Option B)
-- **Current status:** **Research transition in progress — not yet a completed experimental study**
+- **Current status:** **R1 data and simulation implemented — independent review pending; research in development**
 
-> **No deployment, live trading or broker-connected paper trading is part of this project scope.** The canonical research path is designed to run locally and offline. Backtested returns, if produced later, will not be represented as forecasts or investment recommendations.
+> **No deployment, live trading or broker-connected paper trading is part of this project scope.** The canonical research path runs locally and offline. The synthetic demonstration verifies software behavior; it is not a historical-market study or an investment recommendation.
 
 ## Research questions
 
@@ -22,14 +22,14 @@ The evaluation is designed to report negative or inconclusive findings as faithf
 
 | Area | Current codebase | v0.7 research completion target |
 | --- | --- | --- |
-| Market data | Typed daily bars, feature utilities, data-provider adapters | Frozen, hash-verified offline snapshots, data-quality/provenance checks and causal feature availability |
-| Strategy and risk | Deterministic regime, signal, risk and execution-intent components | Connected, audited signal generation with explicit rejection records |
-| Backtesting | Explicit-signal simulator with same-session close assumptions | Next-eligible-session fills, realistic accounting, independent numerical checks and benchmark alignment |
+| Market data | Hash-verified local snapshots, explicit calendar/availability, quality gates and synthetic fixture | Properly licensed historical snapshots with supported action/price assumptions |
+| Strategy and risk | Connected causal features, regime/candidates, numerical risk and rejection records | Controlled time-aware experiments and bounded frozen AI comparisons |
+| Backtesting | Separate next-session-open simulator, costs/stops, cash/P&L, terminal positions; preserved legacy API | Aligned benchmarks and verified research statistics |
 | AI/news | Budgeted shortlist analysis, schemas, guardrails and neutral fallback | Offline frozen-evidence replay and controlled neutral-versus-negative-only ablations |
 | Persistence and workflows | SQLite ledger, Temporal contracts/skeletons and fake/local test paths | Functional **local-only** Temporal/SQLite retry, replay and recovery experiments |
 | Validation and reporting | Historical milestone tests, reporting models and a static dashboard preview | Walk-forward evaluation, uncertainty, cost sensitivity, reproducible artifacts, technical report and local visualizations |
 
-The new research CLI, dataset manifest format, canonical artifact suite and final studies in the right column are **design targets, not features already delivered**. The existing backtester receives caller-supplied signals; it does not independently predict them. The previous 56-day paper-validation record is incomplete and is not used as v0.7 evidence.
+The R1 research CLI connects actual deterministic strategy/risk logic to simulated accounting and writes the versioned artifact suite. Benchmarks, AI comparisons, statistical experiments and final historical studies remain **pending**. The legacy explicit-signal backtester remains available with its original timing. The previous 56-day paper-validation record is incomplete and is not used as v0.7 evidence.
 
 ## Research architecture
 
@@ -41,13 +41,13 @@ flowchart LR
     E["Frozen news / AI evidence"] --> B
 ```
 
-The primary experiment pipeline will operate without Temporal or network services. A separate small local Temporal/SQLite track will test reproducibility and failure recovery against the same research-core interfaces.
+The R1 pipeline operates without Temporal or network services. A separate small local Temporal/SQLite track will test reproducibility and failure recovery against the same research-core interfaces.
 
 ### Implementation checkpoints
 
 | Checkpoint | Evidence required | Status |
 | --- | --- | --- |
-| **R1 — Data and simulation** | Auditable offline snapshot, causal strategy-to-simulation path and verified arithmetic | Planned |
+| **R1 — Data and simulation** | Auditable offline snapshot, causal strategy-to-simulation path and verified arithmetic | Implemented; independent review pending |
 | **R2 — Experiments and AI** | Benchmarks, time-aware splits, cost/ablation/uncertainty tests, frozen AI comparison | Planned |
 | **R3 — Local reliability** | Real local Temporal workflow, idempotent checkpoints and fault-recovery tests | Planned |
 | **R4 — Portfolio release** | Reproducible example, available-data results, technical report, limitations and local presentation | Planned |
@@ -63,9 +63,9 @@ Implementation is organized into these **four** bounded Codex checkpoints. The d
 - **[Four Codex prompts](docs/research/CODEX_CHECKPOINT_PROMPTS.md):** one bounded, copy-ready prompt for each reviewed checkpoint.
 - **[Technical documentation index](docs/README.md):** current research documents and clearly marked historical implementation/runbooks.
 
-## Try the **existing** safe local foundation
+## Run the offline synthetic reference
 
-These commands exercise existing tests and a fake/local demonstration; they **do not yet execute the planned v0.7 research pipeline**.
+These commands run the R1 pipeline without provider credentials, broker connections or network access after dependency setup. The data are original synthetic arithmetic fixtures with an explicitly synthetic weekday calendar.
 
 Prerequisites: Python **3.12+** and [uv](https://docs.astral.sh/uv/).
 
@@ -73,28 +73,35 @@ Prerequisites: Python **3.12+** and [uv](https://docs.astral.sh/uv/).
 git clone https://github.com/ntua-el21026/ai-assisted-quant-research.git
 cd ai-assisted-quant-research
 uv sync --locked --group dev
-uv run --group dev pytest tests/unit -m "not integration"
-uv run python scripts/run_paper_dry_run.py --mode fake-local
+uv run --offline --no-sync pytest tests/unit tests/integration/test_research_cli.py -q
+uv run --offline --no-sync python -m packages.research.cli run \
+  --config experiments/configs/baseline.yaml \
+  --dataset tests/fixtures/market_snapshot/manifest.json \
+  --output results/r1-example
 ```
 
-The last command uses fake broker/alert clients, neutral AI and local in-memory persistence. It does not use a real trading account, external market/news/AI providers, a hosted Temporal server or a managed database. Do not run historical opt-in paper-broker order smoke scripts as part of this research workflow.
-
-The **future** canonical research entry point is specified as `python -m packages.research.cli` with an offline dataset manifest and experiment config. It will be documented as runnable only after R1 tests establish that it exists.
+Use a new output directory for each run; existing outputs are immutable. The command writes
+hash-indexed manifests, decision/fill records, equity, accounting metrics and a generated
+report. Runtime-only timestamps and host details are separated into `runtime.json`.
+See [R1 implementation and verification](docs/research/R1_IMPLEMENTATION.md) for contracts,
+limitations, accounting fixtures and reproducibility details. The full research study,
+benchmarks, AI experiments and local recovery track remain pending.
 
 ## Source organization
 
 | Directory | Responsibility |
 | --- | --- |
-| [`packages/data/`](packages/data/) | Typed observations, features, data access and planned snapshot checks |
+| [`packages/data/`](packages/data/) | Typed observations, causal features and validated local snapshots |
 | [`packages/strategy/`](packages/strategy/) / [`packages/risk/`](packages/risk/) | Deterministic selection and risk contracts |
-| [`packages/backtesting/`](packages/backtesting/) | Existing explicit-signal simulator; future causal simulation layer |
+| [`packages/backtesting/`](packages/backtesting/) | Causal next-session simulator and preserved explicit-signal legacy API |
 | [`packages/ai/`](packages/ai/) | Structured news-risk analysis and restrictive fallback policy |
 | [`packages/ledger/`](packages/ledger/) | Local SQLite repositories and historical audit interfaces |
 | [`apps/workers/`](apps/workers/) | Temporal scaffolding; planned bounded local research workflow |
 | [`tests/`](tests/) | Unit, integration, failure and local orchestration coverage |
 | [`docs/evidence/`](docs/evidence/) | Historical operational observations, **not v0.7 research results** |
 
-The planned `packages/research/` and `experiments/` surfaces will be introduced during the checkpoints.
+[`packages/research/`](packages/research/) provides the offline CLI, configuration, decisions and artifacts.
+[`experiments/configs/baseline.yaml`](experiments/configs/baseline.yaml) freezes the R1 synthetic baseline.
 
 ## Safety, provenance and historical context
 

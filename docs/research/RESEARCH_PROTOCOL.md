@@ -1,7 +1,7 @@
 # Quantitative Trading Research Protocol
 
 - **Governing specification:** [Research Framework v0.7](../app/AI_Assisted_Quant_Research_SPEC_v0.7.md)
-- **Status:** Pre-implementation protocol; no results or findings are asserted here
+- **Status:** R1 data/simulation implementation available; empirical studies, R2 statistics/AI and R3 reliability remain pending. No market findings are asserted here.
 
 ## 1. Scientific objective
 

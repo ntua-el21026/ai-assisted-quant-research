@@ -93,6 +93,11 @@ class ResearchOrderEvent(BacktestModel):
     quantity: int = Field(ge=0)
     status: Literal["filled", "rejected", "unfilled"]
     reason: str
+    decision_accepted: bool = True
+    decision_reason_codes: tuple[str, ...] = ()
+    reference_price: float | None = None
+    stop_price: float | None = None
+    breakout_level: float | None = None
     base_price: float | None = None
     fill_price: float | None = None
     fee: float = Field(default=0, ge=0)

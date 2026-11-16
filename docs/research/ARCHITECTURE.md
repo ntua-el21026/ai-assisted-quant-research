@@ -1,7 +1,7 @@
 # Quantitative Trading Research Architecture — v0.7
 
 - **Authority:** [Research Framework Specification v0.7](../app/AI_Assisted_Quant_Research_SPEC_v0.7.md)
-- **Status:** Target architecture; individual parts below are marked as implemented, partial or planned
+- **Status:** R1 data/simulation implemented; R2–R4 architecture remains planned
 
 ## 1. System boundary
 
@@ -27,13 +27,13 @@ All arrows denote local data movement or controlled function calls. The Temporal
 | Area | Existing source | Current evidence/status |
 | --- | --- | --- |
 | Config and safety | `packages/core/`, `config/` | Typed models and conservative paper/live defaults; keep flags disabled |
-| Market data and features | `packages/data/` | OHLCV models, indicators, provider boundaries, Tiingo EOD adapter; snapshot provenance pipeline missing |
-| Strategy and exits | `packages/strategy/` | Candidate/regime/filter and exit helpers; not integrated with historical backtest decisions |
-| Risk and intent | `packages/risk/`, `packages/execution/` | Deterministic risk and intent contracts; require a simulation-specific integration |
-| Backtest | `packages/backtesting/` | Explicit-signal long-only same-day-close engine, basic metrics; must be audited/corrected for causal research |
+| Market data and features | `packages/data/` | OHLCV models, indicators, provider boundaries, Tiingo EOD adapter; versioned snapshot provenance/quality/availability gates implemented in R1 |
+| Strategy and exits | `packages/strategy/` | Candidate/regime/filter and exit helpers; causal R1 decision adapter records accepted/rejected candidates |
+| Risk and intent | `packages/risk/`, `packages/execution/` | Deterministic risk and intent contracts; R1 numerical simulation adapter reuses checks without operational broker assertions |
+| Backtest | `packages/backtesting/` | Preserved legacy engine plus independently tested causal next-session R1 simulator |
 | AI/news | `packages/ai/` | Provider clients, parsing, budgets, scoring and neutral fallback; frozen as-of experiment path absent |
 | Local demonstration | `packages/paper/dry_run.py` | Fake broker/SQLite/report pipeline exists; fixture demonstration is not multi-year research |
-| Ledger and reporting | `packages/ledger/`, `packages/reporting/` | Repositories and generators exist; experiment artifacts still need integration |
+| Ledger and reporting | `packages/ledger/`, `packages/reporting/` | Repositories and generators exist; R1 artifact writer implemented separately from legacy persistence |
 | Temporal | `apps/workers/app/` | Ten workflow skeletons, activity contracts, local SDK test/replay coverage; not end-to-end research orchestration |
 | Dashboard | `apps/dashboard/` | Static safety-preview scaffold; not a research-results viewer |
 
@@ -70,16 +70,16 @@ New code should not duplicate existing functionality merely to satisfy this shap
 
 ## 4. Canonical research interface
 
-The finished framework must expose a local CLI with an explicit configuration and dataset snapshot, conceptually:
+R1 exposes a local CLI with an explicit configuration and dataset snapshot:
 
 ```bash
-uv run python -m packages.research.cli run \
+uv run --offline --no-sync python -m packages.research.cli run \
   --config experiments/configs/baseline.yaml \
-  --dataset datasets/example/manifest.json \
+  --dataset tests/fixtures/market_snapshot/manifest.json \
   --output results/example
 ```
 
-**This is a target interface, not yet an implemented command.** The canonical runner must refuse missing/invalid inputs, avoid network and broker imports with side effects, use deterministic ordering and write all defined artifacts atomically or fail with a recorded error. Read-only provider acquisition, if later implemented, uses a different explicit command.
+**Implemented in R1.** The canonical runner refuses missing/invalid inputs, avoids network and broker imports, uses deterministic ordering and stages all artifacts before atomic publication. [R1 contracts and limitations](R1_IMPLEMENTATION.md) document the executed path. R2 evaluation and R3 recovery remain pending. Read-only provider acquisition, if later implemented, uses a different explicit command.
 
 The run output is an immutable experiment record identified by data/config/code hashes and a seed. A preview dashboard, if included, consumes **only these generated local files** and does not issue control actions.
 

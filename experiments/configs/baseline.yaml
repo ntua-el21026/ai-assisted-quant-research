@@ -1,5 +1,6 @@
 schema_version: research-config/v1
 experiment_id: r1-synthetic-baseline
+dataset_manifest_sha256: 7057ce77e118a3adfebbda8aba85a317b3b74ba30bcd1ae2da055b1410f582ed
 hypothesis: Synthetic engineering demonstration; no empirical market inference
 seed: 0
 date_start: 2025-01-02

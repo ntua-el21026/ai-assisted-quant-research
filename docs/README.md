@@ -7,11 +7,11 @@
 | Document | Purpose | Status |
 | --- | --- | --- |
 | [Research framework specification v0.7](app/AI_Assisted_Quant_Research_SPEC_v0.7.md) | Research questions, non-goals, safety, interfaces and completion criteria | **Governing specification** |
-| [Research protocol](research/RESEARCH_PROTOCOL.md) | Dataset provenance, causal semantics, time-aware experiments, metrics, uncertainty and reporting | Pre-implementation method |
-| [Research architecture](research/ARCHITECTURE.md) | Actual component inventory, proposed pipeline/CLI, local Temporal boundary | Planned additions distinguished from existing code |
+| [Research protocol](research/RESEARCH_PROTOCOL.md) | Dataset provenance, causal semantics, time-aware experiments, metrics, uncertainty and reporting | Method; R1 implementation available, studies pending |
+| [Research architecture](research/ARCHITECTURE.md) | Actual component inventory, R1 pipeline/CLI, planned local Temporal boundary | Planned additions distinguished from existing code |
 | [Design decision](superpowers/specs/2026-11-16-ai-assisted-quant-research-design.md) | Approved balanced AI/ML + systems direction and tradeoffs | Approved scope |
-| [Four-checkpoint implementation plan](superpowers/plans/2026-11-16-ai-assisted-quant-research.md) | Test-first R1–R4 task definitions and verification gates | **Ready for Codex execution; tasks not yet completed** |
-| [Four Codex prompts](research/CODEX_CHECKPOINT_PROMPTS.md) | Copy-ready R1–R4 implementation assignments to use sequentially after review | Prepared, not executed |
+| [Four-checkpoint implementation plan](superpowers/plans/2026-11-16-ai-assisted-quant-research.md) | Test-first R1–R4 task definitions and verification gates | R1 implemented; R2–R4 pending |
+| [Four Codex prompts](research/CODEX_CHECKPOINT_PROMPTS.md) | Copy-ready R1–R4 implementation assignments to use sequentially after review | R1 implementation completed; later prompts await review |
 | [Root contributor/agent guide](../AGENTS.md) | Repository safety constraints, instructions and current authority | Current |
 | [Main README](../README.md) | Portfolio-facing introduction and truthful implementation status | Current |
 
@@ -22,7 +22,7 @@
 3. **R3 — Local reliability:** real local Temporal research workflow, SQLite idempotency and recovery evidence.
 4. **R4 — Portfolio release:** verified results, research report, license-safe example, local presentation and reproducibility audit.
 
-R1–R4 are **unimplemented targets** until their corresponding test and artifact evidence is committed. A synthetic example is not empirical performance evidence.
+R1 has implemented tests and a synthetic artifact path; independent review is pending. R2–R4 remain unimplemented targets. See [R1 contracts and reproducibility](research/R1_IMPLEMENTATION.md). A synthetic example is not empirical performance evidence.
 
 ## Historical implementation references — not v0.7 goals
 
@@ -44,4 +44,4 @@ The documents in this section describe code, interfaces and operational ideas fr
 - [Machine-readable evidence](evidence/) contains earlier observed results, failures and gates. It does **not** establish a complete 56-day validation, profitability, an active deployment or completion of the new research study.
 - The [old readiness documents](frozen_validation_readiness_m44.md) and checklists are retained to preserve engineering history, not as current release requirements.
 
-Default v0.7 tests and the future reference experiment must need **no provider credentials, broker connection or deployment**. Do not run legacy scripts that can place paper orders. Preserve historical failure evidence and accurately qualify all new findings.
+Default v0.7 tests and the R1 reference experiment need **no provider credentials, broker connection or deployment**. Do not run legacy scripts that can place paper orders. Preserve historical failure evidence and accurately qualify all new findings.

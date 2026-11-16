@@ -42,6 +42,7 @@ class EarningsAnnouncement(ResearchModel):
 class ResearchConfig(ResearchModel):
     schema_version: Literal["research-config/v1"]
     experiment_id: str = Field(min_length=1)
+    dataset_manifest_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
     hypothesis: str = Field(min_length=1)
     seed: int = Field(ge=0)
     date_start: date
