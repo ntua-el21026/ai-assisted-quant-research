@@ -124,7 +124,7 @@ passed after the correction wave. The owner's independent review is still requir
 | --- | ---: | --- |
 | `tests/fixtures/market_snapshot/manifest.json` | 29084 | `7057ce77e118a3adfebbda8aba85a317b3b74ba30bcd1ae2da055b1410f582ed` |
 | `tests/fixtures/market_snapshot/bars.csv` | 48754 | `fcc5d1fc39bdfde3752a50db8fb5bf0208799e0b3a7cffe52d809ce2e8a487f2` |
-| `experiments/configs/baseline.yaml` | 2366 | `8d9374d926790098e49400390a4e0f6525d18f2702c30d0e52daf9e2f7b7b954` |
+| `experiments/configs/baseline.yaml` | 2365 | `db86c1719fa691e6002509f0349216063cea9f7317f1481bd52a9f7920fe6dc5` |
 
 The integration test executes the canonical CLI twice, recomputes every digest and checks
 byte parity of all deterministic files, including `hashes.json`. `runtime.json` is explicitly
@@ -133,14 +133,14 @@ excluded. Final-checkout smoke runs use these commands and new ignored destinati
 ```bash
 uv run --offline --no-sync python -m packages.research.cli run \
   --config experiments/configs/baseline.yaml \
-  --dataset tests/fixtures/market_snapshot/manifest.json --output results/r1-final-a
+  --dataset tests/fixtures/market_snapshot/manifest.json --output results/r1-verified-a
 uv run --offline --no-sync python -m packages.research.cli run \
   --config experiments/configs/baseline.yaml \
-  --dataset tests/fixtures/market_snapshot/manifest.json --output results/r1-final-b
+  --dataset tests/fixtures/market_snapshot/manifest.json --output results/r1-verified-b
 python3 - <<'PY'
 import hashlib, json
 from pathlib import Path
-first, second = Path('results/r1-final-a'), Path('results/r1-final-b')
+first, second = Path('results/r1-verified-a'), Path('results/r1-verified-b')
 index = json.loads((first/'hashes.json').read_text())['sha256']
 for name, digest in index.items():
     assert hashlib.sha256((first/name).read_bytes()).hexdigest() == digest
