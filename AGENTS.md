@@ -12,7 +12,8 @@ The authoritative scope and acceptance criteria are:
 4. [`docs/superpowers/plans/2026-11-16-ai-assisted-quant-research.md`](docs/superpowers/plans/2026-11-16-ai-assisted-quant-research.md) — implementation tasks and gates.
 5. Existing code and tests, followed by the current user-approved task.
 
-The previous autonomous-trading specifications v0.2–v0.6, evidence, paper-broker milestones and operational runbooks are **historical**, not current acceptance criteria. The previous agent instructions are archived at [`docs/history/AGENTS_legacy_v0.6.md`](docs/history/AGENTS_legacy_v0.6.md). If documents conflict, use v0.7 and explicitly identify material ambiguity before implementing.
+The previous autonomous-trading specifications v0.2–v0.6 (including the historical
+[`v0.6 specification`](docs/app/Autonomous_AI_Trading_Bot_SPEC_v0.6.md)), evidence, paper-broker milestones and operational runbooks are **historical**, not current acceptance criteria. The previous agent instructions are archived at [`docs/history/AGENTS_legacy_v0.6.md`](docs/history/AGENTS_legacy_v0.6.md). If documents conflict, use v0.7 and explicitly identify material ambiguity before implementing.
 
 ## Non-negotiable boundaries
 
