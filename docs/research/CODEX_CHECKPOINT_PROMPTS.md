@@ -1,24 +1,42 @@
-# Endeavour v0.7 — Four Codex Checkpoint Prompts
+# AI-Assisted Quantitative Trading Research v0.7 — Four Codex Checkpoint Prompts
 
 - **Status:** Prepared for execution; no checkpoint has been implemented by these prompts.
 - **Order:** R1 → review → R2 → review → R3 → review → R4 → release review.
 - **Branch policy:** User-authorized changes to `main` only. Do not create a feature branch or PR.
-- **Core authority:** [v0.7 specification](../app/Endeavour_Research_Framework_SPEC_v0.7.md), [research protocol](RESEARCH_PROTOCOL.md), [architecture](ARCHITECTURE.md), [task-level implementation plan](../superpowers/plans/2026-11-16-endeavour-research-framework.md) and root [AGENTS.md](../../AGENTS.md).
+- **Core authority:** [v0.7 specification](../app/AI_Assisted_Quant_Research_SPEC_v0.7.md), [research protocol](RESEARCH_PROTOCOL.md), [architecture](ARCHITECTURE.md), [task-level implementation plan](../superpowers/plans/2026-11-16-ai-assisted-quant-research.md) and root [AGENTS.md](../../AGENTS.md).
 
 **Operating sequence:** Copy **one** prompt into Codex after the previous checkpoint has been independently reviewed. Each prompt is self-contained but depends on reading the governing documents. Never interpret an unexecuted target command or a planned test as completed evidence.
 
 ## Prompt 1 — R1: Offline research core
 
 ```text
-You are implementing Endeavour v0.7 CHECKPOINT R1 ONLY on the existing main
-branch of ntua-el21026/ai-trading-bot. Work directly on main; do not create
-branches, PRs or tags. Start by checking git status, local HEAD, origin/main
-and repository instructions. If the tree is unexpectedly dirty or remote
-main has diverged, stop and report rather than overwriting changes.
+Implement CHECKPOINT R1 ONLY for the AI-Assisted Quantitative Trading Research
+Framework (v0.7), targeting ntua-el21026/ai-assisted-quant-research.
+Work directly on main; do not create branches, PRs or tags. First inspect
+git status, local HEAD, origin/main, remote URL and repository instructions.
+If the tree is unexpectedly dirty or remote main has diverged, stop and
+report rather than overwriting changes.
 
-Read AGENTS.md, docs/app/Endeavour_Research_Framework_SPEC_v0.7.md,
+Before implementing R1, verify the GitHub repository has actually been
+renamed to ntua-el21026/ai-assisted-quant-research. Verify the canonical
+GitHub repository name, not merely an old URL that may redirect. If GitHub
+still reports ai-trading-bot as its canonical slug, STOP and ask the owner
+to complete the GitHub Settings rename. Update the documented clone URL
+and local origin after the rename is confirmed.
+
+Conduct an exhaustive, case-insensitive name/remnant audit using rg across
+active docs, metadata, local scripts, configs, and references. Search for
+Endeavour, ai-trading-bot, prior repository URLs, outdated deployment/product
+claims, and broken paths created by the v0.7 naming migration. Fix active
+references and keep Python/Node package metadata and lockfiles consistent.
+Classify legitimate historical references separately: preserve versioned
+v0.2–v0.6 specifications, old evidence, original filenames, deployment
+records, and archived instructions unchanged. Do not perform the later
+legacy-directory restructuring during R1.
+
+Read AGENTS.md, docs/app/AI_Assisted_Quant_Research_SPEC_v0.7.md,
 docs/research/RESEARCH_PROTOCOL.md, docs/research/ARCHITECTURE.md and
-docs/superpowers/plans/2026-11-16-endeavour-research-framework.md in full.
+docs/superpowers/plans/2026-11-16-ai-assisted-quant-research.md in full.
 Follow R1 Tasks 1–4, interfaces and test-first steps; keep all decisions
 consistent with the governing scope.
 
@@ -37,6 +55,8 @@ Keep the canonical CLI credential-free and offline. No broker requests/writes,
 live or paper orders, hosted services, deployment, CI activation, history
 rewrites, speculative experimental results or unrequested scope expansion.
 Run targeted and affected tests, lint and type checks; do not weaken tests.
+Include a Markdown-link check, package lock consistency checks and a final
+remnant report that distinguishes active stale names from intentional history.
 Use small meaningful commits, push to main only if git authorization works
 and origin has not diverged (never force), and verify remote HEAD. Stop after
 R1. Report commit SHA(s), changed interfaces, executed commands/outcomes,
@@ -46,11 +66,11 @@ fixture/artifact hashes, unresolved limitations and exact R1 gate status.
 ## Prompt 2 — R2: Experiments and bounded AI
 
 ```text
-Implement Endeavour v0.7 CHECKPOINT R2 ONLY on main, after verifying R1 has
+Implement the research framework v0.7 CHECKPOINT R2 ONLY on main, after verifying R1 has
 actually passed its gate. Do not create a branch, PR or deployment.
 Check git status, HEAD and origin/main first; stop on conflicting changes.
 Read root AGENTS.md, v0.7 specification, research protocol, architecture,
-and R2 Tasks 5–8 in docs/superpowers/plans/2026-11-16-endeavour-research-framework.md.
+and R2 Tasks 5–8 in docs/superpowers/plans/2026-11-16-ai-assisted-quant-research.md.
 
 Write failing tests first, then implement:
 1. Audited Sharpe/Sortino/drawdown/return/turnover definitions, initial-equity
@@ -75,7 +95,7 @@ results, evidence and remaining limitations for independent review.
 ## Prompt 3 — R3: Local systems correctness
 
 ```text
-Implement Endeavour v0.7 CHECKPOINT R3 ONLY, directly on main, after verifying
+Implement the research framework v0.7 CHECKPOINT R3 ONLY, directly on main, after verifying
 R1 and R2 evidence. Do not create a branch, PR or deployment. First inspect
 git status, HEAD and origin/main and stop on conflicts. Read AGENTS.md,
 the v0.7 spec, architecture, protocol and R3 Tasks 9–10 of the approved
@@ -99,7 +119,7 @@ retry/replay evidence, test results, commits and remaining limitations.
 ## Prompt 4 — R4: Research results and portfolio release
 
 ```text
-Implement Endeavour v0.7 CHECKPOINT R4 ONLY on main after verifying gates
+Implement the research framework v0.7 CHECKPOINT R4 ONLY on main after verifying gates
 R1–R3. First check git status, HEAD and origin/main; do not overwrite
 unexpected changes. Read AGENTS.md, spec v0.7, research protocol,
 architecture and R4 Tasks 11–12 of the implementation plan.

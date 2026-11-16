@@ -1,8 +1,8 @@
-# Endeavour — AI-Assisted Trading Research Framework
+# AI-Assisted Quantitative Trading Research Framework
 
 **Offline quantitative research · bounded AI/news evaluation · reproducible systems experiments**
 
-Endeavour is a Python research framework for studying deterministic US equity/ETF strategies, testing whether a constrained AI news-risk overlay adds value, and examining the reliability of locally orchestrated research workflows. It combines quantitative experimentation with software-engineering correctness, rather than aiming to operate a trading account.
+This repository contains a Python research framework for studying deterministic US equity/ETF strategies, testing whether a constrained AI news-risk overlay adds value, and examining the reliability of locally orchestrated research workflows. It combines quantitative experimentation with software-engineering correctness, rather than aiming to operate a trading account.
 
 - **Maintainer:** Michail Athanasios Peppas
 - **Project direction:** v0.7 research framework (Option B)
@@ -56,14 +56,20 @@ Implementation is organized into these **four** bounded Codex checkpoints. The d
 
 ## Documentation and research design
 
-- **[Research framework specification v0.7](docs/app/Endeavour_Research_Framework_SPEC_v0.7.md):** goals, mandatory boundaries, contracts and release criteria.
+- **[Research framework specification v0.7](docs/app/AI_Assisted_Quant_Research_SPEC_v0.7.md):** goals, mandatory boundaries, contracts and release criteria.
 - **[Research protocol](docs/research/RESEARCH_PROTOCOL.md):** hypotheses, temporal splits, benchmarks, ablations, cost models, statistics and claim policy.
 - **[Research architecture](docs/research/ARCHITECTURE.md):** existing components, proposed interfaces and local reliability boundaries.
-- **[Four-checkpoint implementation plan](docs/superpowers/plans/2026-11-16-endeavour-research-framework.md):** test-first tasks and review gates for Codex.
+- **[Four-checkpoint implementation plan](docs/superpowers/plans/2026-11-16-ai-assisted-quant-research.md):** test-first tasks and review gates for Codex.
 - **[Four Codex prompts](docs/research/CODEX_CHECKPOINT_PROMPTS.md):** one bounded, copy-ready prompt for each reviewed checkpoint.
 - **[Technical documentation index](docs/README.md):** current research documents and clearly marked historical implementation/runbooks.
 
 ## Try the **existing** safe local foundation
+
+**Repository naming transition:** the intended GitHub repository name is
+`ntua-el21026/ai-assisted-quant-research`. GitHub Settings renaming is pending
+the owner's authenticated action. The clone URL below is the **currently
+verified** location; Codex R1 must verify the rename and update this URL
+before implementing research features.
 
 These commands exercise existing tests and a fake/local demonstration; they **do not yet execute the planned v0.7 research pipeline**.
 

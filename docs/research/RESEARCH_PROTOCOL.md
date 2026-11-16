@@ -1,6 +1,6 @@
-# Endeavour Research Protocol
+# Quantitative Trading Research Protocol
 
-- **Governing specification:** [Research Framework v0.7](../app/Endeavour_Research_Framework_SPEC_v0.7.md)
+- **Governing specification:** [Research Framework v0.7](../app/AI_Assisted_Quant_Research_SPEC_v0.7.md)
 - **Status:** Pre-implementation protocol; no results or findings are asserted here
 
 ## 1. Scientific objective
@@ -44,7 +44,7 @@ Do not claim causal benefit, statistical significance or generalization without 
 | Rolling OOS development | 2019–2023 | Anchored expanding-window validation and predeclared tuning/selection |
 | Final evaluation | 2024 to dataset freeze | One final evaluation after all choices are frozen |
 
-Because Endeavour existed before v0.7, these dates **must not automatically be called untouched**. Audit earlier strategy work and reports for potential exposure to the 2024+ period. If there was prior exposure, label the segment *final evaluation with potential design contamination* or select a truly prospective future test; do not conceal it.
+Because the earlier trading-bot project existed before v0.7, these dates **must not automatically be called untouched**. Audit earlier strategy work and reports for potential exposure to the 2024+ period. If there was prior exposure, label the segment *final evaluation with potential design contamination* or select a truly prospective future test; do not conceal it.
 
 For every rolling fold record train end, evaluation start/end, warm-up period, parameter set, universe membership and data availability cutoff. Do not shuffle market dates or use future sessions to compute percentile ranks, earnings blackouts, liquidity screens or model features.
 
@@ -108,7 +108,7 @@ Each experiment configuration records:
 - Baseline/ablation/AI policy, frozen AI evidence hash, random seed and iteration counts.
 - Output schema version, code commit and expected warnings/limitations.
 
-The runner produces the artifacts required by [specification §9](../app/Endeavour_Research_Framework_SPEC_v0.7.md#9-reproducibility-and-artifact-contract). All generated graphs and tables must trace to a run ID and machine-readable metrics. Do not manually edit numbers in the report.
+The runner produces the artifacts required by [specification §9](../app/AI_Assisted_Quant_Research_SPEC_v0.7.md#9-reproducibility-and-artifact-contract). All generated graphs and tables must trace to a run ID and machine-readable metrics. Do not manually edit numbers in the report.
 
 The same snapshot, configuration, code revision and seed must generate identical deterministic content. Separate timestamps or host-specific environment data into a clearly identified nondeterministic metadata section so reproducibility can be tested.
 

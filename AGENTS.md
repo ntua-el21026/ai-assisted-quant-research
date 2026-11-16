@@ -1,15 +1,15 @@
-# AGENTS.md — Endeavour Research Framework
+# AGENTS.md — AI-Assisted Quantitative Trading Research Framework
 
 ## Project identity and authority
 
-Endeavour is an **offline-first, reproducible AI-assisted trading research framework**. It showcases quantitative research, bounded AI news-risk analysis, software correctness and local systems reliability for MSc applications. It is **not** a deployable autonomous trading system.
+This repository is an **offline-first, reproducible AI-assisted trading research framework**. It showcases quantitative research, bounded AI news-risk analysis, software correctness and local systems reliability for MSc applications. It is **not** a deployable autonomous trading system.
 
 The authoritative scope and acceptance criteria are:
 
-1. [`docs/app/Endeavour_Research_Framework_SPEC_v0.7.md`](docs/app/Endeavour_Research_Framework_SPEC_v0.7.md) — current product specification.
+1. [`docs/app/AI_Assisted_Quant_Research_SPEC_v0.7.md`](docs/app/AI_Assisted_Quant_Research_SPEC_v0.7.md) — current product specification.
 2. [`docs/research/RESEARCH_PROTOCOL.md`](docs/research/RESEARCH_PROTOCOL.md) — data, experiment and reporting methodology.
 3. [`docs/research/ARCHITECTURE.md`](docs/research/ARCHITECTURE.md) — architectural boundaries.
-4. [`docs/superpowers/plans/2026-11-16-endeavour-research-framework.md`](docs/superpowers/plans/2026-11-16-endeavour-research-framework.md) — implementation tasks and gates.
+4. [`docs/superpowers/plans/2026-11-16-ai-assisted-quant-research.md`](docs/superpowers/plans/2026-11-16-ai-assisted-quant-research.md) — implementation tasks and gates.
 5. Existing code and tests, followed by the current user-approved task.
 
 The previous autonomous-trading specifications v0.2–v0.6, evidence, paper-broker milestones and operational runbooks are **historical**, not current acceptance criteria. The previous agent instructions are archived at [`docs/history/AGENTS_legacy_v0.6.md`](docs/history/AGENTS_legacy_v0.6.md). If documents conflict, use v0.7 and explicitly identify material ambiguity before implementing.
@@ -57,7 +57,7 @@ Do not activate GitHub Actions/CI unless the user explicitly requests it. A loca
 - Keep the core research CLI independent of Temporal. Use the Temporal SDK **local test environment** only for the bounded systems track, with simulated side effects and SQLite persistence.
 - Keep generated artifacts under a documented result directory, with hashes, sorted records, config snapshot, warnings and explicit nondeterministic metadata. Do not commit large licensed data or raw private provider payloads.
 - Local results visuals must consume generated artifacts; do not turn the static dashboard into a live control plane.
-- Do not rename the repository or remove legacy deployment files without separate authorization.
+- The owner authorized one GitHub rename to `ntua-el21026/ai-assisted-quant-research`; confirm the canonical remote name before R1 begins. Do not make any further repository-name change or remove legacy deployment files without separate authorization.
 
 ## Four checkpoint gates
 

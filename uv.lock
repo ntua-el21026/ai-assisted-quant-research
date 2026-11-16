@@ -7,7 +7,7 @@ resolution-markers = [
 ]
 
 [[package]]
-name = "ai-trading-bot"
+name = "ai-assisted-quant-research"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [

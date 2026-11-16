@@ -1,4 +1,4 @@
-# Endeavour Research Framework v0.7 Implementation Plan
+# AI-Assisted Quantitative Trading Research Framework v0.7 Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task if those skills are available in your environment. Otherwise apply the same strict task-by-task, test-first and review-gated process. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -8,7 +8,7 @@
 
 **Tech Stack:** Python 3.12+, `uv`/`uv.lock`, Pydantic, Pytest, Ruff, mypy, SQLite, Temporal Python SDK local test server; static local reports. Add dependencies only with tested justification.
 
-**Spec:** [`docs/app/Endeavour_Research_Framework_SPEC_v0.7.md`](../../app/Endeavour_Research_Framework_SPEC_v0.7.md); design at [`docs/superpowers/specs/2026-11-16-endeavour-research-framework-design.md`](../specs/2026-11-16-endeavour-research-framework-design.md); method at [`docs/research/RESEARCH_PROTOCOL.md`](../../research/RESEARCH_PROTOCOL.md).
+**Spec:** [`docs/app/AI_Assisted_Quant_Research_SPEC_v0.7.md`](../../app/AI_Assisted_Quant_Research_SPEC_v0.7.md); design at [`docs/superpowers/specs/2026-11-16-ai-assisted-quant-research-design.md`](../specs/2026-11-16-ai-assisted-quant-research-design.md); method at [`docs/research/RESEARCH_PROTOCOL.md`](../../research/RESEARCH_PROTOCOL.md).
 
 ## Global Constraints
 

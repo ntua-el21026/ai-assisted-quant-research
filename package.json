@@ -1,8 +1,8 @@
 {
-  "name": "ai-trading-bot-dashboard-preview",
+  "name": "ai-assisted-quant-research-dashboard-preview",
   "version": "0.0.0",
   "private": true,
-  "description": "Static read-only dashboard preview for the AI trading bot control plane.",
+  "description": "Historical static read-only dashboard preview retained for local research reference.",
   "scripts": {
     "build": "node apps/dashboard/build-preview.mjs",
     "lint": "PYTHONPATH=. python scripts/check_vercel_dashboard_preview.py --frontend-only",

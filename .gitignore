@@ -87,7 +87,7 @@ runs/
 .vercel
 .env*.local
 
-# Endeavour v0.7: default-deny local research inputs and generated results.
+# Quantitative research v0.7: default-deny local research inputs and generated results.
 # Commit only explicitly reviewed, license-safe fixtures and reference outputs.
 /datasets/**
 !/datasets/README.md

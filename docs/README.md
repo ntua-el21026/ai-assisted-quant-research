@@ -1,16 +1,16 @@
 # Technical documentation index
 
-**Endeavour v0.7 is an offline-first research framework under implementation.** No production deployment, paper-broker operation or live-trading readiness is a current goal. The v0.7 research specification supersedes the operating objectives of older documents, which remain available to explain historical implementation and tests.
+**The AI-assisted quantitative trading research framework (v0.7) is under implementation.** No production deployment, paper-broker operation or live-trading readiness is a current goal. The v0.7 research specification supersedes the operating objectives of older documents, which remain available to explain historical implementation and tests.
 
 ## Authoritative research documentation
 
 | Document | Purpose | Status |
 | --- | --- | --- |
-| [Research framework specification v0.7](app/Endeavour_Research_Framework_SPEC_v0.7.md) | Research questions, non-goals, safety, interfaces and completion criteria | **Governing specification** |
+| [Research framework specification v0.7](app/AI_Assisted_Quant_Research_SPEC_v0.7.md) | Research questions, non-goals, safety, interfaces and completion criteria | **Governing specification** |
 | [Research protocol](research/RESEARCH_PROTOCOL.md) | Dataset provenance, causal semantics, time-aware experiments, metrics, uncertainty and reporting | Pre-implementation method |
 | [Research architecture](research/ARCHITECTURE.md) | Actual component inventory, proposed pipeline/CLI, local Temporal boundary | Planned additions distinguished from existing code |
-| [Design decision](superpowers/specs/2026-11-16-endeavour-research-framework-design.md) | Approved balanced AI/ML + systems direction and tradeoffs | Approved scope |
-| [Four-checkpoint implementation plan](superpowers/plans/2026-11-16-endeavour-research-framework.md) | Test-first R1–R4 task definitions and verification gates | **Ready for Codex execution; tasks not yet completed** |
+| [Design decision](superpowers/specs/2026-11-16-ai-assisted-quant-research-design.md) | Approved balanced AI/ML + systems direction and tradeoffs | Approved scope |
+| [Four-checkpoint implementation plan](superpowers/plans/2026-11-16-ai-assisted-quant-research.md) | Test-first R1–R4 task definitions and verification gates | **Ready for Codex execution; tasks not yet completed** |
 | [Four Codex prompts](research/CODEX_CHECKPOINT_PROMPTS.md) | Copy-ready R1–R4 implementation assignments to use sequentially after review | Prepared, not executed |
 | [Root contributor/agent guide](../AGENTS.md) | Repository safety constraints, instructions and current authority | Current |
 | [Main README](../README.md) | Portfolio-facing introduction and truthful implementation status | Current |

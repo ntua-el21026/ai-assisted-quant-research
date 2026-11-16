@@ -1,11 +1,11 @@
-# Endeavour v0.7 Research Architecture
+# Quantitative Trading Research Architecture — v0.7
 
-- **Authority:** [Research Framework Specification v0.7](../app/Endeavour_Research_Framework_SPEC_v0.7.md)
+- **Authority:** [Research Framework Specification v0.7](../app/AI_Assisted_Quant_Research_SPEC_v0.7.md)
 - **Status:** Target architecture; individual parts below are marked as implemented, partial or planned
 
 ## 1. System boundary
 
-Endeavour is an **offline-first research framework**, not an execution service. The main research runner accepts explicit, integrity-checked historical inputs and produces deterministic, auditable experiment artifacts. It must not require a running API, broker account, Temporal Cloud, VPS, Vercel, Telegram or managed database.
+This project is an **offline-first research framework**, not an execution service. The main research runner accepts explicit, integrity-checked historical inputs and produces deterministic, auditable experiment artifacts. It must not require a running API, broker account, Temporal Cloud, VPS, Vercel, Telegram or managed database.
 
 ```mermaid
 flowchart TD
@@ -39,7 +39,7 @@ All arrows denote local data movement or controlled function calls. The Temporal
 
 ## 3. Proposed source organization
 
-Reuse the existing package structure and keep new files focused. Exact signatures and incremental changes are defined in the [implementation plan](../superpowers/plans/2026-11-16-endeavour-research-framework.md).
+Reuse the existing package structure and keep new files focused. Exact signatures and incremental changes are defined in the [implementation plan](../superpowers/plans/2026-11-16-ai-assisted-quant-research.md).
 
 ```text
 packages/

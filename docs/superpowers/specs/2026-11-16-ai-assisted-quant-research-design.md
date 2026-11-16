@@ -1,4 +1,4 @@
-# Endeavour Research Framework v0.7 — Approved Design
+# AI-Assisted Quantitative Trading Research Framework v0.7 — Approved Design
 
 - **Date:** 2026-11-16
 - **Owner:** Michail Athanasios Peppas
@@ -7,7 +7,7 @@
 
 ## Intent and audience
 
-Endeavour should become an academically credible, independently reproducible portfolio project for MSc Computer Science, Data Science, AI/ML and quantitative-finance applications. Its value comes from rigorous quantitative experiments, bounded AI evaluation, explicit correctness properties and a focused local systems-reliability demonstration. It is not a trading product and will not be deployed.
+This framework should become an academically credible, independently reproducible portfolio project for MSc Computer Science, Data Science, AI/ML and quantitative-finance applications. Its value comes from rigorous quantitative experiments, bounded AI evaluation, explicit correctness properties and a focused local systems-reliability demonstration. It is not a trading product and will not be deployed.
 
 ## Goals
 
@@ -36,7 +36,7 @@ Endeavour should become an academically credible, independently reproducible por
 
 The canonical Python CLI loads frozen historical snapshots, validates them, computes causal features and deterministic candidates, applies optional frozen AI evidence and risk controls, simulates trades and calculates benchmarks/experiments. It writes reproducible machine-readable artifacts and a locally viewable report. The main pipeline works without Temporal. Separately, a small local Temporal workflow exercises the same core through typed activities and SQLite-backed idempotency/recovery tests.
 
-The [v0.7 specification](../../app/Endeavour_Research_Framework_SPEC_v0.7.md), [research protocol](../../research/RESEARCH_PROTOCOL.md), and [architecture](../../research/ARCHITECTURE.md) are normative for details. This design intentionally leaves no broker-write or deployment path in the canonical workflow.
+The [v0.7 specification](../../app/AI_Assisted_Quant_Research_SPEC_v0.7.md), [research protocol](../../research/RESEARCH_PROTOCOL.md), and [architecture](../../research/ARCHITECTURE.md) are normative for details. This design intentionally leaves no broker-write or deployment path in the canonical workflow.
 
 ## Important technical decisions
 
