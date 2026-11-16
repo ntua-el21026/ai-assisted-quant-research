@@ -57,7 +57,8 @@ executed during this checkpoint.
 | Exact command | Observed outcome |
 | --- | --- |
 | `uv sync --locked --group dev` | PASS, fresh environment installed |
-| `uv run --offline --no-sync pytest tests/unit/test_research_snapshots.py -q` | Initial RED 18 missing-loader failures, then GREEN 18 |
+| `uv run --locked --group dev pytest tests/unit/test_research_snapshots.py -q` | Initial RED, 18 missing-loader failures |
+| `uv run --offline --no-sync pytest tests/unit/test_research_snapshots.py -q` | GREEN, 18 passed |
 | `uv run --offline --no-sync pytest tests/unit/test_research_signals.py -q` | Initial RED 5 missing-adapter failures; expanded to 10 final cases |
 | `uv run --offline --no-sync pytest tests/unit/test_research_execution.py -q` | Initial RED 13 missing-simulator failures; expanded to 17 final cases |
 | `uv run --offline --no-sync pytest tests/integration/test_research_cli.py -q` | Initial RED 4 missing-runner failures/4 closed-input cases; expanded to 10 final cases |
