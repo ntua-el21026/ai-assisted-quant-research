@@ -5,16 +5,16 @@ from __future__ import annotations
 import hashlib
 from datetime import date, datetime
 
-from packages.data.features import compute_feature_rows
 from packages.data.models import AdjustedDailyBar, FeatureRow, UniverseMember
 from packages.data.snapshots import DatasetSnapshot
+from packages.research.feature_cache import CausalFeatureCache
 from packages.research.models import ResearchConfig, ResearchDecision, ResearchSignalSet
 from packages.risk.checks import evaluate_simulated_risk_order
 from packages.risk.models import KillSwitchSnapshot, NewRiskOrderInput, PositionSizingInput
 from packages.risk.sizing import calculate_position_size
 from packages.strategy.exits import initial_stop_price
-from packages.strategy.models import EarningsBlackoutEvaluation, RegimeObservation, RegimeState
-from packages.strategy.regime import classify_regime, realized_volatility_20
+from packages.strategy.models import EarningsBlackoutEvaluation, RegimeState
+from packages.strategy.regime import classify_regime
 from packages.strategy.signals import evaluate_candidate, evaluate_earnings_blackout
 
 
@@ -71,36 +71,33 @@ def simulation_risk_input(
 
 
 def generate_research_signals(
-    snapshot: DatasetSnapshot, config: ResearchConfig
+    snapshot: DatasetSnapshot,
+    config: ResearchConfig,
+    *,
+    feature_cache: CausalFeatureCache | None = None,
 ) -> ResearchSignalSet:
+    cache = feature_cache or CausalFeatureCache(
+        snapshot,
+        config.strategy.atr_period,
+        through_date=config.date_end,
+        proxy_symbol=config.regime.proxy,
+    )
+    cache.validate(snapshot, config.strategy.atr_period, config.date_end, config.regime.proxy)
     decisions: list[ResearchDecision] = []
     previous_state: RegimeState | None = None
     cooldown = 0
     all_dates = tuple(s.date for s in snapshot.sessions)
-    for index, session in enumerate(snapshot.sessions):
+    for index, session in enumerate(cache.sessions):
         # The loop also traverses warm-up sessions before the requested range for regime state.
         histories = {
-            s: available_history(snapshot, s, session.date, session.decision_at)
-            for s in snapshot.feature_bars_by_symbol
+            symbol: cache.history(symbol, index, session.decision_at)
+            for symbol in snapshot.feature_bars_by_symbol
         }
-        expected = set(all_dates[: index + 1])
-        proxy = histories.get(config.regime.proxy, ())
-        proxy_complete = {b.date for b in proxy} == expected
-        proxy_features = compute_feature_rows(proxy) if proxy_complete else ()
+        proxy_complete = cache.complete(config.regime.proxy, index, session.decision_at)
         regime = None
-        if proxy_features:
-            volatility = realized_volatility_20([b.close for b in proxy])
-            observations = tuple(
-                RegimeObservation(
-                    symbol=config.regime.proxy,
-                    date=f.date,
-                    close=f.close,
-                    sma_fast=f.sma_50,
-                    sma_slow=f.sma_200,
-                    rv20=rv,
-                )
-                for f, rv in zip(proxy_features, volatility, strict=True)
-            )
+        if proxy_complete:
+            count = max(config.regime.risk_on_confirm_closes, config.regime.risk_off_confirm_closes)
+            observations = cache.regime_observations[max(0, index + 1 - count) : index + 1]
             regime = classify_regime(
                 observations,
                 config.regime,
@@ -135,11 +132,10 @@ def generate_research_signals(
         if not config.date_start <= session.date <= config.date_end:
             continue
         features: dict[str, tuple[FeatureRow, ...]] = {}
-        for symbol, history in histories.items():
-            if {b.date for b in history} == expected and proxy_complete:
-                features[symbol] = compute_feature_rows(
-                    history, benchmark_bars=proxy, atr_window=config.strategy.atr_period
-                )
+        for symbol in histories:
+            rows = cache.features(symbol, index, session.decision_at)
+            if rows:
+                features[symbol] = rows
         ranks = {
             symbol: rows[-1].rs_63
             for symbol, rows in features.items()
