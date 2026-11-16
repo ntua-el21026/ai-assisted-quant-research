@@ -56,6 +56,15 @@ def publish_artifacts(output: Path, deterministic: Mapping[str, bytes], runtime:
     An existing destination is always refused. Exceptions before rename leave no final run.
     Abrupt process death may leave a hidden staging directory/lock for manual inspection.
     """
+    for name in deterministic:
+        path = Path(name)
+        if (
+            not name
+            or path.is_absolute()
+            or ".." in path.parts
+            or name in {"hashes.json", "runtime.json"}
+        ):
+            raise ValueError(f"invalid_artifact_path:{name}")
     output = output.absolute()
     output.parent.mkdir(parents=True, exist_ok=True)
     lock = output.parent / f".{output.name}.lock"
@@ -72,9 +81,14 @@ def publish_artifacts(output: Path, deterministic: Mapping[str, bytes], runtime:
         files["runtime.json"] = runtime
         for name, data in sorted(files.items()):
             path = stage / name
+            path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes(data)
             with path.open("rb") as stream:
                 os.fsync(stream.fileno())
+        for directory in sorted(
+            (p for p in stage.rglob("*") if p.is_dir()), key=lambda p: len(p.parts), reverse=True
+        ):
+            _sync_directory(directory)
         _sync_directory(stage)
         if output.exists() or output.is_symlink():
             raise FileExistsError(f"output_exists: {output.name}")

@@ -138,7 +138,7 @@ def run_research(
             (
                 *snapshot.warnings,
                 *result.warnings,
-                "R1_only_benchmarks_AI_statistics_and_historical_studies_pending",
+                "R1_compatible_run_mode_use_evaluate_for_R2_statistics_and_AI",
                 "full_or_none_orders_no_volume_participation_or_partial_fills",
                 "earnings_missing_is_entry_blocking_for_equities",
                 "delistings_and_terminal_liquidation_not_modeled",
@@ -176,8 +176,9 @@ Risk sizing uses initial capital at decision time and actual opening capacity at
 | Closed round trips (count) | {len(result.trades)} |
 | Terminal positions (count) | {len(result.open_positions)} |
 
-Core accounting metrics are in `metrics.json`; Sharpe/Sortino and aligned comparisons
-are deferred to R2. `trades.csv` records all decision rejections, fills and unfilled orders;
+Core accounting metrics are in `metrics.json`. Sharpe/Sortino and aligned comparisons
+are omitted in this R1-compatible mode; use `evaluate` for R2 reports.
+`trades.csv` records all decision rejections, fills and unfilled orders;
 `metrics.json` retains terminal positions. Synthetic inputs support engineering checks,
 not market-performance, AI-uplift or untouched-holdout conclusions.
 
@@ -220,7 +221,10 @@ Warnings and limitations:
                 "schema_version": "research-comparisons/v1",
                 "status": "deferred_to_R2",
                 "references": [],
-                "reason": "R1 verifies data, causal decisions and simulated accounting only",
+                "reason": (
+                    "R1-compatible run format: data, causal decisions and accounting only; "
+                    "use evaluate for R2 comparison artifacts"
+                ),
             }
         ),
         "report.md": report.encode("utf-8"),
@@ -258,3 +262,79 @@ Warnings and limitations:
     )
     publish_artifacts(output_dir, files, runtime)
     return ExperimentRunSummary(run_id, output_dir, deterministic_sha256)
+
+
+def evaluate_research(
+    config_path: Path,
+    dataset_manifest_path: Path,
+    output_dir: Path,
+    *,
+    include_final: bool = False,
+) -> ExperimentRunSummary:
+    """Evaluate exactly a frozen local registration, then publish all cases atomically."""
+    from packages.research.ai_replay import FrozenAIEvidence, load_frozen_ai_evidence
+    from packages.research.matrix_artifacts import matrix_artifacts
+    from packages.research.validation import load_matrix_config, run_experiment_matrix
+
+    started = datetime.now(UTC)
+    clock = time.perf_counter()
+    if output_dir.exists() or output_dir.is_symlink():
+        raise FileExistsError(f"output_exists: {output_dir.name}")
+    # The loader reads/validates each registration/base input once and retains both hashes.
+    config = load_matrix_config(config_path)
+    snapshot = load_dataset_snapshot(dataset_manifest_path)
+    if snapshot.manifest_sha256 != config.dataset_manifest_sha256:
+        raise ValueError("dataset_manifest_hash_mismatch")
+    if not set(config.approved_symbols).issubset(snapshot.feature_bars_by_symbol):
+        raise ValueError("approved_symbols_missing_from_snapshot")
+    if config.regime.proxy not in snapshot.feature_bars_by_symbol:
+        raise ValueError("regime_proxy_missing_from_snapshot")
+    if (
+        config.date_start < snapshot.sessions[0].date
+        or config.date_end > snapshot.sessions[-1].date
+    ):
+        raise ValueError("research_range_outside_snapshot")
+    evidence = (
+        load_frozen_ai_evidence(config._ai_path)
+        if config._ai_path is not None
+        else FrozenAIEvidence(warnings=("missing_evidence",))
+    )
+    source = _source_identity()
+    environment = {
+        "python": platform.python_version(),
+        "precision": "Python binary64 floats, integer shares",
+        "dependencies": {d.metadata["Name"]: d.version for d in importlib.metadata.distributions()},
+    }
+    identity = {
+        "schema_version": "research-matrix-artifacts/v1",
+        "source": source,
+        "environment": environment,
+        "registration_sha256": config.registration_sha256,
+        "baseline_input_sha256": config.baseline_input_sha256,
+        "config_sha256": hashlib.sha256(canonical_json(config.model_dump(mode="json"))).hexdigest(),
+        "dataset_manifest_sha256": snapshot.manifest_sha256,
+        "dataset_provenance": snapshot.manifest.model_dump(mode="json"),
+        "ai_evidence_sha256": evidence.manifest_sha256,
+        "declared_ai_evidence_sha256": config.matrix.ai_manifest_sha256,
+        "ai_provenance": evidence.manifest.model_dump(mode="json") if evidence.manifest else None,
+        "seed": config.seed,
+        "final_evaluation_requested": include_final,
+        "execution_model": "research-execution/v1",
+        "metrics_version": "research-metrics/v2",
+    }
+    run_id = hashlib.sha256(canonical_json(identity)).hexdigest()
+    matrix = run_experiment_matrix(snapshot, config, include_final=include_final, evidence=evidence)
+    files = matrix_artifacts(matrix, config, identity, run_id)
+    digest = hashlib.sha256(canonical_json(content_hashes(files))).hexdigest()
+    runtime = canonical_json(
+        {
+            "schema_version": "research-runtime/v1",
+            "deterministic": False,
+            "started_at_utc": started.isoformat(),
+            "elapsed_seconds": time.perf_counter() - clock,
+            "platform": platform.platform(),
+            "python_executable": sys.executable,
+        }
+    )
+    publish_artifacts(output_dir, files, runtime)
+    return ExperimentRunSummary(run_id, output_dir, digest)
