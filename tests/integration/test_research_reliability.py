@@ -309,3 +309,101 @@ def test_overlapping_same_experiment_attempt_cannot_duplicate_effects(tmp_path):
         request.experiment_id
     )
     assert counts["attempts"] == counts["committed_results"] == counts["completion_events"] == 1
+
+
+@pytest.mark.parametrize("state", ["PREPARED", "COMMITTED"])
+@pytest.mark.parametrize("mutation", ["missing_fields", "changed_elapsed"])
+def test_runtime_bytes_are_immutable_within_prepared_or_committed_attempt(
+    tmp_path, state, mutation
+):
+    from packages.research.artifacts import canonical_json
+    from packages.research.reliability import execute_research_experiment, verify_research_run_state
+    from packages.research.research_ledger import ResearchStateCorruption, SQLiteResearchLedger
+
+    request = request_for(tmp_path)
+
+    def stop(phase):
+        if state == "PREPARED" and phase == "after_prepare":
+            raise RuntimeError("prepared_interruption")
+
+    if state == "PREPARED":
+        with pytest.raises(RuntimeError):
+            execute_research_experiment(request, fault=stop)
+    else:
+        execute_research_experiment(request)
+    root = Path(request.state_dir)
+    ledger = SQLiteResearchLedger(root / "experiments.sqlite3")
+    record = ledger.get(request.experiment_id)
+    prepared = record.prepared
+    artifact = root / (prepared.stage_relpath if state == "PREPARED" else prepared.output_relpath)
+    path = artifact / "runtime.json"
+    runtime = json.loads(path.read_bytes())
+    if mutation == "missing_fields":
+        runtime = {"schema_version": "research-runtime/v1", "deterministic": False}
+    else:
+        runtime["elapsed_seconds"] += 1
+    changed = canonical_json(runtime)
+    path.write_bytes(changed)
+    before = ledger.events(request.experiment_id)
+    with pytest.raises(ResearchStateCorruption):
+        execute_research_experiment(request)
+    assert path.read_bytes() == changed
+    with pytest.raises(ResearchStateCorruption):
+        verify_research_run_state(prepared.run_id, artifact, ledger)
+    if state == "COMMITTED":
+        assert ledger.get(request.experiment_id) == record
+        assert ledger.events(request.experiment_id) == before
+
+
+@pytest.mark.parametrize("distinct_experiment", [False, True])
+def test_first_use_contention_is_retryable_before_initial_database_creation(
+    tmp_path, monkeypatch, distinct_experiment
+):
+    import threading
+    from concurrent.futures import ThreadPoolExecutor
+
+    import yaml
+
+    from packages.research import reliability
+    from packages.research.research_ledger import SQLiteResearchLedger
+
+    request = request_for(tmp_path)
+    second_request = request
+    if distinct_experiment:
+        config = yaml.safe_load(Path(request.config_path).read_bytes())
+        config["experiment_id"] = "second-engineering-experiment"
+        path = tmp_path / "second.yaml"
+        path.write_text(yaml.safe_dump(config))
+        second_request = reliability.prepare_workflow_request(
+            "second-experiment",
+            path,
+            Path(request.dataset_manifest_path),
+            Path(request.state_dir),
+            mode="run",
+        )
+    created, release = threading.Event(), threading.Event()
+    workspace = reliability._workspace
+
+    def pause_creator(path):
+        result = workspace(path)
+        if result:
+            created.set()
+            assert release.wait(10)
+        return result
+
+    monkeypatch.setattr(reliability, "_workspace", pause_creator)
+    with ThreadPoolExecutor(max_workers=1) as executor:
+        first = executor.submit(reliability.execute_research_experiment, request)
+        try:
+            assert created.wait(10)
+            with pytest.raises(RuntimeError, match="initialization_busy|execution_busy"):
+                reliability.execute_research_experiment(second_request)
+        finally:
+            release.set()
+        original = first.result(timeout=15)
+    second = reliability.execute_research_experiment(second_request)
+    assert (original.run_id == second.run_id) is (not distinct_experiment)
+    ledger = SQLiteResearchLedger(Path(request.state_dir) / "experiments.sqlite3")
+    for candidate in (request, second_request):
+        assert ledger.counts(candidate.experiment_id)["completion_events"] == 1
+        assert ledger.counts(candidate.experiment_id)["committed_results"] == 1

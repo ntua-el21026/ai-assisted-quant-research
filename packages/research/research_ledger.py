@@ -56,9 +56,14 @@ class PreparedResult:
     artifact_hashes: dict[str, str]
     stage_relpath: str
     output_relpath: str
+    runtime_sha256: str
 
     def __post_init__(self) -> None:
-        if not _valid_sha(self.run_id) or not _valid_sha(self.deterministic_sha256):
+        if (
+            not _valid_sha(self.run_id)
+            or not _valid_sha(self.deterministic_sha256)
+            or not _valid_sha(self.runtime_sha256)
+        ):
             raise ValueError("invalid_prepared_identity")
         if (
             not isinstance(self.artifact_hashes, dict)

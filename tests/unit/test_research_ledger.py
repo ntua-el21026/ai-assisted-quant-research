@@ -31,6 +31,7 @@ def prepared(**updates):
         "artifact_hashes": hashes,
         "stage_relpath": "attempts/experiment/00000001/artifacts",
         "output_relpath": "runs/" + "c" * 64,
+        "runtime_sha256": "e" * 64,
     }
     values.update(updates)
     return api().PreparedResult(**values)
@@ -204,6 +205,7 @@ def test_invalid_request_never_creates_a_record(kind, tmp_path):
         {"output_relpath": "/absolute"},
         {"artifact_hashes": {"../escape": "a" * 64}},
         {"run_id": "invalid"},
+        {"runtime_sha256": "invalid"},
         {"deterministic_sha256": "d" * 64},
     ],
 )

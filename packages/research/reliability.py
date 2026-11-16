@@ -165,6 +165,37 @@ def _ownership(root: Path, key: str) -> Iterator[None]:
         os.close(fd)  # Kernel ownership is released on close and abrupt process death.
 
 
+def _initialize_ledger(root: Path) -> SQLiteResearchLedger:
+    """Serialize first-use marker/SQLite setup before any caller interprets them.
+
+    A sibling kernel lock also covers a partially written marker. Active setup
+    contention is retryable; a missing ledger after ownership has been released
+    remains a permanent inconsistency. An interrupted bootstrap is not erased.
+    """
+    _no_symlinks(root)
+    root.parent.mkdir(parents=True, exist_ok=True)
+    lock = root.parent / f".{root.name}.research-initialize.lock"
+    _no_symlinks(lock)
+    fd = os.open(lock, os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW, 0o600)
+    try:
+        if not stat.S_ISREG(os.fstat(fd).st_mode):
+            raise ResearchStateCorruption("nonregular_initialization_lock")
+        try:
+            fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as exc:
+            raise RuntimeError("research_initialization_busy") from exc
+        initialized_here = _workspace(root)
+        ledger_path = root / "experiments.sqlite3"
+        _no_symlinks(ledger_path)
+        if not initialized_here and not ledger_path.exists():
+            raise ResearchStateCorruption("missing_research_ledger")
+        ledger = SQLiteResearchLedger(ledger_path)
+        _sync_directory(root)
+        return ledger
+    finally:
+        os.close(fd)
+
+
 def _pairs(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
     result = {}
     for key, value in pairs:
@@ -301,6 +332,8 @@ def _verify(path: Path, record: LedgerRecord) -> ResearchStateCheck:
         or digest != prepared.deterministic_sha256
     ):
         raise ResearchStateCorruption("artifact_checkpoint_mismatch")
+    if hashlib.sha256((path / "runtime.json").read_bytes()).hexdigest() != prepared.runtime_sha256:
+        raise ResearchStateCorruption("runtime_hash_mismatch")
     _bind_manifest(path, json.loads(record.request_json))
     return ResearchStateCheck(record.experiment_id, run_id, record.state, digest, len(hashes))
 
@@ -337,14 +370,9 @@ def execute_research_experiment(
         for p in (Path(request.config_path), Path(request.dataset_manifest_path))
     ):
         raise ResearchConflict("inputs_inside_mutable_state_directory")
-    initialized_here = _workspace(root)
+    ledger = _initialize_ledger(root)
     key = hashlib.sha256(request.experiment_id.encode()).hexdigest()
     with _ownership(root, key):
-        ledger_path = root / "experiments.sqlite3"
-        _no_symlinks(ledger_path)
-        if not initialized_here and not ledger_path.exists():
-            raise ResearchStateCorruption("missing_research_ledger")
-        ledger = SQLiteResearchLedger(ledger_path)
         owned_attempts = root / "attempts" / key
         _no_symlinks(owned_attempts)
         if ledger.get(request.experiment_id) is None and owned_attempts.exists():
@@ -385,7 +413,14 @@ def execute_research_experiment(
                 checkpoint("before_prepare")
                 record = ledger.prepare(
                     request.experiment_id,
-                    PreparedResult(run_id, digest, hashes, stage_relpath, f"runs/{run_id}"),
+                    PreparedResult(
+                        run_id,
+                        digest,
+                        hashes,
+                        stage_relpath,
+                        f"runs/{run_id}",
+                        hashlib.sha256((stage / "runtime.json").read_bytes()).hexdigest(),
+                    ),
                 )
                 checkpoint("after_prepare")
             prepared = record.prepared
