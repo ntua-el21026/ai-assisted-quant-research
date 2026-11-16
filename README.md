@@ -6,7 +6,7 @@ This repository contains a Python research framework for studying deterministic 
 
 - **Maintainer:** Michail Athanasios Peppas
 - **Project direction:** v0.7 research framework (Option B)
-- **Current status:** **R1 data and simulation implemented — independent review pending; research in development**
+- **Current status:** **R2 experiments and frozen AI replay implemented — external review pending; research in development**
 
 > **No deployment, live trading or broker-connected paper trading is part of this project scope.** The canonical research path runs locally and offline. The synthetic demonstration verifies software behavior; it is not a historical-market study or an investment recommendation.
 
@@ -23,13 +23,17 @@ The evaluation is designed to report negative or inconclusive findings as faithf
 | Area | Current codebase | v0.7 research completion target |
 | --- | --- | --- |
 | Market data | Hash-verified local snapshots, explicit calendar/availability, quality gates and synthetic fixture | Properly licensed historical snapshots with supported action/price assumptions |
-| Strategy and risk | Connected causal features, regime/candidates, numerical risk and rejection records | Controlled time-aware experiments and bounded frozen AI comparisons |
-| Backtesting | Separate next-session-open simulator, costs/stops, cash/P&L, terminal positions; preserved legacy API | Aligned benchmarks and verified research statistics |
-| AI/news | Budgeted shortlist analysis, schemas, guardrails and neutral fallback | Offline frozen-evidence replay and controlled neutral-versus-negative-only ablations |
+| Strategy and risk | Causal features, regime/candidates, full research cooldown, registered filter ablations and numerical safeguards | Historical validation with audited design exposure |
+| Backtesting | Next-session simulator, costs/stops, accounting, aligned price benchmarks and verified research statistics; preserved legacy API | Licensed action/dividend-aware historical comparisons |
+| AI/news | Offline as-of frozen replay, provenance, neutral fallback and paired execution bounds | Credible frozen historical news evidence and inconclusive/negative findings retained |
 | Persistence and workflows | SQLite ledger, Temporal contracts/skeletons and fake/local test paths | Functional **local-only** Temporal/SQLite retry, replay and recovery experiments |
-| Validation and reporting | Historical milestone tests, reporting models and a static dashboard preview | Walk-forward evaluation, uncertainty, cost sensitivity, reproducible artifacts, technical report and local visualizations |
+| Validation and reporting | Chronological matrix, fixed-seed uncertainty, cost stresses and deterministic nested artifacts; static historical preview | Empirical report and local research-results presentation |
 
-The R1 research CLI connects actual deterministic strategy/risk logic to simulated accounting and writes the versioned artifact suite. Benchmarks, AI comparisons, statistical experiments and final historical studies remain **pending**. The legacy explicit-signal backtester remains available with its original timing. The previous 56-day paper-validation record is incomplete and is not used as v0.7 evidence.
+The research CLI connects deterministic strategy/risk logic to simulated accounting. Its R2
+`evaluate` command executes registered folds, benchmarks, ablations, cost stresses, uncertainty
+and frozen AI comparisons. Executed examples are synthetic engineering demonstrations;
+empirical historical findings and local recovery remain **pending**. The legacy explicit-signal
+backtester retains its original timing. The incomplete prior paper-validation record is not v0.7 evidence.
 
 ## Research architecture
 
@@ -47,8 +51,8 @@ The R1 pipeline operates without Temporal or network services. A separate small 
 
 | Checkpoint | Evidence required | Status |
 | --- | --- | --- |
-| **R1 — Data and simulation** | Auditable offline snapshot, causal strategy-to-simulation path and verified arithmetic | Implemented; independent review pending |
-| **R2 — Experiments and AI** | Benchmarks, time-aware splits, cost/ablation/uncertainty tests, frozen AI comparison | Planned |
+| **R1 — Data and simulation** | Auditable offline snapshot, causal strategy-to-simulation path and verified arithmetic | Implemented; reviewed cooldown correction included |
+| **R2 — Experiments and AI** | Benchmarks, time-aware splits, cost/ablation/uncertainty tests, frozen AI comparison | Implemented; external acceptance pending |
 | **R3 — Local reliability** | Real local Temporal workflow, idempotent checkpoints and fault-recovery tests | Planned |
 | **R4 — Portfolio release** | Reproducible example, available-data results, technical report, limitations and local presentation | Planned |
 
@@ -65,7 +69,8 @@ Implementation is organized into these **four** bounded Codex checkpoints. The d
 
 ## Run the offline synthetic reference
 
-These commands run the R1 pipeline without provider credentials, broker connections or network access after dependency setup. The data are original synthetic arithmetic fixtures with an explicitly synthetic weekday calendar.
+These commands run offline after dependency setup. Market/news inputs are original synthetic
+fixtures, including a synthetic weekday calendar and hand-authored AI outputs.
 
 Prerequisites: Python **3.12+** and [uv](https://docs.astral.sh/uv/).
 
@@ -78,14 +83,21 @@ uv run --offline --no-sync python -m packages.research.cli run \
   --config experiments/configs/baseline.yaml \
   --dataset tests/fixtures/market_snapshot/manifest.json \
   --output results/r1-example
+uv run --offline --no-sync python -m packages.research.cli evaluate \
+  --config experiments/configs/ablations.yaml \
+  --dataset tests/fixtures/market_snapshot/manifest.json \
+  --output results/r2-example
 ```
 
 Use a new output directory for each run; existing outputs are immutable. The command writes
 hash-indexed manifests, decision/fill records, equity, accounting metrics and a generated
 report. Runtime-only timestamps and host details are separated into `runtime.json`.
 See [R1 implementation and verification](docs/research/R1_IMPLEMENTATION.md) for contracts,
-limitations, accounting fixtures and reproducibility details. The full research study,
-benchmarks, AI experiments and local recovery track remain pending.
+limitations and accounting fixtures. [R2 verification](docs/research/R2_VERIFICATION.md)
+records interfaces, numerical checks, benchmarks and reproducibility hashes. The matrix
+defaults to development folds; `--include-final` explicitly adds the registered synthetic
+final evaluation. This does not establish an untouched historical holdout. The empirical
+research study and R3 local recovery track remain pending.
 
 ## Source organization
 

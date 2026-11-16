@@ -1,7 +1,7 @@
 # Quantitative Trading Research Architecture — v0.7
 
 - **Authority:** [Research Framework Specification v0.7](../app/AI_Assisted_Quant_Research_SPEC_v0.7.md)
-- **Status:** R1 data/simulation implemented; R2–R4 architecture remains planned
+- **Status:** R1–R2 implemented with synthetic verification; R2 external acceptance and R3–R4 remain pending
 
 ## 1. System boundary
 
@@ -31,13 +31,13 @@ All arrows denote local data movement or controlled function calls. The Temporal
 | Strategy and exits | `packages/strategy/` | Candidate/regime/filter and exit helpers; causal R1 decision adapter records accepted/rejected candidates |
 | Risk and intent | `packages/risk/`, `packages/execution/` | Deterministic risk and intent contracts; R1 numerical simulation adapter reuses checks without operational broker assertions |
 | Backtest | `packages/backtesting/` | Preserved legacy engine plus independently tested causal next-session R1 simulator |
-| AI/news | `packages/ai/` | Provider clients, parsing, budgets, scoring and neutral fallback; frozen as-of experiment path absent |
+| AI/news | `packages/ai/`, `packages/research/ai_replay.py` | Lazy legacy API, local frozen as-of replay, negative-only sizing and neutral fallback; provider clients stay outside canonical runs |
 | Local demonstration | `packages/paper/dry_run.py` | Fake broker/SQLite/report pipeline exists; fixture demonstration is not multi-year research |
 | Ledger and reporting | `packages/ledger/`, `packages/reporting/` | Repositories and generators exist; R1 artifact writer implemented separately from legacy persistence |
 | Temporal | `apps/workers/app/` | Ten workflow skeletons, activity contracts, local SDK test/replay coverage; not end-to-end research orchestration |
 | Dashboard | `apps/dashboard/` | Static safety-preview scaffold; not a research-results viewer |
 
-## 3. Proposed source organization
+## 3. Source organization and remaining additions
 
 Reuse the existing package structure and keep new files focused. Exact signatures and incremental changes are defined in the [implementation plan](../superpowers/plans/2026-11-16-ai-assisted-quant-research.md).
 
@@ -79,7 +79,16 @@ uv run --offline --no-sync python -m packages.research.cli run \
   --output results/example
 ```
 
-**Implemented in R1.** The canonical runner refuses missing/invalid inputs, avoids network and broker imports, uses deterministic ordering and stages all artifacts before atomic publication. [R1 contracts and limitations](R1_IMPLEMENTATION.md) document the executed path. R2 evaluation and R3 recovery remain pending. Read-only provider acquisition, if later implemented, uses a different explicit command.
+**Implemented in R1.** The canonical runner refuses missing/invalid inputs, avoids network and broker imports, uses deterministic ordering and stages all artifacts before atomic publication. [R1 contracts and limitations](R1_IMPLEMENTATION.md) document this compatible path.
+
+R2 adds `python -m packages.research.cli evaluate --config experiments/configs/ablations.yaml
+--dataset tests/fixtures/market_snapshot/manifest.json --output results/r2-example`.
+`validation.py` registers anchored folds, fixed ablations/costs, opt-in final evaluation and
+paired AI policies. `metrics.py`, `benchmarks.py` and `resampling.py` provide explicit
+statistical conventions and undefined reasons. `matrix_artifacts.py` publishes a root matrix
+and complete versioned case records. See [executed R2 verification](R2_VERIFICATION.md).
+R3 recovery remains pending. Read-only provider acquisition, if later implemented, uses a
+different explicit command.
 
 The run output is an immutable experiment record identified by data/config/code hashes and a seed. A preview dashboard, if included, consumes **only these generated local files** and does not issue control actions.
 
@@ -87,7 +96,12 @@ The run output is an immutable experiment record identified by data/config/code 
 
 - **Data boundary:** source validation, finite OHLCV, unique session rows, corporate-action and calendar policy, snapshot hashes, sufficient warm-up, no look-ahead.
 - **Strategy boundary:** deterministic signal timestamps, accepted and rejected candidates, versioned parameters, no future-derived universe or ranks.
-- **AI boundary:** as-of-valid frozen inputs, strict schema, negative-only sizing/blocks, neutral fallback, no broker authority.
+- **AI boundary:** as-of-valid frozen inputs, strict schema, negative-only sizing/blocks,
+  neutral fallback, and hashes of declared and resolved evidence (including missing files).
+  A neutral shadow checks executable entry identity/quantity at the eligible opening;
+  vetoes cannot release capacity for replacement trades. Session gross USD exposure is
+  bounded by the paired control. Equity-normalized ratios retain each portfolio's denominator.
+  Candidate generation never reads later neutral fills. No broker authority exists.
 - **Simulator boundary:** next-session eligible fills, cost model, stop/gap treatment, cash/positions/equity conservation, no unexplained order duplication.
 - **Evaluation boundary:** frozen splits, benchmark alignment, ablations and Monte Carlo seeded before the final evaluation, every metric traceable to inputs.
 - **Artifact boundary:** canonical records, atomic writes, stable run IDs, source/config hashes, no secrets or proprietary payloads.
