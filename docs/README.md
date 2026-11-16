@@ -22,7 +22,8 @@
 3. **R3 — Local reliability:** real local Temporal research workflow, SQLite idempotency and recovery evidence.
 4. **R4 — Portfolio release:** verified results, research report, license-safe example, local presentation and reproducibility audit.
 
-R1 has implemented tests and a synthetic artifact path; independent review is pending. R2–R4 remain unimplemented targets. See [R1 contracts and reproducibility](research/R1_IMPLEMENTATION.md). A synthetic example is not empirical performance evidence.
+R1 has implemented tests and a synthetic artifact path; independent review is pending. R2–R4 remain unimplemented targets. See [R1 contracts and reproducibility](research/R1_IMPLEMENTATION.md) and the
+[executed R1 verification handoff](research/R1_VERIFICATION.md). A synthetic example is not empirical performance evidence.
 
 ## Historical implementation references — not v0.7 goals
 
