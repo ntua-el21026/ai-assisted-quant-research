@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import date
+from datetime import date, datetime
 from typing import Literal, Self
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -70,6 +70,35 @@ class BacktestMetrics(BacktestModel):
     sortino: float | None
 
 
+class OpenResearchPosition(BacktestModel):
+    symbol: str
+    entry_date: date
+    quantity: int = Field(gt=0)
+    entry_price: float = Field(gt=0)
+    entry_fee: float = Field(ge=0)
+    stop_price: float = Field(gt=0)
+    mark_price: float = Field(gt=0)
+    cost_basis: float = Field(gt=0)
+    unrealized_pnl: float
+
+
+class ResearchOrderEvent(BacktestModel):
+    order_id: str
+    symbol: str
+    action: Literal["buy", "sell"]
+    decision_session: date
+    decision_at: datetime
+    eligible_session: date | None
+    session: date | None
+    quantity: int = Field(ge=0)
+    status: Literal["filled", "rejected", "unfilled"]
+    reason: str
+    base_price: float | None = None
+    fill_price: float | None = None
+    fee: float = Field(default=0, ge=0)
+    slippage_cost: float = Field(default=0, ge=0)
+
+
 class BacktestResult(BacktestModel):
     name: str
     trades: tuple[BacktestTrade, ...]
@@ -77,10 +106,12 @@ class BacktestResult(BacktestModel):
     metrics: BacktestMetrics
     validation_note: str
     optimistic_universe_warning: bool = False
+    open_positions: tuple[OpenResearchPosition, ...] = ()
+    order_events: tuple[ResearchOrderEvent, ...] = ()
+    warnings: tuple[str, ...] = ()
 
     @model_validator(mode="after")
     def validate_note(self) -> Self:
         if "not proof of profitability" not in self.validation_note:
             raise ValueError("validation note must state that backtests do not prove profitability")
         return self
-
