@@ -1,7 +1,7 @@
 # Quantitative Trading Research Architecture — v0.7
 
 - **Authority:** [Research Framework Specification v0.7](../app/AI_Assisted_Quant_Research_SPEC_v0.7.md)
-- **Status:** R1–R2 implemented with synthetic verification; R2 external acceptance and R3–R4 remain pending
+- **Status:** R1–R3 implemented; R2 external engineering review passed, R3 independent acceptance and R4 remain pending
 
 ## 1. System boundary
 
@@ -34,7 +34,7 @@ All arrows denote local data movement or controlled function calls. The Temporal
 | AI/news | `packages/ai/`, `packages/research/ai_replay.py` | Lazy legacy API, local frozen as-of replay, negative-only sizing and neutral fallback; provider clients stay outside canonical runs |
 | Local demonstration | `packages/paper/dry_run.py` | Fake broker/SQLite/report pipeline exists; fixture demonstration is not multi-year research |
 | Ledger and reporting | `packages/ledger/`, `packages/reporting/` | Repositories and generators exist; R1 artifact writer implemented separately from legacy persistence |
-| Temporal | `apps/workers/app/` | Ten workflow skeletons, activity contracts, local SDK test/replay coverage; not end-to-end research orchestration |
+| Temporal | `apps/workers/app/` | Dedicated real research workflow/activity, finite local SDK runner and replay/recovery tests; ten legacy skeletons preserved |
 | Dashboard | `apps/dashboard/` | Static safety-preview scaffold; not a research-results viewer |
 
 ## 3. Source organization and remaining additions
@@ -87,7 +87,7 @@ R2 adds `python -m packages.research.cli evaluate --config experiments/configs/a
 paired AI policies. `metrics.py`, `benchmarks.py` and `resampling.py` provide explicit
 statistical conventions and undefined reasons. `matrix_artifacts.py` publishes a root matrix
 and complete versioned case records. See [executed R2 verification](R2_VERIFICATION.md).
-R3 recovery remains pending. Read-only provider acquisition, if later implemented, uses a
+Optional R3 orchestration is documented below. Read-only provider acquisition, if later implemented, uses a
 different explicit command.
 
 The run output is an immutable experiment record identified by data/config/code hashes and a seed. A preview dashboard, if included, consumes **only these generated local files** and does not issue control actions.
@@ -110,7 +110,69 @@ The first end-to-end integration test should run entirely on the synthetic fixtu
 
 ## 6. Local reliability track
 
-The systems demonstration must prove **functional behavior**, not merely register Temporal workflow class names:
+The optional `ResearchExperimentWorkflow` invokes a typed `ResearchActivities.run` that
+executes the unchanged `run_research` or `evaluate_research` pipeline. Filesystem,
+source/environment validation and SQLite I/O remain in the activity; replay executes
+only deterministic orchestration. The dedicated local CLI uses the SDK test environment
+with an explicit existing executable and terminates after one workflow/history/replay.
+It does not register historical broker/provider activities or alter legacy queues.
+
+`packages/research/research_ledger.py` defines a small `ResearchLedger` protocol and a
+separate local SQLite schema. The legacy broker schema and its transaction-owning
+repositories remain unchanged. `reliability.py` owns verification and reconciliation.
+
+```mermaid
+stateDiagram-v2
+    [*] --> REGISTERED: immutable input contract
+    REGISTERED --> RUNNING: durable attempt
+    RUNNING --> RUNNING: retry in a new retained attempt
+    RUNNING --> PREPARED: verified run ID and full hash set
+    PREPARED --> PUBLISHED: verify or rename artifacts, then SQL checkpoint
+    PUBLISHED --> COMMITTED: result row and completion event in one SQL transaction
+    REGISTERED --> FAILED: permanent error
+    RUNNING --> FAILED: unverifiable state
+    PREPARED --> FAILED: inconsistent artifacts
+    PUBLISHED --> FAILED: inconsistent artifacts
+```
+
+The experiment key, canonical request fingerprint, runner ID and destination have
+uniqueness constraints. The request pins config/base/market/AI resolution, source,
+orchestration code, environment, mode and final-evaluation flag. Short explicit SQLite
+transactions atomically update lifecycle records and append checked progress events.
+A cooperative POSIX advisory lock serializes each experiment's execution; the kernel
+releases it on process exit. A filename's presence is never treated as active ownership.
+A separate short initialization lock covers the first marker write and database creation,
+so a concurrent caller sees retryable contention rather than a false corruption diagnosis.
+
+The runner first publishes into a private attempt directory. PREPARED durably anchors
+the exact deterministic artifact hashes and a separate runtime-byte digest before that
+directory is renamed to `runs/<run_id>`. Runtime remains excluded from reproducible
+research hashes, while its original bytes are immutable within one attempt.
+The filesystem rename and SQLite transitions **are not one atomic transaction**:
+
+| Persisted condition | Deterministic action |
+| --- | --- |
+| REGISTERED/RUNNING without anchored output | Retain prior attempt evidence and compute in a new attempt |
+| PREPARED with only exact matching private output | Rename to final, verify, then advance SQL |
+| PREPARED with only exact matching final output | Reconcile an interrupted post-rename transition |
+| PUBLISHED with matching final output | Commit result and completion event once |
+| COMMITTED with matching final output | Return the same verified result without new effects |
+| Missing/changed artifacts, conflicting identity, stage and final both present, lost ledger or invalid SQL/event state | Fail closed and preserve evidence |
+
+Verification checks the full recursive inventory, safe regular paths, every digest,
+manifest/index agreement, expected aggregate, original request binding and database
+event/result consistency. COMMITTED is immutable evidence of a past commit; each return
+revalidates current artifacts, and later corruption raises an error without rewriting
+the original successful ledger history. Uncommitted permanent failures enter FAILED.
+
+Exactly-once claims concern observable committed results and completion records.
+Private computation can run more than once, and retry attempt records legitimately
+differ. Controlled process death after rename verifies kernel-lock release and recovery;
+worker/history tests verify the separately documented local SDK scenarios. This is
+single-host cooperative evidence, not a distributed lease, hostile-writer protection,
+power-loss proof or production service guarantee. See [R3 verification](R3_VERIFICATION.md).
+
+The systems demonstration checks functional behavior:
 
 1. A typed local workflow invokes a real research activity and writes an identifiable experiment result.
 2. Repeated execution with the same experiment ID is idempotent and does not duplicate committed artifacts or ledger side effects.
@@ -118,7 +180,9 @@ The systems demonstration must prove **functional behavior**, not merely registe
 4. A corrupted or inconsistent ledger/simulation snapshot fails closed, with evidence and no hidden recovery that changes results.
 5. All Temporal tests use the SDK's local test environment and fake side effects; no cloud namespace or real orders.
 
-Existing production-oriented workflow skeletons may remain for historical context, but they are not the canonical research workflow and should not be counted as implemented reliability experiments.
+Existing production-oriented workflow skeletons remain historical context. The dedicated
+research workflow supplies the new R3 evidence; skeleton registration is not counted as
+research execution. R4 empirical research and presentation remain separate work.
 
 ## 7. Historical operational boundary
 

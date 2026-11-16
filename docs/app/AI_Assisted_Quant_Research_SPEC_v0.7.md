@@ -1,7 +1,7 @@
 # AI-Assisted Quantitative Trading Research Framework
 
 - **Specification:** v0.7 (research-scope transition)
-- **Status:** Approved project direction; implementation and experiments are not yet complete
+- **Status:** R1–R3 implemented; R2 external engineering review passed, R3 independent acceptance and R4 empirical/release work pending
 - **Owner:** Michail Athanasios Peppas
 - **Target audience:** MSc Computer Science, Data Science, AI/ML and quantitative-finance reviewers
 - **Execution environment:** Local, offline-first Python research software; no deployment
@@ -10,7 +10,12 @@
 
 This document is the **current source of truth** for the research framework's intended behavior, architecture, non-goals and completion criteria. It supersedes the operational objectives of [`Autonomous_AI_Trading_Bot_SPEC_v0.6.md`](Autonomous_AI_Trading_Bot_SPEC_v0.6.md), which remains unchanged as a historical specification. Earlier milestone reports, broker evidence, runbooks, deployment manifests and frozen-validation records likewise remain historical. Their old `GO`/`NO_GO` outcomes do not establish v0.7 research completeness.
 
-The v0.7 change is a **product-scope change**, not a claim that the repository has already implemented the features below. The present code includes useful deterministic modules, simulated paper flows, local persistence, Temporal contracts and provider adapters, but the research experiment pipeline remains to be implemented and verified. See [the architecture](../research/ARCHITECTURE.md), [the research protocol](../research/RESEARCH_PROTOCOL.md) and [the implementation plan](../superpowers/plans/2026-11-16-ai-assisted-quant-research.md).
+The v0.7 change is a **product-scope change**. R1–R2 now implement the offline research
+pipeline, and R3 adds optional local Temporal/SQLite reliability. The owner reports
+independent external R2 engineering acceptance at `9b3678b`; R3 awaits independent
+acceptance. Historical studies and overall release remain incomplete. See
+[the architecture](../research/ARCHITECTURE.md), [the research protocol](../research/RESEARCH_PROTOCOL.md),
+[R3 verification](../research/R3_VERIFICATION.md) and [the implementation plan](../superpowers/plans/2026-11-16-ai-assisted-quant-research.md).
 
 For future work, this specification overrides contradictory requirements in older docs. Existing safety invariants remain binding unless this document explicitly tightens them. No new functionality is authorized merely because it appears in a legacy roadmap.
 
@@ -145,7 +150,7 @@ A canonical experiment run must accept a versioned configuration and an offline 
 | `comparisons.json` | Baseline/ablation/AI/benchmark comparison references, where applicable |
 | `report.md` | Method, findings, tables, limitations and run identifiers |
 
-Use canonical serialization, ordered records and fixed seeds. Two runs with the same inputs should yield byte-identical deterministic artifacts, excluding separately labeled non-deterministic runtime metadata. The exact CLI and file schemas are implementation deliverables, **not current functionality**. A single documented offline command and a small public fixture must reproduce a complete illustrative run without credentials or network access.
+Use canonical serialization, ordered records and fixed seeds. Two runs with the same inputs should yield byte-identical deterministic artifacts, excluding separately labeled non-deterministic runtime metadata. The implemented R1/R2 CLIs and schemas are documented in the architecture and checkpoint handoffs. A single documented offline command and a small public fixture must reproduce a complete illustrative run without credentials or network access.
 
 Large, private, licensed or generated datasets belong outside Git; commit manifests, code, test fixtures and appropriately sized, licensed example results only.
 

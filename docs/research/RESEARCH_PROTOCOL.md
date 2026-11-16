@@ -1,7 +1,7 @@
 # Quantitative Trading Research Protocol
 
 - **Governing specification:** [Research Framework v0.7](../app/AI_Assisted_Quant_Research_SPEC_v0.7.md)
-- **Status:** R1 data/simulation and R2 statistics/frozen AI implemented; external R2 acceptance, empirical studies and R3 reliability remain pending. No market findings are asserted here.
+- **Status:** R1–R3 implemented; R2 passed external engineering review. R3 independent acceptance and empirical studies remain pending. No market findings are asserted here.
 
 ## 1. Scientific objective
 
@@ -105,6 +105,15 @@ Report units and annualization assumptions alongside each result.
 - Trading: closed trade count, win rate, mean gain/loss, profit factor, average holding time, turnover, average/gross exposure, costs and unfilled/rejected counts.
 - AI: input coverage, structured-output validity, neutral fallback count, changed decisions and relative exposure.
 - Systems: completed/failed/retried work, duplicate side-effect count, final state equivalence and replay success.
+
+R3 systems comparisons use an ordinary uninterrupted offline runner as an independent
+artifact reference, plus explicit expected ledger states/cardinalities. Recovered runs
+must match run IDs, deterministic file hashes, accounting results and one committed
+result/completion event. Attempt/audit counts can increase after retry and are reported
+separately. SQLite commits and filesystem publication remain separate resources;
+reconciliation verifies a prior durable hash checkpoint rather than assuming atomicity.
+Executed local SDK and process-interruption scenarios, including their untested crash,
+power-loss and concurrency limits, are recorded in [R3 verification](R3_VERIFICATION.md).
 
 Undefined metrics must be `null`/N/A with a reason (e.g., no losing trades, zero downside deviation, insufficient returns), not fabricated zeros, infinities or favorable replacements. Include numerical unit fixtures and comparisons with an independent reference calculator.
 

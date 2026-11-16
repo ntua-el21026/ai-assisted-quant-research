@@ -6,7 +6,7 @@ This repository contains a Python research framework for studying deterministic 
 
 - **Maintainer:** Michail Athanasios Peppas
 - **Project direction:** v0.7 research framework (Option B)
-- **Current status:** **R2 experiments and frozen AI replay implemented — external review pending; research in development**
+- **Current status:** **R3 local reliability implemented — independent acceptance pending; research in development**
 
 > **No deployment, live trading or broker-connected paper trading is part of this project scope.** The canonical research path runs locally and offline. The synthetic demonstration verifies software behavior; it is not a historical-market study or an investment recommendation.
 
@@ -26,13 +26,14 @@ The evaluation is designed to report negative or inconclusive findings as faithf
 | Strategy and risk | Causal features, regime/candidates, full research cooldown, registered filter ablations and numerical safeguards | Historical validation with audited design exposure |
 | Backtesting | Next-session simulator, costs/stops, accounting, aligned price benchmarks and verified research statistics; preserved legacy API | Licensed action/dividend-aware historical comparisons |
 | AI/news | Offline as-of frozen replay, provenance, neutral fallback and paired execution bounds | Credible frozen historical news evidence and inconclusive/negative findings retained |
-| Persistence and workflows | SQLite ledger, Temporal contracts/skeletons and fake/local test paths | Functional **local-only** Temporal/SQLite retry, replay and recovery experiments |
+| Persistence and workflows | Optional local Temporal research workflow, SQLite experiment ledger, retry/replay and verified publication reconciliation | External R3 acceptance; no production durability claim |
 | Validation and reporting | Chronological matrix, fixed-seed uncertainty, cost stresses and deterministic nested artifacts; static historical preview | Empirical report and local research-results presentation |
 
 The research CLI connects deterministic strategy/risk logic to simulated accounting. Its R2
 `evaluate` command executes registered folds, benchmarks, ablations, cost stresses, uncertainty
 and frozen AI comparisons. Executed examples are synthetic engineering demonstrations;
-empirical historical findings and local recovery remain **pending**. The legacy explicit-signal
+empirical historical findings remain **pending**. Optional R3 orchestration adds local
+SQLite/Temporal recovery without changing ordinary research execution. The legacy explicit-signal
 backtester retains its original timing. The incomplete prior paper-validation record is not v0.7 evidence.
 
 ## Research architecture
@@ -45,15 +46,17 @@ flowchart LR
     E["Frozen news / AI evidence"] --> B
 ```
 
-The R1 pipeline operates without Temporal or network services. A separate small local Temporal/SQLite track will test reproducibility and failure recovery against the same research-core interfaces.
+The R1/R2 pipeline operates without Temporal or network services. A separate optional
+local Temporal/SQLite track executes the same research core and verifies retries,
+replay and reconciliation across separate database and filesystem commits.
 
 ### Implementation checkpoints
 
 | Checkpoint | Evidence required | Status |
 | --- | --- | --- |
 | **R1 — Data and simulation** | Auditable offline snapshot, causal strategy-to-simulation path and verified arithmetic | Implemented; reviewed cooldown correction included |
-| **R2 — Experiments and AI** | Benchmarks, time-aware splits, cost/ablation/uncertainty tests, frozen AI comparison | Implemented; external acceptance pending |
-| **R3 — Local reliability** | Real local Temporal workflow, idempotent checkpoints and fault-recovery tests | Planned |
+| **R2 — Experiments and AI** | Benchmarks, time-aware splits, cost/ablation/uncertainty tests, frozen AI comparison | Independent external engineering review passed at `9b3678b` |
+| **R3 — Local reliability** | Real local Temporal workflow, idempotent checkpoints and fault-recovery tests | Implemented; independent acceptance pending |
 | **R4 — Portfolio release** | Reproducible example, available-data results, technical report, limitations and local presentation | Planned |
 
 Implementation is organized into these **four** bounded Codex checkpoints. The detailed task-by-task plan is available below; no deployment step is included.
@@ -97,7 +100,26 @@ limitations and accounting fixtures. [R2 verification](docs/research/R2_VERIFICA
 records interfaces, numerical checks, benchmarks and reproducibility hashes. The matrix
 defaults to development folds; `--include-final` explicitly adds the registered synthetic
 final evaluation. This does not establish an untouched historical holdout. The empirical
-research study and R3 local recovery track remain pending.
+research study remains pending.
+
+### Optional local workflow and replay
+
+With an already available Temporal SDK test-server executable, run one finite local
+workflow. This command never downloads a server or connects to Temporal Cloud:
+
+```bash
+uv run --offline --no-sync python -m apps.workers.app.research_local \
+  --experiment-id synthetic-local-example --config experiments/configs/ablations.yaml \
+  --dataset tests/fixtures/market_snapshot/manifest.json --state results/r3-example \
+  --test-server-binary /path/to/existing/temporal-test-server
+```
+
+Repeat the same request and state directory to reuse the verified committed result.
+Changed inputs/source/environment under the same identity fail explicitly. The command
+shuts down its worker/server, retains an execution history and verifies deterministic
+replay. [R3 verification](docs/research/R3_VERIFICATION.md) documents the lifecycle,
+failure matrix, exact evidence and bounded crash/concurrency assumptions. SQLite and
+artifact publication are separate commits; recovery verifies each boundary.
 
 ## Source organization
 
@@ -108,7 +130,7 @@ research study and R3 local recovery track remain pending.
 | [`packages/backtesting/`](packages/backtesting/) | Causal next-session simulator and preserved explicit-signal legacy API |
 | [`packages/ai/`](packages/ai/) | Structured news-risk analysis and restrictive fallback policy |
 | [`packages/ledger/`](packages/ledger/) | Local SQLite repositories and historical audit interfaces |
-| [`apps/workers/`](apps/workers/) | Temporal scaffolding; planned bounded local research workflow |
+| [`apps/workers/`](apps/workers/) | Optional local research workflow and preserved historical Temporal scaffolding |
 | [`tests/`](tests/) | Unit, integration, failure and local orchestration coverage |
 | [`docs/evidence/`](docs/evidence/) | Historical operational observations, **not v0.7 research results** |
 

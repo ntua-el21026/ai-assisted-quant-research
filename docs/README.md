@@ -7,10 +7,10 @@
 | Document | Purpose | Status |
 | --- | --- | --- |
 | [Research framework specification v0.7](app/AI_Assisted_Quant_Research_SPEC_v0.7.md) | Research questions, non-goals, safety, interfaces and completion criteria | **Governing specification** |
-| [Research protocol](research/RESEARCH_PROTOCOL.md) | Dataset provenance, causal semantics, time-aware experiments, metrics, uncertainty and reporting | R1–R2 implemented; empirical studies pending |
+| [Research protocol](research/RESEARCH_PROTOCOL.md) | Dataset provenance, causal semantics, time-aware experiments, metrics, uncertainty and reporting | R1–R3 implemented; empirical studies pending |
 | [Research architecture](research/ARCHITECTURE.md) | Actual component inventory, offline research/matrix CLI, planned local Temporal boundary | Planned additions distinguished from existing code |
 | [Design decision](superpowers/specs/2026-11-16-ai-assisted-quant-research-design.md) | Approved balanced AI/ML + systems direction and tradeoffs | Approved scope |
-| [Four-checkpoint implementation plan](superpowers/plans/2026-11-16-ai-assisted-quant-research.md) | Test-first R1–R4 task definitions and verification gates | R1–R2 implemented; R2 external acceptance and R3–R4 pending |
+| [Four-checkpoint implementation plan](superpowers/plans/2026-11-16-ai-assisted-quant-research.md) | Test-first R1–R4 task definitions and verification gates | R1–R3 implemented; R3 independent acceptance and R4 pending |
 | [Four Codex prompts](research/CODEX_CHECKPOINT_PROMPTS.md) | Copy-ready R1–R4 implementation assignments to use sequentially after review | R1 implementation completed; later prompts await review |
 | [Root contributor/agent guide](../AGENTS.md) | Repository safety constraints, instructions and current authority | Current |
 | [Main README](../README.md) | Portfolio-facing introduction and truthful implementation status | Current |
@@ -22,9 +22,10 @@
 3. **R3 — Local reliability:** real local Temporal research workflow, SQLite idempotency and recovery evidence.
 4. **R4 — Portfolio release:** verified results, research report, license-safe example, local presentation and reproducibility audit.
 
-R1–R2 have tests and executed synthetic artifact paths; R2 awaits external acceptance.
-R3–R4 remain targets. See [R1 contracts](research/R1_IMPLEMENTATION.md),
-[R1 verification](research/R1_VERIFICATION.md) and [R2 verification](research/R2_VERIFICATION.md).
+R1–R3 have tests and executed synthetic/local systems paths. R2 passed independent external
+engineering review at `9b3678b`; R3 awaits independent acceptance. R4 remains a target.
+See [R1 contracts](research/R1_IMPLEMENTATION.md), [R1 verification](research/R1_VERIFICATION.md),
+[R2 verification](research/R2_VERIFICATION.md) and [R3 verification](research/R3_VERIFICATION.md).
 A synthetic example is not empirical performance evidence.
 
 ## Historical implementation references — not v0.7 goals
