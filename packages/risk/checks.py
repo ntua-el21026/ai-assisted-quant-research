@@ -238,9 +238,8 @@ def _sector_exposure_check(
     order_input: NewRiskOrderInput,
     risk_config: RiskLevelConfig,
 ) -> RiskCheckResult:
-    proposed_sector_pct = (
-        order_input.current_sector_exposure_pct
-        + (order_input.proposed_order_value / order_input.account_equity)
+    proposed_sector_pct = order_input.current_sector_exposure_pct + (
+        order_input.proposed_order_value / order_input.account_equity
     )
     if proposed_sector_pct > risk_config.max_sector_exposure_pct:
         return _fail(
@@ -327,3 +326,51 @@ def _temporal_workflow_check(order_input: NewRiskOrderInput) -> RiskCheckResult:
     if not order_input.temporal_workflow_consistent:
         return _fail("temporal_workflow_consistency", "temporal_workflow_state_inconsistent")
     return _pass("temporal_workflow_consistency", "temporal_workflow_state_consistent")
+
+
+def evaluate_simulated_risk_order(
+    order_input: NewRiskOrderInput,
+    *,
+    risk_config: RiskLevelConfig,
+) -> RiskAssessment:
+    """Reuse numerical safeguards for local simulation, without operational assertions.
+
+    Broker, autonomy and Temporal checks remain exclusive to evaluate_new_risk_order.
+    None of those operational states is asserted or enabled by this adapter.
+    """
+    checks: tuple[RiskCheckResult, ...] = (
+        _market_session_check(order_input),
+        _data_freshness_check(order_input),
+        _kill_switch_check(order_input),
+        _loss_limit_check(
+            "daily_loss_limit", order_input.daily_loss_pct, risk_config.max_daily_loss_pct
+        ),
+        _loss_limit_check(
+            "weekly_loss_limit", order_input.weekly_loss_pct, risk_config.max_weekly_loss_pct
+        ),
+        _loss_limit_check(
+            "monthly_loss_limit", order_input.monthly_loss_pct, risk_config.max_monthly_loss_pct
+        ),
+        _position_size_check(order_input, risk_config),
+        _gross_exposure_check(order_input, risk_config),
+        _deployable_capital_check(order_input, risk_config),
+        _open_positions_check(order_input, risk_config),
+        _sector_exposure_check(order_input, risk_config),
+        _cash_buffer_check(order_input, risk_config),
+        _risk_per_trade_check(order_input, risk_config),
+        _duplicate_intent_check(order_input),
+    )
+    stop_valid = (
+        order_input.stop_loss_price is not None
+        and 0 < order_input.stop_loss_price < order_input.entry_price
+    )
+    checks += (
+        (
+            _pass("protective_stop", "protective_stop_available")
+            if stop_valid
+            else _fail("protective_stop", "invalid_stop_distance")
+        ),
+    )
+    return RiskAssessment(
+        symbol=order_input.symbol, approved=all(c.passed for c in checks), checks=checks
+    )
