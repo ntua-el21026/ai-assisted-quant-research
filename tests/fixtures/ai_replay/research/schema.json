@@ -1,0 +1,5 @@
+{
+  "schema_id": "ai_trade_research_schema_v0_3",
+  "parser": "packages.ai.parser.parse_ai_trade_research_json",
+  "purpose": "Version descriptor for the existing strict schema; not a claim of provider output."
+}

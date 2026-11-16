@@ -1,0 +1,140 @@
+{
+  "model_id": "hand-authored-research-illustration/v1",
+  "origin": "Original hand-constructed synthetic test outputs, not real model inference, historical news, or market-news observations. No provider service was called.",
+  "license": "Original synthetic work, repository MIT license",
+  "timestamp_provenance": {
+    "construction_date": "2026-11-16",
+    "scenario_frozen_at": "2025-11-30T00:00:00Z",
+    "meaning": "Publication, observed availability, analysis, output availability and freeze timestamps are assigned causal scenario times, not observed collection/model-execution dates."
+  },
+  "effective_settings": {
+    "baseline_config_reference": "experiments/configs/baseline.yaml",
+    "baseline_config_sha256": "db86c1719fa691e6002509f0349216063cea9f7317f1481bd52a9f7920fe6dc5",
+    "baseline_config": {
+      "schema_version": "research-config/v1",
+      "experiment_id": "r1-synthetic-baseline",
+      "dataset_manifest_sha256": "7057ce77e118a3adfebbda8aba85a317b3b74ba30bcd1ae2da055b1410f582ed",
+      "hypothesis": "Synthetic engineering demonstration; no empirical market inference",
+      "seed": 0,
+      "date_start": "2025-01-02",
+      "date_end": "2025-10-22",
+      "initial_cash": 10000,
+      "approved_symbols": [
+        "AAPL",
+        "QQQ",
+        "SPY"
+      ],
+      "etf_symbols": [
+        "QQQ",
+        "SPY"
+      ],
+      "sectors": {
+        "AAPL": "technology",
+        "QQQ": "technology",
+        "SPY": "broad_market"
+      },
+      "earnings": [],
+      "execution": {
+        "entry_slippage_bps": 10,
+        "exit_slippage_bps": 10,
+        "stop_slippage_bps": 20,
+        "fee_bps_per_side": 1
+      },
+      "strategy": {
+        "name": "regime_filtered_breakout_v0_3",
+        "trend_fast_ma": 50,
+        "trend_slow_ma": 200,
+        "breakout_lookback_primary": 20,
+        "breakout_lookback_research_variants": [
+          20,
+          55
+        ],
+        "volume_lookback_days": 20,
+        "volume_ratio_min": 1.2,
+        "relative_strength_lookback_days": 63,
+        "relative_strength_min": 0.0,
+        "relative_strength_percentile_floor_research": 70,
+        "atr_period": 14,
+        "atr_pct_min": 0.015,
+        "atr_pct_max": 0.06,
+        "initial_stop_atr_multiplier": 2.0,
+        "initial_stop_atr_multiplier_research_variants": [
+          2.0,
+          2.5
+        ],
+        "trailing_stop_atr_multiplier": 2.5,
+        "trailing_stop_atr_multiplier_research_variants": [
+          2.5,
+          3.0
+        ],
+        "technical_exit_ema": 10,
+        "technical_exit_confirm_closes": 2,
+        "time_stop_days": 20,
+        "fail_fast_exit_days": 5
+      },
+      "regime": {
+        "model_version": "rule_based_regime_v0_3",
+        "states": [
+          "RISK_ON",
+          "CAUTION",
+          "RISK_OFF"
+        ],
+        "proxy": "SPY",
+        "sma_slow": 200,
+        "sma_fast": 50,
+        "risk_on_above_sma200_multiplier": 1.01,
+        "risk_off_below_sma200_multiplier": 0.99,
+        "risk_on_confirm_closes": 3,
+        "risk_off_confirm_closes": 2,
+        "rv20_risk_on_max": 0.25,
+        "rv20_risk_off_min": 0.35,
+        "risk_off_cooldown_days": 3
+      },
+      "risk": {
+        "max_gross_exposure_pct": 0.2,
+        "max_deployable_capital_pct": 0.2,
+        "max_position_size_pct": 0.04,
+        "max_risk_per_trade_pct": 0.0035,
+        "max_open_positions": 5,
+        "max_sector_exposure_pct": 0.1,
+        "min_cash_buffer_pct": 0.75,
+        "max_daily_loss_pct": 0.01,
+        "max_weekly_loss_pct": 0.025,
+        "max_monthly_loss_pct": 0.05,
+        "allow_margin": false,
+        "allow_shorting": false,
+        "allow_options": false,
+        "allow_leveraged_etfs": false,
+        "allow_futures": false,
+        "allow_crypto": false,
+        "allow_prediction_markets": false,
+        "require_protective_stop": true
+      },
+      "research_universe": {
+        "min_price": 10,
+        "min_adv20_usd": 20000000,
+        "include_us_common_stocks": true,
+        "include_major_etfs": true,
+        "survivorship_bias_warning_required": true,
+        "point_in_time_universe_preferred": true
+      }
+    },
+    "dataset_manifest_reference": "tests/fixtures/market_snapshot/manifest.json",
+    "dataset_manifest_sha256": "7057ce77e118a3adfebbda8aba85a317b3b74ba30bcd1ae2da055b1410f582ed",
+    "zero_based_market_session_indices": [
+      200,
+      202
+    ],
+    "decision_convention": "session close plus one minute; execution eligible next declared session",
+    "candidate_scope": "Exact QQQ decision_id, symbol and decision_at; all other candidates unchanged",
+    "ai_policy": {
+      "scoring_policy_version": "research-ai-negative-only/v1",
+      "hard_block_confidence_min": 0.7,
+      "comparison": [
+        "AI_NEUTRAL",
+        "AI_NEGATIVE_ONLY"
+      ],
+      "neutral_control_changes_non_ai_settings": false
+    }
+  }
+}

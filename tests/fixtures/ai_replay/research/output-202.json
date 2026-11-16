@@ -1,0 +1,42 @@
+{
+  "symbol": "QQQ",
+  "analysis_at": "2025-10-13T19:10:00Z",
+  "schema_version": "ai_trade_research_schema_v0_3",
+  "prompt_version": "ai_trade_research_v0_3",
+  "model_version": "hand-authored-research-illustration/v1",
+  "news_state": "found",
+  "events": [
+    {
+      "event_id": "synthetic-qqq-event-202",
+      "event_type": "product_contract_management_change",
+      "direction": "negative",
+      "confidence": 0.9,
+      "risk_level": "high",
+      "source_quality": "company_pr",
+      "published_at": "2025-10-13T19:00:00Z",
+      "citation_ids": [
+        "synthetic-qqq-citation-202"
+      ],
+      "summary": "Hand-authored fictional half-size illustration.",
+      "blocking_risk": false
+    }
+  ],
+  "citations": [
+    {
+      "citation_id": "synthetic-qqq-citation-202",
+      "title": "Synthetic QQQ candidate 202 adverse-risk illustration",
+      "source": "Original synthetic research fixture",
+      "canonical_url": "https://example.invalid/synthetic-qqq-candidate-202",
+      "published_at": "2025-10-13T19:00:00Z",
+      "provider": "synthetic",
+      "raw_payload_hash": "7759cde35aca0bc869338b4d5da4ac3f59f232ffed0e05f2052271b5967c93d4"
+    }
+  ],
+  "hard_block": false,
+  "hard_block_reason": null,
+  "ai_score": 45,
+  "size_multiplier": 0.5,
+  "explanation": "Original hand-authored synthetic adverse-only software fixture; no actual news/model observation and no AI-benefit claim.",
+  "fallback": false,
+  "fallback_reason": "none"
+}

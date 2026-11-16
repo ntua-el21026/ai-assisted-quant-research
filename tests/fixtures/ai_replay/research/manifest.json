@@ -1,0 +1,96 @@
+{
+  "schema_version": "frozen-ai-evidence/v1",
+  "evidence_id": "synthetic-baseline-bound-adverse-illustration/v1",
+  "kind": "synthetic",
+  "source": "Original hand-constructed synthetic scenarios bound to the original synthetic market_snapshot baseline; assigned causal scenario timestamps, no historical news, real model output or market-news observations",
+  "license": "Original synthetic work, repository MIT license; no third-party news or model output",
+  "frozen_at": "2025-11-30T00:00:00Z",
+  "model": {
+    "version": "hand-authored-research-illustration/v1",
+    "file": {
+      "path": "model.json",
+      "size_bytes": 4877,
+      "sha256": "8798b7308bdae95f521db488f11f72c51a23587190c46fd06d1e6e14798fcc1d"
+    }
+  },
+  "prompt": {
+    "version": "ai_trade_research_v0_3",
+    "file": {
+      "path": "prompt.txt",
+      "size_bytes": 153,
+      "sha256": "e06ddf3178eae4364d71e97fb249452bd0d5b1102b2ca6e5d00809351cec0475"
+    }
+  },
+  "output_schema": {
+    "version": "ai_trade_research_schema_v0_3",
+    "file": {
+      "path": "schema.json",
+      "size_bytes": 213,
+      "sha256": "79451837b204f198911df3568dc42c10f612fd522f4647fc2cc1defdbe53a978"
+    }
+  },
+  "scoring_policy_version": "research-ai-negative-only/v1",
+  "hard_block_confidence_min": 0.7,
+  "articles": [
+    {
+      "article_id": "synthetic-qqq-article-200",
+      "observed_available_at": "2025-10-09T19:05:00Z",
+      "file": {
+        "path": "article-200.json",
+        "size_bytes": 594,
+        "sha256": "3b02e5afb28875dfab0b8f207de206d1f9c676522d3c344cc74ba49a4db863a1"
+      }
+    },
+    {
+      "article_id": "synthetic-qqq-article-202",
+      "observed_available_at": "2025-10-13T19:05:00Z",
+      "file": {
+        "path": "article-202.json",
+        "size_bytes": 594,
+        "sha256": "7759cde35aca0bc869338b4d5da4ac3f59f232ffed0e05f2052271b5967c93d4"
+      }
+    }
+  ],
+  "records": [
+    {
+      "record_id": "synthetic-qqq-record-200",
+      "decision_id": "8010b973262d56376bac824c10c3b91fb65c9ac6e2cb7af611d491a6ed4e6b07",
+      "symbol": "QQQ",
+      "decision_at": "2025-10-09T20:01:00Z",
+      "analysis_at": "2025-10-09T19:10:00Z",
+      "output_available_at": "2025-10-09T19:11:00Z",
+      "output": {
+        "path": "output-200.json",
+        "size_bytes": 1526,
+        "sha256": "10917ce22aa6ae0043afbc934f1c827e8b593e79c9a72222c357e4cee3428729"
+      },
+      "citation_bindings": [
+        {
+          "citation_id": "synthetic-qqq-citation-200",
+          "article_id": "synthetic-qqq-article-200"
+        }
+      ],
+      "provider_failure": null
+    },
+    {
+      "record_id": "synthetic-qqq-record-202",
+      "decision_id": "7a7a97705eac7520429fd314d1c0e86fc09bb3f23cd7d9250780025dc6c9aff8",
+      "symbol": "QQQ",
+      "decision_at": "2025-10-13T20:01:00Z",
+      "analysis_at": "2025-10-13T19:10:00Z",
+      "output_available_at": "2025-10-13T19:11:00Z",
+      "output": {
+        "path": "output-202.json",
+        "size_bytes": 1465,
+        "sha256": "28365b9d5c3fa9e826e89a2f1088759c2e3e4568449ce7479ffaec666a9e4cfc"
+      },
+      "citation_bindings": [
+        {
+          "citation_id": "synthetic-qqq-citation-202",
+          "article_id": "synthetic-qqq-article-202"
+        }
+      ],
+      "provider_failure": null
+    }
+  ]
+}

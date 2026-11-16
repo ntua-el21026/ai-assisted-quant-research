@@ -1,0 +1,14 @@
+{
+  "provider": "synthetic",
+  "provider_article_id": "illustration-1",
+  "symbol": "AAPL",
+  "tickers": [
+    "AAPL"
+  ],
+  "title": "Synthetic adverse event illustration",
+  "source": "Original synthetic fixture",
+  "canonical_url": "https://example.invalid/synthetic-adverse-illustration",
+  "published_at": "2026-05-04T18:00:00Z",
+  "summary": "Hand-authored artificial adverse news used only to test replay boundaries. No claim about an actual company or event.",
+  "source_quality": "company_pr"
+}

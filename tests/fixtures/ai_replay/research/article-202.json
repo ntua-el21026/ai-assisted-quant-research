@@ -1,0 +1,14 @@
+{
+  "provider": "synthetic",
+  "provider_article_id": "synthetic-qqq-article-202",
+  "symbol": "QQQ",
+  "tickers": [
+    "QQQ"
+  ],
+  "title": "Synthetic QQQ candidate 202 adverse-risk illustration",
+  "source": "Original synthetic research fixture",
+  "canonical_url": "https://example.invalid/synthetic-qqq-candidate-202",
+  "published_at": "2025-10-13T19:00:00Z",
+  "summary": "Original hand-constructed fictional adverse scenario for deterministic replay testing. This describes no actual QQQ news, company event, market observation or model inference.",
+  "source_quality": "company_pr"
+}

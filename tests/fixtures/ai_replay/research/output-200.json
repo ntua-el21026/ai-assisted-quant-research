@@ -1,0 +1,42 @@
+{
+  "symbol": "QQQ",
+  "analysis_at": "2025-10-09T19:10:00Z",
+  "schema_version": "ai_trade_research_schema_v0_3",
+  "prompt_version": "ai_trade_research_v0_3",
+  "model_version": "hand-authored-research-illustration/v1",
+  "news_state": "found",
+  "events": [
+    {
+      "event_id": "synthetic-qqq-event-200",
+      "event_type": "lawsuit_sec_fda_halt_accounting_risk",
+      "direction": "negative",
+      "confidence": 0.9,
+      "risk_level": "blocking",
+      "source_quality": "company_pr",
+      "published_at": "2025-10-09T19:00:00Z",
+      "citation_ids": [
+        "synthetic-qqq-citation-200"
+      ],
+      "summary": "Hand-authored fictional blocking illustration.",
+      "blocking_risk": true
+    }
+  ],
+  "citations": [
+    {
+      "citation_id": "synthetic-qqq-citation-200",
+      "title": "Synthetic QQQ candidate 200 adverse-risk illustration",
+      "source": "Original synthetic research fixture",
+      "canonical_url": "https://example.invalid/synthetic-qqq-candidate-200",
+      "published_at": "2025-10-09T19:00:00Z",
+      "provider": "synthetic",
+      "raw_payload_hash": "3b02e5afb28875dfab0b8f207de206d1f9c676522d3c344cc74ba49a4db863a1"
+    }
+  ],
+  "hard_block": true,
+  "hard_block_reason": "lawsuit_sec_fda_halt_accounting_risk:synthetic-qqq-event-200",
+  "ai_score": 42,
+  "size_multiplier": 0.0,
+  "explanation": "Original hand-authored synthetic adverse-only software fixture; no actual news/model observation and no AI-benefit claim.",
+  "fallback": false,
+  "fallback_reason": "none"
+}

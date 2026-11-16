@@ -1,0 +1,42 @@
+{
+  "symbol": "AAPL",
+  "analysis_at": "2026-05-04T19:00:00Z",
+  "schema_version": "ai_trade_research_schema_v0_3",
+  "prompt_version": "ai_trade_research_v0_3",
+  "model_version": "hand-authored-illustration/v1",
+  "news_state": "found",
+  "events": [
+    {
+      "event_id": "synthetic-negative-1",
+      "event_type": "product_contract_management_change",
+      "direction": "negative",
+      "confidence": 0.8,
+      "risk_level": "high",
+      "source_quality": "company_pr",
+      "published_at": "2026-05-04T18:00:00Z",
+      "citation_ids": [
+        "citation-1"
+      ],
+      "summary": "Hand-authored synthetic risk illustration, not actual news.",
+      "blocking_risk": false
+    }
+  ],
+  "citations": [
+    {
+      "citation_id": "citation-1",
+      "title": "Synthetic adverse event illustration",
+      "source": "Original synthetic fixture",
+      "canonical_url": "https://example.invalid/synthetic-adverse-illustration",
+      "published_at": "2026-05-04T18:00:00Z",
+      "provider": "synthetic",
+      "raw_payload_hash": "92efdee7ff29d6f52bdcd4f3d62d16307d234fff59d18a35bb8e78fd3b79d50f"
+    }
+  ],
+  "hard_block": false,
+  "hard_block_reason": null,
+  "ai_score": 50,
+  "size_multiplier": 1.0,
+  "explanation": "Original hand-authored synthetic illustration for deterministic replay tests; no empirical benefit claim.",
+  "fallback": false,
+  "fallback_reason": "none"
+}
