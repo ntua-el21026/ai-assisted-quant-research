@@ -1,0 +1,125 @@
+{
+  "schema_version": "research-calendar/v1",
+  "name": "US core prices",
+  "timezone": "America/New_York",
+  "coverage_start": "2020-01-01",
+  "coverage_end": "2025-12-31",
+  "price_session": "regular",
+  "regular_open": "09:30",
+  "regular_close": "16:00",
+  "early_close": "13:00",
+  "status": "official_schedule_qualified",
+  "qualification_basis": "Explicit NYSE Group scheduled holidays and early closes, updated for the Carter closure independently announced by NYSE and Nasdaq; literal annual counts and UTC conversions checked. Qualification concerns the documented core-session schedule, not provider aggregation, point-in-time availability, or an independent runtime calendar oracle. Raw official-document bytes and checksums have not been retained.",
+  "sources": [
+    {
+      "source_id": "nyse-2019-12-09",
+      "title": "NYSE Group Announces 2020, 2021 and 2022 Holiday and Early Closings Calendar",
+      "url": "https://ir.theice.com/press/news-details/2019/NYSE-Group-Announces-2020-2021-and-2022-Holiday-and-Early-Closings-Calendar/default.aspx",
+      "published_on": "2019-12-09",
+      "consulted_on": "2026-11-17",
+      "evidence_role": "Scheduled weekday closures and 13:00 Eastern early closes for 2020 and 2021. The later Juneteenth amendment governs 2022."
+    },
+    {
+      "source_id": "nyse-2021-12-27",
+      "title": "NYSE Group Announces 2022, 2023 and 2024 Holiday and Early Closings Calendar",
+      "url": "https://ir.theice.com/press/news-details/2021/NYSE-Group-Announces-2022-2023-and-2024-Holiday-and-Early-Closings-Calendar/default.aspx",
+      "published_on": "2021-12-27",
+      "consulted_on": "2026-11-17",
+      "evidence_role": "Scheduled closures and early closes for 2022 and 2023, including Juneteenth beginning in 2022 and no observed New Year closure for Saturday 2022-01-01."
+    },
+    {
+      "source_id": "nyse-2023-11-10",
+      "title": "NYSE Group Announces 2024, 2025 and 2026 Holiday and Early Closings Calendar",
+      "url": "https://ir.theice.com/press/news-details/2023/NYSE-Group-Announces-2024-2025-and-2026-Holiday-and-Early-Closings-Calendar/default.aspx",
+      "published_on": "2023-11-10",
+      "consulted_on": "2026-11-17",
+      "evidence_role": "Scheduled closures and early closes for 2024 and 2025. The subsequently announced Carter closure supplements this planned calendar."
+    },
+    {
+      "source_id": "nyse-carter-2024-12-30",
+      "title": "The New York Stock Exchange Will Close Markets on January 9 to Honor the Passing of Former President Jimmy Carter on National Day of Mourning",
+      "url": "https://ir.theice.com/press/news-details/2024/The-New-York-Stock-Exchange-Will-Close-Markets-on-January-9-to-Honor-the-Passing-of-Former-President-Jimmy-Carter-on-National-Day-of-Mourning/default.aspx",
+      "published_on": "2024-12-30",
+      "consulted_on": "2026-11-17",
+      "evidence_role": "Additional full-day closure on 2025-01-09 for all NYSE Group equity markets, including NYSE Arca."
+    },
+    {
+      "source_id": "nasdaq-carter-2024-12-30",
+      "title": "U.S. Markets will be Closed for a National Day of Mourning for Former President Jimmy Carter",
+      "url": "https://www.nasdaqtrader.com/TraderNews.aspx?id=ETA2024-87",
+      "published_on": "2024-12-30",
+      "consulted_on": "2026-11-17",
+      "evidence_role": "Independent Nasdaq confirmation of the 2025-01-09 equities closure. URL identifier ETA2024-87; displayed heading Equity Trader Alert #2024-86."
+    },
+    {
+      "source_id": "nyse-core-hours",
+      "title": "Holidays and Trading Hours",
+      "url": "https://www.nyse.com/markets/hours-calendars",
+      "published_on": null,
+      "consulted_on": "2026-11-17",
+      "evidence_role": "Core equities session 09:30 to 16:00 Eastern. Current page holiday years roll forward; historical dates come from the archived releases. Publication date is not established."
+    }
+  ],
+  "years": [
+    {
+      "year": 2020,
+      "source_id": "nyse-2019-12-09",
+      "closed_dates": ["2020-01-01", "2020-01-20", "2020-02-17", "2020-04-10", "2020-05-25", "2020-07-03", "2020-09-07", "2020-11-26", "2020-12-25"],
+      "early_close_dates": ["2020-11-27", "2020-12-24"],
+      "supplemental_closures": [],
+      "expected_sessions": 253,
+      "expected_early_closes": 2
+    },
+    {
+      "year": 2021,
+      "source_id": "nyse-2019-12-09",
+      "closed_dates": ["2021-01-01", "2021-01-18", "2021-02-15", "2021-04-02", "2021-05-31", "2021-07-05", "2021-09-06", "2021-11-25", "2021-12-24"],
+      "early_close_dates": ["2021-11-26"],
+      "supplemental_closures": [],
+      "expected_sessions": 252,
+      "expected_early_closes": 1
+    },
+    {
+      "year": 2022,
+      "source_id": "nyse-2021-12-27",
+      "closed_dates": ["2022-01-17", "2022-02-21", "2022-04-15", "2022-05-30", "2022-06-20", "2022-07-04", "2022-09-05", "2022-11-24", "2022-12-26"],
+      "early_close_dates": ["2022-11-25"],
+      "supplemental_closures": [],
+      "expected_sessions": 251,
+      "expected_early_closes": 1
+    },
+    {
+      "year": 2023,
+      "source_id": "nyse-2021-12-27",
+      "closed_dates": ["2023-01-02", "2023-01-16", "2023-02-20", "2023-04-07", "2023-05-29", "2023-06-19", "2023-07-04", "2023-09-04", "2023-11-23", "2023-12-25"],
+      "early_close_dates": ["2023-07-03", "2023-11-24"],
+      "supplemental_closures": [],
+      "expected_sessions": 250,
+      "expected_early_closes": 2
+    },
+    {
+      "year": 2024,
+      "source_id": "nyse-2023-11-10",
+      "closed_dates": ["2024-01-01", "2024-01-15", "2024-02-19", "2024-03-29", "2024-05-27", "2024-06-19", "2024-07-04", "2024-09-02", "2024-11-28", "2024-12-25"],
+      "early_close_dates": ["2024-07-03", "2024-11-29", "2024-12-24"],
+      "supplemental_closures": [],
+      "expected_sessions": 252,
+      "expected_early_closes": 3
+    },
+    {
+      "year": 2025,
+      "source_id": "nyse-2023-11-10",
+      "closed_dates": ["2025-01-01", "2025-01-20", "2025-02-17", "2025-04-18", "2025-05-26", "2025-06-19", "2025-07-04", "2025-09-01", "2025-11-27", "2025-12-25"],
+      "early_close_dates": ["2025-07-03", "2025-11-28", "2025-12-24"],
+      "supplemental_closures": [
+        {
+          "date": "2025-01-09",
+          "reason": "National Day of Mourning for former President Jimmy Carter",
+          "source_ids": ["nyse-carter-2024-12-30", "nasdaq-carter-2024-12-30"]
+        }
+      ],
+      "expected_sessions": 250,
+      "expected_early_closes": 3
+    }
+  ]
+}

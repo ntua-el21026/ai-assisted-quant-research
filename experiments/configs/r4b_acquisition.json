@@ -1,0 +1,436 @@
+{
+  "account_plan": "Basic",
+  "account_type": "paper_only",
+  "budget": {
+    "max_attempts": 100,
+    "max_elapsed_seconds": 900,
+    "max_local_bytes": 1073741824,
+    "max_received_body_bytes": 262144000,
+    "min_interval_seconds": 0.35,
+    "timeout_seconds": 20
+  },
+  "calendar_path": "r4b_calendar_2020_2025.json",
+  "calendar_sha256": "181922ef62e8e73c6edb9641abc776c4b7f67c680e00288ce27159947e2b400f",
+  "candidate_end": "2025-12-31",
+  "candidate_start": "2020-01-01",
+  "checkpoint": "R4-B",
+  "entitlement_sources": [
+    "https://docs.alpaca.markets/us/docs/paper-trading",
+    "https://docs.alpaca.markets/us/docs/about-market-data-api",
+    "owner-reported Alpaca Support #397685"
+  ],
+  "feed": "iex",
+  "plan_id": "r4b-iex-etf-20261117",
+  "provider": "alpaca",
+  "rights_statement": "Owner-reported Support #397685 permits personal noncommercial research/backtesting and local storage within account entitlements. IEX only; no public vendor observations or empirical visualization/statistics release; no perpetual/post-account retention grant is inferred.",
+  "schema_version": "historical-acquisition-plan/v1",
+  "selection_rationale": "Two liquid ETFs assess regime/benchmark and comparison inputs without single-stock earnings requirements. Pilot and candidate measure data quality only; dates and symbols are frozen before observations. Small AAPL/NVDA queries are split-convention diagnostics, not study-universe selection.",
+  "stages": [
+    {
+      "acquisition_id": "preflight-bars",
+      "request": {
+        "adjustment": "raw",
+        "asof": "-",
+        "end": "2025-01-10",
+        "feed": "iex",
+        "limit": 100,
+        "max_pages": 2,
+        "provider": "alpaca",
+        "start": "2025-01-06",
+        "symbols": [
+          "QQQ",
+          "SPY"
+        ],
+        "timeframe": "1Day"
+      },
+      "request_kind": "bars",
+      "role": "preflight"
+    },
+    {
+      "acquisition_id": "preflight-actions",
+      "request": {
+        "data_quality": "all",
+        "end": "2024-03-31",
+        "limit": 1000,
+        "max_pages": 4,
+        "provider": "alpaca",
+        "start": "2024-01-01",
+        "symbols": [
+          "QQQ",
+          "SPY"
+        ],
+        "types": "all"
+      },
+      "request_kind": "actions",
+      "role": "preflight"
+    },
+    {
+      "acquisition_id": "pilot-bars",
+      "request": {
+        "adjustment": "raw",
+        "asof": "-",
+        "end": "2025-12-31",
+        "feed": "iex",
+        "limit": 1000,
+        "max_pages": 4,
+        "provider": "alpaca",
+        "start": "2024-01-01",
+        "symbols": [
+          "QQQ",
+          "SPY"
+        ],
+        "timeframe": "1Day"
+      },
+      "request_kind": "bars",
+      "role": "pilot"
+    },
+    {
+      "acquisition_id": "pilot-actions",
+      "request": {
+        "data_quality": "all",
+        "end": "2026-11-16",
+        "limit": 1000,
+        "max_pages": 4,
+        "provider": "alpaca",
+        "start": "2024-01-01",
+        "symbols": [
+          "QQQ",
+          "SPY"
+        ],
+        "types": "all"
+      },
+      "request_kind": "actions",
+      "role": "pilot"
+    },
+    {
+      "acquisition_id": "candidate-bars",
+      "request": {
+        "adjustment": "raw",
+        "asof": "-",
+        "end": "2025-12-31",
+        "feed": "iex",
+        "limit": 1000,
+        "max_pages": 8,
+        "provider": "alpaca",
+        "start": "2020-01-01",
+        "symbols": [
+          "QQQ",
+          "SPY"
+        ],
+        "timeframe": "1Day"
+      },
+      "request_kind": "bars",
+      "role": "candidate"
+    },
+    {
+      "acquisition_id": "candidate-actions",
+      "request": {
+        "data_quality": "all",
+        "end": "2026-11-16",
+        "limit": 1000,
+        "max_pages": 4,
+        "provider": "alpaca",
+        "start": "2020-01-01",
+        "symbols": [
+          "QQQ",
+          "SPY"
+        ],
+        "types": "all"
+      },
+      "request_kind": "actions",
+      "role": "candidate"
+    },
+    {
+      "acquisition_id": "coverage-2016",
+      "request": {
+        "adjustment": "raw",
+        "asof": "-",
+        "end": "2016-01-08",
+        "feed": "iex",
+        "limit": 100,
+        "max_pages": 2,
+        "provider": "alpaca",
+        "start": "2016-01-04",
+        "symbols": [
+          "QQQ",
+          "SPY"
+        ],
+        "timeframe": "1Day"
+      },
+      "request_kind": "bars",
+      "role": "diagnostic"
+    },
+    {
+      "acquisition_id": "coverage-2017",
+      "request": {
+        "adjustment": "raw",
+        "asof": "-",
+        "end": "2017-01-13",
+        "feed": "iex",
+        "limit": 100,
+        "max_pages": 2,
+        "provider": "alpaca",
+        "start": "2017-01-09",
+        "symbols": [
+          "QQQ",
+          "SPY"
+        ],
+        "timeframe": "1Day"
+      },
+      "request_kind": "bars",
+      "role": "diagnostic"
+    },
+    {
+      "acquisition_id": "coverage-2018",
+      "request": {
+        "adjustment": "raw",
+        "asof": "-",
+        "end": "2018-01-12",
+        "feed": "iex",
+        "limit": 100,
+        "max_pages": 2,
+        "provider": "alpaca",
+        "start": "2018-01-08",
+        "symbols": [
+          "QQQ",
+          "SPY"
+        ],
+        "timeframe": "1Day"
+      },
+      "request_kind": "bars",
+      "role": "diagnostic"
+    },
+    {
+      "acquisition_id": "coverage-2019",
+      "request": {
+        "adjustment": "raw",
+        "asof": "-",
+        "end": "2019-01-11",
+        "feed": "iex",
+        "limit": 100,
+        "max_pages": 2,
+        "provider": "alpaca",
+        "start": "2019-01-07",
+        "symbols": [
+          "QQQ",
+          "SPY"
+        ],
+        "timeframe": "1Day"
+      },
+      "request_kind": "bars",
+      "role": "diagnostic"
+    },
+    {
+      "acquisition_id": "early-actions",
+      "request": {
+        "data_quality": "all",
+        "end": "2020-03-31",
+        "limit": 1000,
+        "max_pages": 4,
+        "provider": "alpaca",
+        "start": "2016-01-01",
+        "symbols": [
+          "QQQ",
+          "SPY"
+        ],
+        "types": "all"
+      },
+      "request_kind": "actions",
+      "role": "diagnostic"
+    },
+    {
+      "acquisition_id": "aapl-split-raw",
+      "request": {
+        "adjustment": "raw",
+        "asof": "-",
+        "end": "2020-09-02",
+        "feed": "iex",
+        "limit": 100,
+        "max_pages": 2,
+        "provider": "alpaca",
+        "start": "2020-08-27",
+        "symbols": [
+          "AAPL"
+        ],
+        "timeframe": "1Day"
+      },
+      "request_kind": "bars",
+      "role": "diagnostic"
+    },
+    {
+      "acquisition_id": "nvda-split-raw",
+      "request": {
+        "adjustment": "raw",
+        "asof": "-",
+        "end": "2024-06-12",
+        "feed": "iex",
+        "limit": 100,
+        "max_pages": 2,
+        "provider": "alpaca",
+        "start": "2024-06-06",
+        "symbols": [
+          "NVDA"
+        ],
+        "timeframe": "1Day"
+      },
+      "request_kind": "bars",
+      "role": "diagnostic"
+    },
+    {
+      "acquisition_id": "aapl-split-split",
+      "request": {
+        "adjustment": "split",
+        "asof": "-",
+        "end": "2020-09-02",
+        "feed": "iex",
+        "limit": 100,
+        "max_pages": 2,
+        "provider": "alpaca",
+        "start": "2020-08-27",
+        "symbols": [
+          "AAPL"
+        ],
+        "timeframe": "1Day"
+      },
+      "request_kind": "bars",
+      "role": "diagnostic"
+    },
+    {
+      "acquisition_id": "nvda-split-split",
+      "request": {
+        "adjustment": "split",
+        "asof": "-",
+        "end": "2024-06-12",
+        "feed": "iex",
+        "limit": 100,
+        "max_pages": 2,
+        "provider": "alpaca",
+        "start": "2024-06-06",
+        "symbols": [
+          "NVDA"
+        ],
+        "timeframe": "1Day"
+      },
+      "request_kind": "bars",
+      "role": "diagnostic"
+    },
+    {
+      "acquisition_id": "aapl-split-actions",
+      "request": {
+        "data_quality": "all",
+        "end": "2020-10-01",
+        "limit": 1000,
+        "max_pages": 4,
+        "provider": "alpaca",
+        "start": "2020-08-01",
+        "symbols": [
+          "AAPL"
+        ],
+        "types": "all"
+      },
+      "request_kind": "actions",
+      "role": "diagnostic"
+    },
+    {
+      "acquisition_id": "nvda-split-actions",
+      "request": {
+        "data_quality": "all",
+        "end": "2024-08-01",
+        "limit": 1000,
+        "max_pages": 4,
+        "provider": "alpaca",
+        "start": "2024-06-01",
+        "symbols": [
+          "NVDA"
+        ],
+        "types": "all"
+      },
+      "request_kind": "actions",
+      "role": "diagnostic"
+    },
+    {
+      "acquisition_id": "etf-adjustment-raw",
+      "request": {
+        "adjustment": "raw",
+        "asof": "-",
+        "end": "2024-09-23",
+        "feed": "iex",
+        "limit": 100,
+        "max_pages": 2,
+        "provider": "alpaca",
+        "start": "2024-09-19",
+        "symbols": [
+          "QQQ",
+          "SPY"
+        ],
+        "timeframe": "1Day"
+      },
+      "request_kind": "bars",
+      "role": "diagnostic"
+    },
+    {
+      "acquisition_id": "etf-adjustment-split",
+      "request": {
+        "adjustment": "split",
+        "asof": "-",
+        "end": "2024-09-23",
+        "feed": "iex",
+        "limit": 100,
+        "max_pages": 2,
+        "provider": "alpaca",
+        "start": "2024-09-19",
+        "symbols": [
+          "QQQ",
+          "SPY"
+        ],
+        "timeframe": "1Day"
+      },
+      "request_kind": "bars",
+      "role": "diagnostic"
+    },
+    {
+      "acquisition_id": "etf-adjustment-dividend",
+      "request": {
+        "adjustment": "dividend",
+        "asof": "-",
+        "end": "2024-09-23",
+        "feed": "iex",
+        "limit": 100,
+        "max_pages": 2,
+        "provider": "alpaca",
+        "start": "2024-09-19",
+        "symbols": [
+          "QQQ",
+          "SPY"
+        ],
+        "timeframe": "1Day"
+      },
+      "request_kind": "bars",
+      "role": "diagnostic"
+    },
+    {
+      "acquisition_id": "etf-adjustment-all",
+      "request": {
+        "adjustment": "all",
+        "asof": "-",
+        "end": "2024-09-23",
+        "feed": "iex",
+        "limit": 100,
+        "max_pages": 2,
+        "provider": "alpaca",
+        "start": "2024-09-19",
+        "symbols": [
+          "QQQ",
+          "SPY"
+        ],
+        "timeframe": "1Day"
+      },
+      "request_kind": "bars",
+      "role": "diagnostic"
+    }
+  ],
+  "symbols": [
+    "QQQ",
+    "SPY"
+  ]
+}
