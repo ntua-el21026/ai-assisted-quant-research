@@ -1,6 +1,6 @@
 # Final project handoff — 2026-11-17
 
-**B. ENGINEERING CLOSURE COMPLETE — EMPIRICAL RESEARCH PENDING**
+**Engineering implementation verified; historical empirical research pending.**
 
 The implemented framework is a verified, reproducible engineering deliverable for
 portfolio review. Historical strategy evaluation has not executed. The original
@@ -30,7 +30,7 @@ Historical AI/news evidence remains unqualified. An eventual empirical study mus
 keep AI neutral unless credible as-of evidence exists. Frozen synthetic AI examples
 test bounded behavior; they do not support an empirical AI-uplift claim.
 
-## Git identity, commits and exact file inventory
+## Engineering-closure identity and file inventory
 
 Initial clean main, origin/main and remote GitHub main all matched
 `73febf57badc11dfe0a4984c7a5ac9c9ca242ddd`, with canonical SSH origin
@@ -42,12 +42,13 @@ Markdown documentation. The 147-file Python fingerprint remains
 Closure commits:
 
 1. `d4dc21485b6429810d1d8306331be20ff2394cbd` — `docs(research): close bounded data feasibility with empirical no-go`.
-2. The commit containing this handoff — `docs: finalize engineering portfolio and reproducibility handoff`.
+2. `cb30a032fff66966de6645545ee443dbe12366a6` — `docs: finalize engineering portfolio and reproducibility handoff`.
 
-**Final delivery SHA:** resolve `git log -1 --format=%H -- docs/research/FINAL_PROJECT_HANDOFF.md`
-in the delivered checkout. A report cannot embed its own future Git object hash. The
-literal final SHA, commit list and post-push local/origin/GitHub equality are recorded
-in the final delivery message and ignored release receipt described below.
+The engineering closure was delivered at `cb30a032fff66966de6645545ee443dbe12366a6`.
+The subsequent documentation-only correction and presentation pass are described below.
+Their final revision is the commit containing this updated handoff, resolved with
+`git log -1 --format=%H -- docs/research/FINAL_PROJECT_HANDOFF.md`. The post-push receipt
+and delivery message record its literal SHA without a self-referential commit hash.
 
 | Changed file | Purpose |
 | --- | --- |
@@ -82,8 +83,10 @@ attempts. SQLite and filesystem publication are separate durability boundaries. 
 are bounded cooperative single-host tests, not distributed/concurrency, hostile-writer,
 power-loss, exchange-execution or hosted-production guarantees.
 
-## Fresh test, static and installation evidence
+## Engineering-closure test, static and installation evidence
 
+The following established results belong to the engineering-closure verification;
+the later editorial pass does not represent them as a newly executed full suite.
 Environment: Python 3.14.7, SQLite 3.53.1, Pydantic 2.13.3, Pytest 9.0.3, Ruff 0.15.12,
 mypy 1.20.2 and Temporal SDK 1.27.0. No existing environment was deleted/recreated.
 All settled verification commands exited **0**:
@@ -157,7 +160,8 @@ final cash/equity `9980.4831136` from initial cash `10000`, P&L `−19.5168864` 
 synthetic software expectations, not empirical performance findings.
 
 All six fixture commands (R1/R2/R4-A, each twice) passed. All deterministic pair bytes
-matched, and **238 invariant files** matched accepted R4-B/R4-B.2 evidence. Numerical
+matched, and **238 generated artifact files** matched accepted R4-B/R4-B.2 baseline
+bytes after excluding runtime metadata and revision-dependent manifests/reports. Numerical
 projections remain:
 
 | Fixture projection | Files | SHA-256 |
@@ -224,6 +228,12 @@ conflict with the retained positive-relative-strength entry condition. No new sc
 split or threshold is chosen on the owner's behalf, and no empirical results are
 fabricated to complete the portfolio narrative.
 
+The [EODHD licensing correction](FINAL_DATA_FEASIBILITY.md#eodhd-licensing-correction--2026-11-17)
+establishes conditional private storage and post-cancellation retention rights for
+qualifying users. Project-specific public-derived licensing, owner entitlement and
+dataset qualification remain unestablished. It does not qualify the existing IEX pilot
+or change the empirical NO-GO.
+
 ## Security, publication and final repository state
 
 The complete diff is restricted to the eight named Markdown files. Staged content is
@@ -233,10 +243,14 @@ remain ignored. Existing `.venv`, raw provider evidence and historical documents
 intact. No credentials were loaded/forwarded, broker-write endpoint invoked, service
 deployed, schedule enabled, CI activated, account changed or subscription purchased.
 
-Publication uses a normal push only after confirming the remote has not advanced.
-Post-push release verification records the literal final SHA, exact commit/file inventory,
-report hashes, final-checkout deterministic runs and these observed conditions in
-`results/final-closure-release-audit-20261117/release.json`:
+The original engineering-closure publication is recorded in
+`results/final-closure-release-audit-20261117/release.json`, SHA-256
+`62163b46669734ec65b0f129483576f9a12a6088c91de4598b1ba5076b8eeec9`.
+That receipt and the earlier verification artifacts remain unchanged.
+
+The final documentation pass uses a separate post-push receipt,
+`results/final-presentation-20261117/release.json`. It records the literal presentation
+revision, changed-file inventory, documentation checks and these observed conditions:
 
 ```text
 local HEAD = origin/main = GitHub refs/heads/main
@@ -245,8 +259,30 @@ protected source/config/test/dependency and historical paths are unchanged
 no private/licensed input or generated empirical result is tracked
 ```
 
-The release receipt and final delivery message complete the Git observation after the
-report's own commit; synchronization is not inferred from a local commit succeeding.
+The presentation receipt and delivery message complete the Git observation after the
+report's own commit. Publication uses a normal push only after confirming that the
+remote has not advanced; synchronization is not inferred from a local commit succeeding.
+
+## Final documentation and presentation pass
+
+This final pass corrects the EODHD assessment using three separately authorized official
+pages, improves the README's research objectives and evidence terminology, and clarifies
+the implemented architecture, execution conventions and reproducibility conditions.
+The [source report](FINAL_DATA_FEASIBILITY.md) preserves the original failed legal-URL
+lookup and distinguishes that review from the corrective verification. The empirical
+decision remains NO-GO; no data acquisition or historical research execution is authorized.
+
+Implementation, tests, dependencies, parameters, fixtures and established numerical
+artifacts are unchanged. Dated checkpoint verification reports retain their original
+evidence and review status. Reproduction command blocks are checked against the
+verified guide. The editorial checks passed 12 Markdown-link checker tests and validated
+107 Markdown files with 232 local links. GitHub's Markdown API rendered all eight edited
+pages. All three diagrams rendered with Mermaid's browser runtime and were visually
+inspected; the README uses a top-down layout for legibility. The headless GitHub preview
+did not load its rich diagram display, so that client preview is not claimed as a
+successful rendering check. The separate browser-runtime results and privacy checks
+are recorded in the presentation receipt. The repository is frozen for presentation
+at the final documentation revision. No further development phase is proposed.
 
 ## Is further Codex work necessary?
 

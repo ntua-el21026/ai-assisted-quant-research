@@ -4,8 +4,9 @@
 engineering framework delivered with empirical validation pending.** The existing
 authorized IEX pilot remains inadmissible. None of the three permitted alternatives
 has both established authorization and sufficiently qualified evidence for this study.
-Public documentation, an advertised free plan and an existing adapter establish
-neither account entitlement nor approval to acquire or retain a research dataset.
+Public documentation can establish conditional license permissions, including the
+EODHD private-retention permissions corrected below. It does not establish the owner's
+applicable eligibility, actual account entitlement or authorization for new acquisition.
 
 This finite review closes the source-feasibility decision. It authorizes no additional
 acquisition, subscription, source integration, R4-B continuation or R4-C experiment.
@@ -90,8 +91,8 @@ complete, correct, historically available or licensed for the intended use.
 | **D — Currency and security identity** | Reviewed distribution schema does not establish payout currency or permanent historical identity. Symbology limits delisted support to unrecycled tickers and describes further permanent-ticker support as expansion work. [T2][t2], [T5][t5] | Dividend payout currency and separate listing currency/identifiers are documented. Fundamentals expose FIGI/ISIN and update fields; these are not proof of complete effective-dated identity or knowledge-time history. [E2][e2], [E3][e3] | Dividend payment currency and dated ticker metadata with CIK/FIGIs/listing currency are documented. Older metadata fields may be empty. Effective-date queries do not alone prove historical first-publication vintages. [M2][m2], [M4][m4] |
 | **E — Session, calendar and execution** | EOD availability is documented, but reviewed pages do not establish the exact regular-session aggregation, auction/open convention and calendar contract required by strict v2. [T1][t1] | Daily trading-date OHLC is documented; reviewed pages do not fully specify eligible-sale/session boundaries or establish auction/open attainability. [E1][e1] | ET aggregates use qualifying trades and can span premarket, regular and after-hours periods. No eligible trade means no bar. Session filtering/aggregation and the execution/calendar contract would need explicit qualification. [M1][m1] |
 | **F — Availability, corrections and revisions** | Most US EOD data is available at 17:30 in the documentation's EST wording; corrections update through 20:00. No historical vintage selector is established. An EOD close-plus-one-minute cutoff is unsupported by this evidence. [T1][t1] | Major US updates are documented within 15 minutes after close; other markets can be later. Adjusted closes are recomputed. Reviewed endpoints do not establish historical availability/revision snapshots. [E1][e1] | Dated reference metadata is useful, but reviewed aggregate/action schemas do not establish immutable as-known-at vintages or historical delivery cutoffs. An event date is not an observation timestamp. [M1][m1], [M2][m2], [M4][m4] |
-| **G — Durable storage and retention** | Current §1.6 forbids durable source/derived storage on Starter/trial. Eligible paid source data must be deleted after the paid entitlement ends; retention exceptions are unavailable to Starter/Power. This conflicts with an unconditionally permanent frozen dataset. [T0][t0] | A retention grant for the proposed frozen research artifact was not established. The attempted legal URL returned 404; pricing/docs do not supply that permission. This is unresolved, not a finding that all retention is prohibited. [E4][e4], [E5][e5] | Current §8 limits use to licensed information and requires deletion after the relevant license ends, generally within 30 days. Downgrade leaves only the new entitlement's permitted information. Per-request licensing is not perpetual. [M6][m6] |
-| **H — Public derived results and redistribution** | §1.6 conditionally permits qualifying non-substitutive, non-reconstructive derived products outside Starter/trial restrictions; §7.3 separately limits raw redistribution. A particular public chart/table and source-specific rights still require assessment. [T0][t0] | Public aggregate-statistic/chart and raw-data redistribution rights were not established in the bounded official sources. A personal-use product description is insufficient. [E1][e1], [E4][e4] | Personal retained analyses that neither contain nor reconstruct source information are distinguished from publication/sharing. Reviewed personal terms do not establish permission for this project's public empirical report; source-specific restrictions also apply. [M6][m6] |
+| **G — Durable storage and retention** | Current §1.6 forbids durable source/derived storage on Starter/trial. Eligible paid source data must be deleted after the paid entitlement ends; retention exceptions are unavailable to Starter/Power. This conflicts with an unconditionally permanent frozen dataset. [T0][t0] | Confirmed conditional permission: qualifying Non-Professional users may store data privately for noncommercial use. Active-subscription downloads and provenance may be kept after cancellation/downgrade; private derived outputs may be retained indefinitely. This does not establish the owner's eligibility or entitlement. [E6][e6], [E7][e7], [E8][e8] | Current §8 limits use to licensed information and requires deletion after the relevant license ends, generally within 30 days. Downgrade leaves only the new entitlement's permitted information. Per-request licensing is not perpetual. [M6][m6] |
+| **H — Public derived results and redistribution** | §1.6 conditionally permits qualifying non-substitutive, non-reconstructive derived products outside Starter/trial restrictions; §7.3 separately limits raw redistribution. A particular public chart/table and source-specific rights still require assessment. [T0][t0] | Personal-use permission restricts redistribution and public display of original/repackaged data. Private research outputs are allowed; public derived statistics/charts require separate licensing assessment and are not automatically permitted by aggregation or non-reconstructibility. Project-specific public rights remain unresolved. [E6][e6], [E7][e7], [E8][e8] | Personal retained analyses that neither contain nor reconstruct source information are distinguished from publication/sharing. Reviewed personal terms do not establish permission for this project's public empirical report; source-specific restrictions also apply. [M6][m6] |
 | **I — Authorized access and cost** | No alternative access authorization is established. Advertised individual Power is $30/month; commercial internal use is $50/month. Free access does not permit frozen research storage under current terms. No plan is purchased. [T0][t0], [T4][t4] | No authorized account/plan is established. EOD is advertised at $19.99/month; ALL-IN-ONE, including the separate fundamentals surface, is $99.99/month. Free one-year history cannot satisfy this multiyear design. [E4][e4] | No authorized account/classification is established. Advertised monthly Stocks tiers are $0/$29/$79/$199. A cheaper tier's shorter rolling history does not automatically cover the proposed dates plus warm-up. [M5][m5], [M6][m6] |
 | **J — Existing implementation and remaining work** | Repository has an adjusted-bar provider for the historical paper-validation path, not a qualified v2 action/raw/history pipeline. Reuse would still require scoped normalization, preservation and admission evidence. No integration is implemented. | No qualifying adapter/retained dataset is established by this review. Mixed volume basis, action fields and nullable dates would require dedicated normalization/provenance tests after authorization. No integration is implemented. | Richer schemas reduce some field uncertainty but do not supply a verified adapter, source-wide qualification or rights. Session and dated-identity semantics would need explicit tests after authorization. No integration is implemented. |
 
@@ -113,8 +114,10 @@ credential or adapter would not extend the owner's Alpaca-only authorization.
 **No candidate is demonstrated to pass all A–J checks, and no alternative has established
 authorization for acquisition.** Tiingo offers relevant EOD/action surfaces but has material storage,
 identity and historical-field limitations. EODHD offers relevant raw/action fields but
-retention/publication rights, historical availability and exact contract compatibility
-remain unestablished. Massive offers the clearest reviewed currency/classification and
+its confirmed conditional private-storage and post-cancellation retention permissions
+do not establish this owner's eligibility, account entitlement or acquisition
+authorization. Public derived-result licensing, historical availability and exact
+contract compatibility remain unestablished. Massive offers the clearest reviewed currency/classification and
 dated-identity fields, but those capabilities do not establish actual record quality,
 the required source/timing contract, retention/publication rights or authorized access.
 These findings are not a quality ranking or proof that any provider cannot support a
@@ -129,7 +132,7 @@ strength, alter risk thresholds, truncate the study or relabel an exposed period
 untouched holdout. There is no further source investigation or owner scope question in
 this closure task. No R4-C or additional R4-B phase is initiated.
 
-## Source inventory and executed limits
+## Original source inventory and executed limits
 
 All links below were checked through official-domain documentation/search on
 **2026-11-17**. They are public capability/legal evidence, not archived market
@@ -164,8 +167,9 @@ targets and six search-quality feedback submissions**. The first 17 targets used
 Firecrawl: 16 returned HTTP 200 and one returned HTTP 404 according to connector
 metadata. The last permitted target independently retrieved Tiingo's official terms
 through the web reader and confirmed §1.6; it was not a market-data request. The failed
-EODHD legal-path lookup was not retried. Its terms search returned no results, so its
-legal permission gaps are reported explicitly. The inventory contains **19 distinct
+EODHD legal-path lookup was not retried. Its terms search returned no results; the
+separately authorized correction below resolves that review's private-retention
+permission gap using three different official URLs. The original inventory contains **19 distinct
 cited source URLs**: 18 document targets and the search-only Tiingo dividend product.
 
 Tools used were `firecrawl_search`, `firecrawl_scrape`,
@@ -181,6 +185,58 @@ observations embedded in documentation were not used or retained as a dataset an
 are not reproduced here. No code or test change, numerical experiment or empirical
 qualification run is part of this report.
 
+## EODHD licensing correction — 2026-11-17
+
+The initial review used the wrong legal path, [E5][e5], which returned HTTP 404.
+That failed lookup did not establish an absence of EODHD storage or retention
+permission. The user subsequently supplied three exact official URLs and explicitly
+authorized this bounded documentation correction. All three were checked through
+`firecrawl_scrape` on **November 17, 2026, at approximately 14:13 UTC**, with the
+following observed results:
+
+| ID | Corrective official source | Observed tool result |
+| --- | --- | --- |
+| E6 | [EODHD Terms and Conditions][e6] | HTTP 200; title: Terms and Conditions; connector cache timestamp 2026-11-17 13:06:23 UTC |
+| E7 | [EODHD storage and cancellation help][e7] | HTTP 200; title: Cancel a Plan, Keep Your Data, Refunds; cache timestamp 2026-11-16 02:59:09 UTC |
+| E8 | [EODHD personal-use help][e8] | HTTP 200; title: What a Personal Plan Allows; cache timestamp 2026-11-16 13:03:31 UTC |
+
+The governing terms permit qualifying Non-Professional users acting personally for
+their own investment activities to store and analyze data privately for noncommercial
+purposes. Use on behalf of another person, a business or an organization is outside
+that personal scope. The help pages explicitly interpret those terms as permitting
+local raw/normalized data, backups and audit/provenance records, including retention
+of active-subscription downloads after cancellation or downgrade. Private research
+outputs may be kept indefinitely, whether or not their source values are
+reconstructible, provided neither the data nor the outputs are shared. New data or
+revisions remain subject to an applicable active entitlement. [E6][e6], [E7][e7], [E8][e8]
+
+These permissions do not extend automatically to public portfolio results. Personal
+plans restrict raw/repackaged redistribution and public data display. The personal-use
+help page separately directs publication of derived rankings, signals and backtest
+statistics to licensing assessment using the actual outputs and audience; transforming
+or aggregating data is not an automatic publication grant. The help pages identify
+the terms as governing personal plans and say a separate permission letter is generally
+unnecessary for the described qualifying personal uses. This report therefore does
+not require a special letter for already-covered private use, infer a public-derived
+license or determine the owner's personal/professional status. [E6][e6], [E7][e7], [E8][e8]
+
+This correction changes G, H and the EODHD decision explanation. It removes a blanket
+unresolved-private-retention finding. **The empirical NO-GO and STOP remain unchanged:**
+the owner's applicable eligibility, actual entitlement and new-acquisition
+authorization were not established or inspected; public-result licensing and source
+qualification remain unresolved. No provider observation, account or credential was
+accessed, and no study, implementation, purchase or additional investigation is
+initiated by the correction.
+
+The corrective authorization covers **three page targets, all HTTP 200, zero searches
+and zero data/API acquisition requests**. These are additional to the preserved
+original **18-target / 19-source-URL** review, rather than a reset or retrospective
+expansion of that review's budget. Across the two authorizations there are **21
+document targets and 22 distinct cited source URLs**; the original six searches and
+six feedback submissions are unchanged. The original E5 HTTP 404 remains recorded at
+its different URL. No native downloads, account access, credential inspection or
+independently verified connector byte accounting is claimed.
+
 [t0]: https://app.tiingo.com/tos/
 [t1]: https://www.tiingo.com/documentation/end-of-day
 [t2]: https://www.tiingo.com/documentation/corporate-actions/dividends
@@ -194,6 +250,9 @@ qualification run is part of this report.
 [e3]: https://eodhd.com/financial-apis/stock-etfs-fundamental-data-feeds
 [e4]: https://eodhd.com/pricing
 [e5]: https://eodhd.com/terms-conditions
+[e6]: https://eodhd.com/financial-apis/terms-conditions
+[e7]: https://eodhd.com/help/storage
+[e8]: https://eodhd.com/help/personal-use
 [m1]: https://massive.com/docs/rest/stocks/aggregates/custom-bars
 [m2]: https://massive.com/docs/rest/stocks/corporate-actions/dividends
 [m3]: https://massive.com/docs/rest/stocks/corporate-actions/splits

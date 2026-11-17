@@ -171,15 +171,21 @@ A canonical experiment run must accept a versioned configuration and an offline 
 
 | Artifact | Required content |
 | --- | --- |
-| `manifest.json` | Code revision, config/data hashes, experiment ID, seed, platform/dependency versions, time convention, provenance and warnings |
+| `manifest.json` | Code revision, config/data hashes, experiment ID, seed, Python/dependency versions, time convention, provenance and warnings |
 | `config.snapshot.*` | Exact effective research configuration |
 | `trades.csv` | Signals, simulated fills/exits, rejected/unfilled cases, costs, timestamps and reasons |
 | `equity.csv` | Session equity, cash, exposures and benchmark-aligned values |
 | `metrics.json` | Definitions, calculated metrics, undefined values and units |
 | `comparisons.json` | Baseline/ablation/AI/benchmark comparison references, where applicable |
 | `report.md` | Method, findings, tables, limitations and run identifiers |
+| `runtime.json` | Separately labeled nondeterministic timestamps, elapsed duration and host/platform details |
 
-Use canonical serialization, ordered records and fixed seeds. Two runs with the same inputs should yield byte-identical deterministic artifacts, excluding separately labeled non-deterministic runtime metadata. The implemented R1/R2 CLIs and schemas are documented in the architecture and checkpoint handoffs. A single documented offline command and a small public fixture must reproduce a complete illustrative run without credentials or network access.
+Use canonical serialization, ordered records and fixed seeds. Runs with the same frozen
+inputs, configuration, source revision and recorded execution environment should produce
+byte-identical deterministic artifacts, excluding separately labeled nondeterministic
+runtime metadata. The R1/R2 CLIs and schemas are documented in the architecture and
+checkpoint handoffs. The public fixture must reproduce a connected illustrative run
+without credentials or network access during execution.
 
 Large, private, licensed or generated datasets belong outside Git; commit manifests, code, test fixtures and appropriately sized, licensed example results only.
 

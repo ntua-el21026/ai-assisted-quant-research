@@ -27,23 +27,26 @@ program remains in development; the engineering deliverable is ready for portfol
 | [Research architecture](research/ARCHITECTURE.md) | Actual offline research/matrix CLI, local Temporal/SQLite and qualification boundaries | Delivered interfaces and deferred scientific work distinguished |
 | [Design decision](superpowers/specs/2026-11-16-ai-assisted-quant-research-design.md) | Approved balanced AI/ML + systems direction and tradeoffs | Approved scope |
 | [Four-checkpoint implementation plan](superpowers/plans/2026-11-16-ai-assisted-quant-research.md) | Test-first R1–R4 task definitions and verification gates | R1–R3 reviewed baseline; R4 empirical gate pending |
-| [Four Codex prompts](research/CODEX_CHECKPOINT_PROMPTS.md) | Original checkpoint assignments; later work follows explicit staged authorization | R1–R4-B engineering reviewed; R4-B.1 acceptance pending |
+| [Four Codex prompts](research/CODEX_CHECKPOINT_PROMPTS.md) | Original checkpoint assignments; later work follows explicit staged authorization | Historical assignments; use the final handoff for current status |
 | [Root contributor/agent guide](../AGENTS.md) | Repository safety constraints, instructions and current authority | Current |
 | [Main README](../README.md) | Portfolio-facing introduction and truthful implementation status | Current |
 
-### The four implementation checkpoints
+### Checkpoint structure and detailed evidence
 
 1. **R1 — Data and simulation:** audited offline snapshots, signal generation, correct causal fills and local artifact contract.
 2. **R2 — Experiments and AI:** aligned benchmarks, walk-forward, cost/ablation/uncertainty analysis and frozen AI evaluation.
 3. **R3 — Local reliability:** real local Temporal research workflow, SQLite idempotency and recovery evidence.
-4. **R4 — Portfolio release:** verified results, research report, license-safe example, local presentation and reproducibility audit.
+4. **R4 — Portfolio release:** historical study and reporting, public example and reproducibility audit. Engineering closure is complete; the empirical gate remains open.
 
 R1–R3 have tests and executed synthetic/local systems paths. The owner identifies
 `60dd250` as their reviewed R1–R3 baseline. R4-A's synthetic-only historical-data
 and corporate-action foundation was independently accepted at `0dd0875`.
-R4-B engineering was independently accepted at `a6d3a09`. R4-B.1's bounded pilot has
-complete raw bar coverage but failed action/scientific admission. Its independent
-acceptance and historical strategy research remain pending.
+R4-B engineering was independently accepted at `a6d3a09`. Subsequent corrective
+reports preserve their dated implementation, qualification and review status.
+The pilot has complete internal bar coverage but remains unqualified for historical
+strategy research. The final handoff records the current engineering closure.
+Test counts and artifact hashes in earlier reports describe their recorded revisions;
+they are not replacements for the consolidated closure evidence.
 See [R1 contracts](research/R1_IMPLEMENTATION.md), [R1 verification](research/R1_VERIFICATION.md),
 [R2 verification](research/R2_VERIFICATION.md) and [R3 verification](research/R3_VERIFICATION.md).
 A synthetic example is not empirical performance evidence.

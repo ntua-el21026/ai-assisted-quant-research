@@ -7,10 +7,11 @@ deterministic strategy and risk decisions, next-session simulation, evaluation a
 hash-indexed artifacts. A separate local Temporal/SQLite track verifies retries,
 idempotence, reconciliation and workflow replay against the same research core.
 
-The public demonstration is reproducible and synthetic. It includes a hand-checked
-losing trade, explicit rejections and complete cash/equity accounting. The project
-currently supports software-correctness and local-reliability claims; it does not
-establish historical strategy performance or empirical AI benefit.
+The research objectives are to assess deterministic strategy robustness and the
+incremental effect of a negative-only AI/news risk overlay. The systems objective is
+to verify state recovery, idempotence and replay. The public demonstration uses
+synthetic data and supports software-correctness and local-reliability claims;
+historical strategy performance and empirical AI benefit remain unverified.
 
 **Start here:** [final technical handoff](docs/research/FINAL_PROJECT_HANDOFF.md) ·
 [reproduce the public example](docs/research/REPRODUCIBILITY.md) ·
@@ -32,7 +33,8 @@ Maintainer: Michail Athanasios Peppas, NTUA Electrical and Computer Engineering.
   lifecycle records, exactly-once observable committed results and fail-closed recovery
   across separate database and filesystem publication boundaries.
 - **Historical-data safety:** compatible v1/v2 contracts, isolated split/dividend accounting,
-  explicit read-only acquisition, durable budgets and immutable negative qualification evidence.
+  explicit read-only acquisition, durable budgets and immutable audit evidence, including
+  failed dataset qualifications.
 
 The long-only baseline, relative-strength filter, risk limits and accepted numerical
 behavior are preserved. Positive returns and a minimum trade count are not acceptance criteria.
@@ -40,7 +42,7 @@ behavior are preserved. Positive returns and a minimum trade count are not accep
 ## Architecture and technology
 
 ```mermaid
-flowchart LR
+flowchart TB
     D["Frozen dataset + config"] --> F["Causal features"]
     F --> S["Strategy + risk decisions"]
     S --> E["Next-session simulation + accounting"]
@@ -84,17 +86,19 @@ no historical investment inference. The fixture calendar is not an exchange cale
 
 [Reproducibility instructions](docs/research/REPRODUCIBILITY.md) give the executed two-run
 sequence, exact inventory/hash verification, expected output and optional existing
-matrix, corporate-action and local workflow demonstrations. The R2 `evaluate` command
-adds the implemented statistical/benchmark/AI comparisons; the R1-compatible `run`
-format deliberately defers those comparisons. No new backtesting framework is required.
+matrix, corporate-action and local workflow demonstrations. The `run` command records
+causal decisions and accounting; `evaluate` adds chronological experiments, benchmarks,
+statistical comparisons and frozen AI controls.
 
 ## Verification status
 
-Closure verification: **1,521 tests passed, nine gated external-service tests skipped**,
+At the [engineering closure](docs/research/FINAL_PROJECT_HANDOFF.md),
+**1,521 tests passed and nine gated external-service tests were skipped**,
 with three existing Temporal/Pydantic warnings. Repository-wide Ruff, the established
 59-file mypy scope, dependency/lock consistency, frontend-only checks and local Temporal
-recovery/replay passed. Two-run artifacts match byte-for-byte; 238 protected invariant
-files match the accepted references. Commands, environment, hashes, exclusions and
+recovery/replay passed. Repeated artifact sets were byte-identical. Across revisions,
+238 generated artifact files matched accepted baseline bytes; this comparison excludes
+runtime metadata and revision-dependent manifests/reports. Commands, environment, hashes, exclusions and
 clean-install evidence are consolidated in [the final handoff](docs/research/FINAL_PROJECT_HANDOFF.md).
 
 Reproducibility is defined for the same dataset, configuration, code revision and recorded

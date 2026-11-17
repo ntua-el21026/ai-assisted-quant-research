@@ -37,22 +37,24 @@ All arrows denote local data movement or controlled function calls. The Temporal
 | Temporal | `apps/workers/app/` | Dedicated real research workflow/activity, finite local SDK runner and replay/recovery tests; ten legacy skeletons preserved |
 | Dashboard | `apps/dashboard/` | Static safety-preview scaffold; not a research-results viewer |
 
-## 3. Source organization and remaining additions
+## 3. Implemented source organization
 
-Reuse the existing package structure and keep new files focused. Exact signatures and incremental changes are defined in the [implementation plan](../superpowers/plans/2026-11-16-ai-assisted-quant-research.md).
+The implementation uses the existing package boundaries below. The
+[implementation plan](../superpowers/plans/2026-11-16-ai-assisted-quant-research.md)
+records the original task sequence; the checkpoint reports document delivered interfaces.
 
 ```text
 packages/
-  data/            # Existing OHLCV/feature code; add snapshot manifests and quality gates
-  strategy/        # Reuse deterministic candidates, regime and exits
-  risk/            # Reuse risk constraints through simulation-safe adapters
-  backtesting/     # Correct execution accounting, timing and metrics
-  ai/              # Reuse parsers, scoring, provider-agnostic policy
-  research/        # New experiment config, offline orchestration, validation, artifacts
-  ledger/          # Existing local persistence contracts
+  data/            # Observations, features, snapshots, provenance and quality gates
+  strategy/        # Deterministic candidates, regime and exits
+  risk/            # Risk constraints used by simulation-safe adapters
+  backtesting/     # Execution accounting, timing and metrics
+  ai/              # Parsers, scoring and provider-agnostic policy
+  research/        # Experiment config, offline orchestration, validation and artifacts
+  ledger/          # Local persistence contracts
 apps/
-  workers/app/     # Add a small local research workflow, preserve legacy skeletons
-  dashboard/       # Optional generated static results view; no privileged browser calls
+  workers/app/     # Local research workflow and preserved legacy skeletons
+  dashboard/       # Retained static safety preview; no privileged browser calls
 experiments/
   configs/         # Versioned baseline, costs, ablations and reproducibility seeds
 datasets/
@@ -66,7 +68,8 @@ results/           # Generated local outputs, ignored by default; explicitly vet
 docs/research/     # Protocol, architecture and verified results/report
 ```
 
-New code should not duplicate existing functionality merely to satisfy this shape. During implementation, prefer adapters and tested extensions to wholesale rewrites. Large historic modules may be split only where the task's tests justify a cohesive boundary.
+The research adapters reuse existing feature, strategy and risk logic. Research-specific
+artifact and ledger state are separate from the historical operational interfaces.
 
 ## 4. Canonical research interface
 
@@ -81,8 +84,14 @@ uv run --offline --no-sync python -m packages.research.cli run \
 
 **Implemented in R1.** The canonical runner refuses missing/invalid inputs, avoids network and broker imports, uses deterministic ordering and stages all artifacts before atomic publication. [R1 contracts and limitations](R1_IMPLEMENTATION.md) document this compatible path.
 
-R2 adds `python -m packages.research.cli evaluate --config experiments/configs/ablations.yaml
---dataset tests/fixtures/market_snapshot/manifest.json --output results/r2-example`.
+The R2 matrix interface is:
+
+```bash
+uv run --offline --no-sync python -m packages.research.cli evaluate \
+  --config experiments/configs/ablations.yaml \
+  --dataset tests/fixtures/market_snapshot/manifest.json --output results/r2-example
+```
+
 `validation.py` registers anchored folds, fixed ablations/costs, opt-in final evaluation and
 paired AI policies. `metrics.py`, `benchmarks.py` and `resampling.py` provide explicit
 statistical conventions and undefined reasons. `matrix_artifacts.py` publishes a root matrix
@@ -90,7 +99,10 @@ and complete versioned case records. See [executed R2 verification](R2_VERIFICAT
 Optional R3 orchestration is documented below. Read-only provider acquisition uses the
 separate explicit R4-B command documented in section 10; ordinary runs remain offline.
 
-The run output is an immutable experiment record identified by data/config/code hashes and a seed. A preview dashboard, if included, consumes **only these generated local files** and does not issue control actions.
+The run output is an immutable experiment record identified by dataset, configuration,
+source and recorded execution-environment hashes, with fixed seeds. Generated reports
+consume recorded local artifacts. The retained dashboard is a static safety preview,
+not a research-results viewer or a control interface for the research pipeline.
 
 ## 5. Research correctness boundaries
 
@@ -106,7 +118,9 @@ The run output is an immutable experiment record identified by data/config/code 
 - **Evaluation boundary:** frozen splits, benchmark alignment, ablations and Monte Carlo seeded before the final evaluation, every metric traceable to inputs.
 - **Artifact boundary:** canonical records, atomic writes, stable run IDs, source/config hashes, no secrets or proprietary payloads.
 
-The first end-to-end integration test should run entirely on the synthetic fixture with fixed expected positions, cash, equity, trade count, reject codes and artifact hashes. Only then should real historical experiments begin.
+Executed end-to-end integration tests use the synthetic fixture with independently
+checked positions, cash, equity, trade counts, rejection codes and artifact hashes.
+They verify software behavior; historical experiments still require separate data admission.
 
 ## 6. Local reliability track
 

@@ -1,7 +1,7 @@
 # Reproduce the public engineering demonstration
 
 **Engineering implementation verified; historical empirical research pending.**
-The reference uses original CC0 synthetic prices and a synthetic weekday calendar.
+The reference uses original CC0-1.0 synthetic prices and a synthetic weekday calendar.
 It demonstrates connected software behavior, not market performance, an exchange
 calendar, historical AI accuracy or an untouched evaluation period.
 
@@ -49,8 +49,8 @@ positions are recorded.
 
 ## 3. Verify hashes, inventories, paired bytes and the accounting target
 
-The following is a small inspection command for this fixed, flat public example.
-It does not add a verifier API or alter the accepted artifact contracts.
+The following inspection command validates both output inventories and file hashes,
+then compares every deterministic file byte-for-byte.
 
 ```bash
 uv run --offline --no-sync python - <<'PY'

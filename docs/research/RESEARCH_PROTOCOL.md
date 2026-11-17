@@ -93,11 +93,11 @@ For every rolling fold record train end, evaluation start/end, warm-up period, p
 
 ## 4. Decision and execution conventions
 
-The baseline will be an EOD strategy. Completed daily bars for session `t` are available only **after** that session's close. Signals using those bars become eligible for execution at the **next valid session** under the configured entry convention. Same-bar closing-price fills are forbidden for such signals.
+The implemented baseline is an EOD strategy. Completed daily bars for session `t` are available only **after** that session's close. Signals using those bars become eligible for execution at the **next valid session** under the configured entry convention. Same-bar closing-price fills are forbidden for such signals.
 
 - Every order has decision date/time, earliest eligible fill session, action, symbol, quantity, reason and deterministic ID.
-- Fill price derives from documented raw tradable prices (next-session open by default), spread/slippage and fees. If the required price is absent, reject or defer according to policy; never silently substitute a future close.
-- Stops/targets use a conservative, explicit OHLC ordering policy. Overnight gaps through a stop must not be filled at an unattainable stop price by assumption.
+- Entry fills use the exact next eligible calendar-session open, adverse slippage and fees. A missing required entry bar leaves the order unfilled; it is not deferred to a later price. Missing bars for an existing position fail validation rather than being forward-filled.
+- Opening stops and routine exits precede entries, followed by intraday stops. Overnight gaps through a stop use the documented gap/slippage convention. The baseline does not implement profit targets or claim intraday precision beyond its OHLC assumptions.
 - A fixed ordering of simultaneous orders and portfolio capacity rules prevents iteration-order dependence.
 - Portfolio equity includes marked-to-market open positions; realized P&L, fees, cash and positions must reconcile. End-of-sample open positions remain identified as open rather than fabricated as closed trades.
 - Long-only, unleveraged simulation is the primary study. Simulated shorting and scale-ins are optional, separately tested extensions.
@@ -171,7 +171,9 @@ Each experiment configuration records:
 
 The runner produces the artifacts required by [specification §9](../app/AI_Assisted_Quant_Research_SPEC_v0.7.md#9-reproducibility-and-artifact-contract). All generated graphs and tables must trace to a run ID and machine-readable metrics. Do not manually edit numbers in the report.
 
-The same snapshot, configuration, code revision and seed must generate identical deterministic content. Separate timestamps or host-specific environment data into a clearly identified nondeterministic metadata section so reproducibility can be tested.
+The same snapshot, configuration, code revision, recorded Python/dependency environment
+and seed must generate identical deterministic content. Timestamps and host/platform
+details belong in separate nondeterministic runtime metadata.
 
 ## 9. Research-completion evidence and publication
 
@@ -184,6 +186,6 @@ Use these labels precisely:
 - **Synthetic demonstration:** artificial or hand-constructed input used to verify behavior.
 - **Historical backtest:** measured strategy behavior on historical market data under modeled execution.
 - **Out-of-sample evaluation:** data excluded from the specified fitting/selection procedure, with contamination caveats.
-- **Local reliability experiment:** test-server/fake-ledger failure and replay evidence, not cloud or broker-operational proof.
+- **Local reliability experiment:** local test-server/SQLite research-ledger failure and replay evidence, with explicitly bounded recovery guarantees.
 
 No deployment, live readiness, proven profitability or achieved AI uplift can be claimed. Result publication is deferred until the experiments execute and their provenance has been verified.
