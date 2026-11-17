@@ -119,7 +119,7 @@ def test_multi_symbol_global_pagination_and_new_york_date_boundaries() -> None:
 @pytest.mark.parametrize(
     "changes",
     [
-        {"feed": "iex"},
+        {"feed": "boats"},
         {"feed": None},
         {"provider": "other"},
         {"timeframe": "1Min"},
@@ -134,6 +134,26 @@ def test_multi_symbol_global_pagination_and_new_york_date_boundaries() -> None:
 def test_explicit_supported_requests_reject_ambiguous_inputs(changes: dict[str, object]) -> None:
     with pytest.raises(ValidationError):
         request(**changes)
+
+
+def test_iex_is_explicit_and_preserved_through_query_and_observation() -> None:
+    transport = Transport(
+        response({"bars": {"AAPL": [bar("2025-03-07T05:00:00Z")]}, "next_page_token": None})
+    )
+    acquisition = acquire(transport, feed="iex")
+    observation = api().normalize_historical_bars(
+        acquisition, sessions=sessions(), missing_policy="exclude"
+    ).bars[0]
+    assert acquisition.request.feed == "iex"
+    assert transport.requests[0][1]["feed"] == "iex"
+    assert observation.feed == "iex"
+
+
+def test_iex_entitlement_failure_never_substitutes_sip() -> None:
+    transport = Transport(response({"message": "private account"}, 403))
+    with pytest.raises(api().HistoricalAcquisitionError, match="forbidden"):
+        acquire(transport, feed="iex")
+    assert [item[1]["feed"] for item in transport.requests] == ["iex"]
 
 
 def test_successful_rate_header_and_retry_after_are_honored() -> None:
@@ -392,6 +412,16 @@ def action_request(**changes: object) -> Any:
             **changes,
         }
     )
+
+
+def test_all_quality_action_inventory_is_explicit_and_preserved_in_wire_query() -> None:
+    transport = Transport(response({"corporate_actions": {}, "next_page_token": None}))
+    acquired = api().AlpacaHistoricalAcquirer(transport=transport, clock=lambda: NOW).fetch_actions(
+        action_request(types="all", data_quality="all")
+    )
+    assert acquired.request.data_quality == "all"
+    assert transport.requests[0][1]["data_quality"] == "all"
+    assert "types" not in transport.requests[0][1]
 
 
 def test_corporate_action_process_window_and_exact_cash_and_split_normalization() -> None:

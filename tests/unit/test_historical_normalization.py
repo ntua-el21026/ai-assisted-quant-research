@@ -157,6 +157,21 @@ def test_receipt_keeps_exact_query_hashes_and_disabled_symbol_mapping_marker() -
     assert real_branch.provider == "alpaca" and not real_branch.mocked
 
 
+def test_iex_receipt_preserves_feed_and_rejects_sip_query_substitution() -> None:
+    acquisition = acquire(feed="iex")
+    receipt = bridge().to_acquisition_provenance(
+        acquisition, acquisition_id="test-iex", mocked=False
+    )
+    assert receipt.feed == "iex"
+    assert dict(receipt.query_parameters)["feed"] == "iex"
+    changed = receipt.model_dump()
+    changed["feed"] = "sip"
+    from pydantic import ValidationError
+
+    with pytest.raises(ValidationError, match="query_parameter_mismatch"):
+        type(receipt).model_validate(changed)
+
+
 def test_action_receipt_does_not_invent_feed_currency_or_symbol_mapping_query() -> None:
     acquisition = AlpacaHistoricalAcquirer(
         transport=Transport(
@@ -188,6 +203,23 @@ def test_action_receipt_does_not_invent_feed_currency_or_symbol_mapping_query() 
         "start": "2025-03-01",
         "symbols": "AAPL",
     }
+
+
+def test_action_receipt_preserves_explicit_all_quality_inventory() -> None:
+    acquisition = AlpacaHistoricalAcquirer(
+        transport=Transport(b'{"corporate_actions":{},"next_page_token":null}'),
+        clock=lambda: NOW,
+    ).fetch_actions(
+        CorporateActionsRequest(
+            provider="alpaca", symbols=("AAPL",), start="2025-03-01", end="2025-03-31",
+            types="all", data_quality="all",
+        )
+    )
+    receipt = bridge().to_acquisition_provenance(
+        acquisition, acquisition_id="all-quality-actions", mocked=False,
+    )
+    assert dict(receipt.query_parameters)["data_quality"] == "all"
+    assert receipt.action_scope == "all"
 
 
 def test_filtered_action_receipt_cannot_certify_complete_inventory() -> None:

@@ -135,7 +135,7 @@ class AcquisitionProvenance(HistoricalModel):
     mocked: bool
     endpoint: Literal["/v2/stocks/bars", "/v1/corporate-actions"]
     symbols: tuple[str, ...] = Field(min_length=1)
-    feed: Literal["sip"] | None
+    feed: Literal["iex", "sip"] | None
     adjustment: Literal["raw"] | None
     timeframe: Literal["1Day"] | None
     start: date
@@ -181,7 +181,7 @@ class AcquisitionProvenance(HistoricalModel):
                 self.adjustment != "raw"
                 or self.timeframe != "1Day"
                 or self.action_scope
-                or self.feed != "sip"
+                or self.feed not in {"iex", "sip"}
                 or self.currency != "USD"
                 or self.asof is None
             ):

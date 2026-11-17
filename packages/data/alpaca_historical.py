@@ -79,7 +79,7 @@ class HistoricalRequest(AcquisitionModel):
 
 
 class HistoricalBarsRequest(HistoricalRequest):
-    feed: Literal["sip"]
+    feed: Literal["iex", "sip"]
     adjustment: Adjustment
     timeframe: Literal["1Day"]
     limit: int = Field(default=10000, ge=1, le=10000)
@@ -90,6 +90,7 @@ class CorporateActionsRequest(HistoricalRequest):
     """The inclusive start/end window refers to provider process_date."""
 
     types: tuple[ActionType, ...] | Literal["all"]
+    data_quality: Literal["complete", "all"] = "complete"
     limit: int = Field(default=1000, ge=1, le=1000)
 
     @field_validator("types")
@@ -210,6 +211,115 @@ class UrllibHistoricalTransport:
             raise HistoricalAcquisitionError("body_limit_exceeded") from None
         return bytes(body)
 
+    def get_bounded(
+        self,
+        endpoint: str,
+        params: Mapping[str, str],
+        timeout_seconds: float,
+        *,
+        max_body_bytes: int,
+        body_received: Callable[[int], None],
+        response_started: Callable[[int], None],
+        request_started: Callable[[], None],
+        remaining_seconds: Callable[[], float],
+    ) -> HttpResponse:
+        """Read within a caller's remaining payload allowance, including HTTP errors.
+
+        This path never consumes an extra probe byte. An unknown-length response
+        reaching its allowance is conservatively rejected, even if exactly full.
+        Deadline checks bound application-controlled work; OS/DNS blocking still
+        needs the caller's process watchdog for a strict wall-clock limit.
+        """
+        if endpoint not in {BARS_ENDPOINT, ACTIONS_ENDPOINT}:
+            raise HistoricalAcquisitionError("endpoint_rejected")
+        if not math.isfinite(timeout_seconds) or not 0 < timeout_seconds <= 120:
+            raise HistoricalAcquisitionError("invalid_timeout")
+        if (
+            isinstance(max_body_bytes, bool)
+            or not isinstance(max_body_bytes, int)
+            or not 1 <= max_body_bytes <= 16 * 1024 * 1024
+        ):
+            raise HistoricalAcquisitionError("invalid_body_limit")
+        cap = min(max_body_bytes, self.max_body_bytes)
+        query = urllib.parse.urlencode(sorted(params.items()))
+        request = urllib.request.Request(
+            endpoint + ("?" + query if query else ""),
+            method="GET",
+            headers={
+                "APCA-API-KEY-ID": self.api_key,
+                "APCA-API-SECRET-KEY": self.secret_key,
+                "Accept": "application/json",
+            },
+        )
+
+        def receive(opened: object, status: int, headers: Mapping[str, str]) -> HttpResponse:
+            response_started(status)
+            body = self._bounded_body(opened, headers, cap, body_received, remaining_seconds)
+            return HttpResponse(status, dict(headers), body)
+
+        try:
+            request_started()
+            timeout = min(timeout_seconds, remaining_seconds())
+            with self._opener.open(request, timeout=timeout) as opened:
+                return receive(opened, opened.status, dict(opened.headers))
+        except urllib.error.HTTPError as exc:
+            try:
+                return receive(exc, exc.code, dict(exc.headers))
+            except HistoricalAcquisitionError:
+                raise
+            except Exception:
+                raise HistoricalAcquisitionError("transport_failed") from None
+            finally:
+                try:
+                    exc.close()
+                except Exception:
+                    raise HistoricalAcquisitionError("transport_failed") from None
+        except HistoricalAcquisitionError:
+            raise
+        except Exception:
+            raise HistoricalAcquisitionError("transport_failed") from None
+
+    @staticmethod
+    def _bounded_body(
+        opened: object,
+        headers: Mapping[str, str],
+        limit: int,
+        body_received: Callable[[int], None],
+        remaining_seconds: Callable[[], float],
+    ) -> bytes:
+        normalized = {key.lower(): value for key, value in headers.items()}
+        expected: int | None = None
+        if "content-length" in normalized:
+            value = normalized["content-length"]
+            if not value.isascii() or not value.isdigit() or len(value) > 20:
+                raise HistoricalAcquisitionError("invalid_body_length")
+            if "transfer-encoding" in normalized:
+                raise HistoricalAcquisitionError("invalid_body_length")
+            expected = int(value)
+            if expected > limit:
+                raise HistoricalAcquisitionError("body_limit_exceeded")
+        chunks: list[bytes] = []
+        received = 0
+        reader = getattr(opened, "read1", None) or opened.read  # type: ignore[attr-defined]
+        while True:
+            remaining_seconds()
+            if expected is not None and received == expected:
+                return b"".join(chunks)
+            allowance = limit - received
+            if not allowance:
+                raise HistoricalAcquisitionError("body_limit_exceeded")
+            size = min(64 * 1024, allowance)
+            if expected is not None:
+                size = min(size, expected - received)
+            chunk = bytes(reader(size))
+            if not chunk:
+                if expected is not None and received != expected:
+                    raise HistoricalAcquisitionError("incomplete_body")
+                return b"".join(chunks)
+            body_received(len(chunk))
+            received += len(chunk)
+            chunks.append(chunk)
+
 
 @dataclass(frozen=True)
 class AcquiredPage:
@@ -299,7 +409,7 @@ def historical_query(
         "limit": str(request.limit),
         "sort": "asc",
         "region": "us",
-        "data_quality": "complete",
+        "data_quality": request.data_quality,
     }
     if request.types != "all":
         params["types"] = ",".join(request.types)
@@ -491,7 +601,7 @@ class HistoricalBar:
     available_at: datetime
     availability_basis: Literal["observed", "assumed"]
     adjustment: Adjustment
-    feed: Literal["sip"]
+    feed: Literal["iex", "sip"]
     exact_ohlcv: ExactOHLCV
 
 

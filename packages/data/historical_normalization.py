@@ -144,7 +144,7 @@ def to_acquisition_provenance(
         mocked=mocked,
         endpoint=endpoint_path,
         symbols=request.symbols,
-        feed="sip" if bars else None,
+        feed=request.feed if isinstance(request, HistoricalBarsRequest) else None,
         adjustment="raw" if bars else None,
         timeframe="1Day" if bars else None,
         start=request.start,
