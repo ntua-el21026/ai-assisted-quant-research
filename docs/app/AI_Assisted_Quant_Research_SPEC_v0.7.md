@@ -1,7 +1,7 @@
 # AI-Assisted Quantitative Trading Research Framework
 
 - **Specification:** v0.7 (research-scope transition)
-- **Status:** R1–R3 reviewed baseline; R4-A synthetic infrastructure implemented, independent acceptance pending; historical research/release pending
+- **Status:** R1–R4-A reviewed engineering baseline; R4-B acquisition/qualification awaits acceptance; historical strategy research/release blocked
 - **Owner:** Michail Athanasios Peppas
 - **Target audience:** MSc Computer Science, Data Science, AI/ML and quantitative-finance reviewers
 - **Execution environment:** Local, offline-first Python research software; no deployment
@@ -15,6 +15,12 @@ pipeline, and R3 adds optional local Temporal/SQLite reliability. The owner iden
 `60dd250` as the independently reviewed R1–R3 baseline. R4-A adds a separately authorized,
 synthetic-only historical-data/action foundation; [its contracts](../research/R4A_IMPLEMENTATION.md)
 and [verification](../research/R4A_VERIFICATION.md) do not establish empirical acceptance.
+The owner independently accepted R4-A at `0dd0875` for synthetic engineering.
+Separately authorized [R4-B](../research/R4B_IMPLEMENTATION.md) implements finite private
+IEX acquisition and offline candidate qualification; its preflight stopped on an
+unsupported special-dividend classification. No pilot, larger dataset or historical
+strategy evaluation followed. Strict v2 admission, registered research hypotheses,
+periods and numerical acceptance criteria are preserved.
 Historical studies and overall release remain incomplete. See
 [the architecture](../research/ARCHITECTURE.md), [the research protocol](../research/RESEARCH_PROTOCOL.md),
 [R3 verification](../research/R3_VERIFICATION.md) and [the implementation plan](../superpowers/plans/2026-11-16-ai-assisted-quant-research.md).

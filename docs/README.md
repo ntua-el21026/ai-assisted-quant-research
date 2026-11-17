@@ -11,7 +11,7 @@
 | [Research architecture](research/ARCHITECTURE.md) | Actual component inventory, offline research/matrix CLI, planned local Temporal boundary | Planned additions distinguished from existing code |
 | [Design decision](superpowers/specs/2026-11-16-ai-assisted-quant-research-design.md) | Approved balanced AI/ML + systems direction and tradeoffs | Approved scope |
 | [Four-checkpoint implementation plan](superpowers/plans/2026-11-16-ai-assisted-quant-research.md) | Test-first R1–R4 task definitions and verification gates | R1–R3 reviewed baseline; R4 empirical gate pending |
-| [Four Codex prompts](research/CODEX_CHECKPOINT_PROMPTS.md) | Original checkpoint assignments; later work follows explicit staged authorization | R1–R3 baseline reviewed; R4-A independent acceptance pending |
+| [Four Codex prompts](research/CODEX_CHECKPOINT_PROMPTS.md) | Original checkpoint assignments; later work follows explicit staged authorization | R1–R4-A reviewed; R4-B acceptance pending |
 | [Root contributor/agent guide](../AGENTS.md) | Repository safety constraints, instructions and current authority | Current |
 | [Main README](../README.md) | Portfolio-facing introduction and truthful implementation status | Current |
 
@@ -23,8 +23,10 @@
 4. **R4 — Portfolio release:** verified results, research report, license-safe example, local presentation and reproducibility audit.
 
 R1–R3 have tests and executed synthetic/local systems paths. The owner identifies
-`60dd250` as their reviewed baseline. R4-A implements a synthetic-only historical-data
-and corporate-action foundation; its independent acceptance and R4 empirical work remain pending.
+`60dd250` as their reviewed R1–R3 baseline. R4-A's synthetic-only historical-data
+and corporate-action foundation was independently accepted at `0dd0875`.
+R4-B engineering acceptance and R4 empirical work remain pending; its private preflight
+candidate is blocked from historical strategy execution.
 See [R1 contracts](research/R1_IMPLEMENTATION.md), [R1 verification](research/R1_VERIFICATION.md),
 [R2 verification](research/R2_VERIFICATION.md) and [R3 verification](research/R3_VERIFICATION.md).
 A synthetic example is not empirical performance evidence.
@@ -36,6 +38,12 @@ A synthetic example is not empirical performance evidence.
 - [R4-A verification](research/R4A_VERIFICATION.md): executed checks, literal numerical
   evidence, baseline compatibility and deterministic hashes.
 - [R4-A bounded implementation plan](superpowers/plans/2026-11-16-r4a-historical-infrastructure.md).
+- [R4-B implementation](research/R4B_IMPLEMENTATION.md): opt-in finite IEX acquisition,
+  immutable private candidate envelopes and offline qualification.
+- [R4-B data qualification](research/R4B_DATA_QUALIFICATION.md): sanitized acquisition,
+  corporate-action, rights and scientific restrictions.
+- [R4-B verification](research/R4B_VERIFICATION.md): commands, hashes, compatibility and review handoff.
+- [R4-B bounded plan](superpowers/plans/2026-11-17-r4b-historical-acquisition.md).
 
 ## Historical implementation references — not v0.7 goals
 

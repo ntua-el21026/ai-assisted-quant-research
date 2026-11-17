@@ -1,7 +1,10 @@
 # R4-A implementation and verification — 2026-11-16
 
-**R4-A implemented; independent acceptance pending. Historical data acquisition and
-empirical R4 execution have not begun.** All new market/action observations and
+**Acceptance update, 2026-11-17: R4-A independently accepted at
+`0dd0875c9f4a1ff806a107badcd693922d9f7e29` for synthetic engineering scope.**
+The evidence below records R4-A, when historical acquisition and empirical execution
+had not begun. Subsequent acquisition is reported separately in [R4-B](R4B_VERIFICATION.md).
+All R4-A market/action observations and
 acquisition receipts are original synthetic fixtures or mocked HTTP responses.
 No empirical performance, AI benefit or overall research-completion claim is made.
 

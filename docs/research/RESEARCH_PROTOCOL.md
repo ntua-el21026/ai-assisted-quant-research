@@ -1,7 +1,7 @@
 # Quantitative Trading Research Protocol
 
 - **Governing specification:** [Research Framework v0.7](../app/AI_Assisted_Quant_Research_SPEC_v0.7.md)
-- **Status:** R1–R3 reviewed baseline; R4-A synthetic infrastructure implemented, independent acceptance pending. Historical studies remain pending. No market findings are asserted here.
+- **Status:** R1–R4-A reviewed engineering baseline; R4-B acquisition/qualification awaits acceptance. The private preflight candidate is blocked; historical studies remain pending.
 
 ## 1. Scientific objective
 
@@ -21,7 +21,7 @@ Do not claim causal benefit, statistical significance or generalization without 
 
 ### Market data
 
-- Preferred candidate after the accepted R4-0 preflight: Alpaca historical SIP, conditional on written entitlement/storage/retention/publication clarification and full data qualification. Previously authorized inputs and alternative licensed sources remain possible; R4-A uses only synthetic/existing fixtures and mocked transport.
+- R4-B uses explicitly selected **Basic/IEX**, supported by official paper-only documentation and owner-reported Support #397685 for personal noncommercial research and local storage. Historical SIP remains conditional on separate written entitlement evidence; no SIP observations were acquired in R4-B. IEX prices, volume and extrema are venue-limited, not consolidated-market execution evidence. Persistent/post-account retention and public derived-result rights remain unresolved.
 - Public example: small synthetic, hand-audited OHLCV fixtures committed under `tests/fixtures/` or a clearly labeled equivalent, with no proprietary redistribution.
 - One frozen manifest per dataset: source and license, retrieval/freeze UTC timestamp, date coverage, symbol universe, raw/adjusted basis, corporate actions, timezone, calendar, schema version, per-file SHA-256, normalization version, missing-data exclusions and survivorship caveat.
 - Validate unique `(symbol, session)` keys, sorted sessions, nonnegative volume, finite valid OHLC, consistent fields and adequate feature warm-up; reject malformed data or produce explicit exclusion records according to the versioned policy.
@@ -32,6 +32,15 @@ in [R4-A contracts](R4A_IMPLEMENTATION.md). Its synthetic checks do not approve 
 inputs, establish first-publication timestamps, change the proposed dates below, or
 execute a strategy study. Payment-open reinvestment is a declared analytical assumption;
 empirical comparison conventions must be registered and supported by the eventual data.
+
+R4-A was independently accepted at `0dd0875` for synthetic engineering. The separately
+authorized [R4-B qualification](R4B_DATA_QUALIFICATION.md) predeclares SPY/QQQ pilot
+2024–2025 and conditional candidate 2020–2025 as **data-quality windows**, not new study
+splits. Acquisition stopped during preflight on an unsupported special-dividend flag;
+neither window was acquired. A `historical-candidate/v1` envelope retains negative evidence
+without weakening strict v2 admission. Observed acquisition times are never backdated
+to historical decision cutoffs. No protocol dates, strategy, benchmarks, parameters,
+holdout status or final-period performance have been changed or inspected.
 
 ### AI/news evidence
 

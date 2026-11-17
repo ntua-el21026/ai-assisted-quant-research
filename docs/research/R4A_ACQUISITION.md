@@ -2,6 +2,10 @@
 
 R4-A qualifies these interfaces with original synthetic responses and mocked HTTP.
 It does not acquire a historical dataset or establish empirical research results.
+**2026-11-17 status:** independently accepted at `0dd0875` for that synthetic scope.
+The separately authorized [R4-B extension](R4B_IMPLEMENTATION.md) adds explicit IEX
+selection and private acquisition, with remaining rights and qualification restrictions.
+The following describes R4-A's original boundary; its SIP examples remain compatible.
 Provider entitlement, storage, retention and publication rights remain unresolved for
 any proposed real dataset. The canonical research CLI remains offline; R4-A exposes
 no download command or automatic provider fallback.

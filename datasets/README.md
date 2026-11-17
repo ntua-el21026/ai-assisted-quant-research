@@ -42,5 +42,16 @@ corporate actions, security mappings, explicit query/calendar/revision/rights pr
 and exact JSON Decimal values. V1 above remains unchanged; ordinary R1/R2 commands
 do not silently consume v2. [R4-A contracts](../docs/research/R4A_IMPLEMENTATION.md) and
 the [original synthetic v2 fixture](../tests/fixtures/historical_snapshot/manifest.json)
-document the separate boundary. Historical acquisition and empirical execution remain
+document the separate R4-A boundary. Historical acquisition and empirical execution remained
 blocked pending rights/data qualification and separate authorization.
+
+## Private R4-B candidates
+
+R4-B separately authorizes finite Basic/IEX acquisition for personal noncommercial
+qualification. Real captures, source receipts, normalized rows and independent issuer
+workbooks belong only under gitignored `datasets/private/r4b/<new-workspace>/`.
+No provider observations are public fixtures. `historical-candidate/v1` preserves failed
+or incomplete evidence; it is not an admitted v2 snapshot. Offline qualification never
+changes the frozen input. The observed preflight candidate is blocked by an unsupported
+action flag and unresolved evidence. See [R4-B contracts](../docs/research/R4B_IMPLEMENTATION.md)
+and [qualification](../docs/research/R4B_DATA_QUALIFICATION.md).

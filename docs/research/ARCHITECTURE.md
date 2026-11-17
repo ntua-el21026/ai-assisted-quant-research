@@ -1,7 +1,7 @@
 # Quantitative Trading Research Architecture — v0.7
 
 - **Authority:** [Research Framework Specification v0.7](../app/AI_Assisted_Quant_Research_SPEC_v0.7.md)
-- **Status:** R1–R3 reviewed baseline; R4-A synthetic infrastructure implemented, independent acceptance and empirical R4 pending
+- **Status:** R1–R4-A reviewed baseline; R4-B private acquisition/qualification awaits review; empirical R4 remains blocked
 
 ## 1. System boundary
 
@@ -87,8 +87,8 @@ R2 adds `python -m packages.research.cli evaluate --config experiments/configs/a
 paired AI policies. `metrics.py`, `benchmarks.py` and `resampling.py` provide explicit
 statistical conventions and undefined reasons. `matrix_artifacts.py` publishes a root matrix
 and complete versioned case records. See [executed R2 verification](R2_VERIFICATION.md).
-Optional R3 orchestration is documented below. Read-only provider acquisition, if later implemented, uses a
-different explicit command.
+Optional R3 orchestration is documented below. Read-only provider acquisition uses the
+separate explicit R4-B command documented in section 10; ordinary runs remain offline.
 
 The run output is an immutable experiment record identified by data/config/code hashes and a seed. A preview dashboard, if included, consumes **only these generated local files** and does not issue control actions.
 
@@ -217,6 +217,35 @@ artifact and R3 workflow contracts remain unchanged; v2 is never silently substi
 
 [R4-A contracts](R4A_IMPLEMENTATION.md), [provider boundary](R4A_ACQUISITION.md) and
 [verification](R4A_VERIFICATION.md) describe supported/restricted modes and executed tests.
-Historical strategy integration, acquisition, data qualification and empirical study
-require later authorization. Written Alpaca entitlement/retention/publication clarification
-is pending. This infrastructure does not close the historical research/release gate.
+R4-A was independently accepted at `0dd0875` for synthetic engineering. Historical
+strategy integration and empirical study still require later authorization. R4-B has
+separate bounded acquisition authority, described below. This infrastructure does not
+close the historical research/release gate.
+
+## 10. R4-B optional acquisition and qualification
+
+`python -m packages.data.acquisition_cli plan|acquire|qualify` separates an offline plan
+check, explicit finite network acquisition and offline frozen-evidence qualification.
+Only `acquire --allow-network --credentials-file ...` loads credentials. Its registered
+Basic/paper-only plan permits IEX only; the shared library still supports explicit SIP.
+GET transport accepts two exact HTTPS data endpoints, rejects redirects/proxies, and
+shares one durable attempt/body/time budget across all queries/retries. A POSIX alarm
+bounds the CLI process's execution; no worker or schedule persists afterward.
+
+`PrivateStorage` confines new captures and atomic publications to ignored private
+checkpoint workspaces with conservative permissions and retained-byte accounting.
+`historical-candidate/v1` records complete/partial query truth, raw page hashes, exact
+v2-compatible normalization, source/plan fingerprints and unresolved evidence. The
+candidate is **not** `market-snapshot/v2`; failed admission is never repaired with
+invented completeness, timestamps or licensing. An outer deterministic hash index and
+runtime file surround a strictly inventoried evidence subtree.
+
+`qualify_historical_candidate` checks source pagination/content, calendar/session
+coverage, OHLCV, identities, rights, availability and action inventory. `reconcile_actions`
+separately compares exact split fractions/dividend fields with independent, hashed
+evidence. Both are offline and return explicit PASS/RESTRICTED/FAIL findings. Neither
+executes strategy decisions or changes the R3 experiment identity contract.
+
+The actual IEX preflight stopped on an unsupported special dividend. All evidence stays
+private; no pilot, larger candidate or strategy study followed. See [implementation](R4B_IMPLEMENTATION.md),
+[qualification](R4B_DATA_QUALIFICATION.md) and [verification](R4B_VERIFICATION.md).

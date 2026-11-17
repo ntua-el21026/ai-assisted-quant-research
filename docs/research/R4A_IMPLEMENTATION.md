@@ -2,8 +2,10 @@
 
 R4-A is a **synthetic-only engineering foundation**. The owner accepted the R4-0
 preflight and identified `60dd250c52254ab1f08f7042971967467f05b11f` as the reviewed
-R1–R3 baseline. R4-A independent acceptance, historical acquisition, data-rights
-clearance and empirical research remain pending. This phase changes no registered
+R1–R3 baseline. **Acceptance update (2026-11-17): the owner reports independent R4-A
+acceptance at `0dd0875c9f4a1ff806a107badcd693922d9f7e29` for synthetic engineering only.**
+Subsequent [R4-B acquisition/qualification](R4B_IMPLEMENTATION.md) has separate authority;
+historical strategy execution and full data-rights clearance remain pending. R4-A changed no registered
 research periods, strategy thresholds or accepted v1 numerical behavior.
 
 ## Interfaces and execution boundary
@@ -23,10 +25,12 @@ research periods, strategy thresholds or accepted v1 numerical behavior.
 | `research.historical_demo.run_historical_synthetic` | Synthetic-only qualification artifacts, not historical strategy execution |
 
 [Acquisition reference](R4A_ACQUISITION.md) gives exact transport/normalization usage,
-safe errors, resource bounds and a fully mocked example. There is **no acquisition CLI**,
+safe errors, resource bounds and a fully mocked example. R4-A itself added **no acquisition CLI**,
 environment/credential discovery, automatic provider request or scheduled worker.
 The optional concrete transport accepts caller-supplied authentication; every test
 mocks HTTP. No Alpaca credentials or authenticated endpoints were accessed in R4-A.
+R4-B extends explicit feed selection to IEX while preserving SIP requests and default
+corporate-action quality filtering; its separate CLI never becomes a research prerequisite.
 
 V1 loader, `run_backtest`, `run_causal_backtest`, ordinary research `run`/`evaluate`,
 metrics and R3 workflow/ledger remain unchanged. They do not silently dispatch v2.
