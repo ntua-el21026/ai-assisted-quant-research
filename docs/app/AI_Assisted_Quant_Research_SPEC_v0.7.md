@@ -1,7 +1,7 @@
 # AI-Assisted Quantitative Trading Research Framework
 
 - **Specification:** v0.7 (research-scope transition)
-- **Status:** R1–R4-B engineering reviewed; R4-B.1 corrective engineering verified, independent acceptance pending; historical strategy research/release blocked
+- **Status:** R1–R4-B engineering reviewed; R4-B.2 targeted field resolution verified, independent acceptance pending; historical strategy research/release blocked
 - **Owner:** Michail Athanasios Peppas
 - **Target audience:** MSc Computer Science, Data Science, AI/ML and quantitative-finance reviewers
 - **Execution environment:** Local, offline-first Python research software; no deployment
@@ -30,6 +30,13 @@ remain unchanged.
 Historical studies and overall release remain incomplete. See
 [the architecture](../research/ARCHITECTURE.md), [the research protocol](../research/RESEARCH_PROTOCOL.md),
 [R3 verification](../research/R3_VERIFICATION.md) and [the implementation plan](../superpowers/plans/2026-11-16-ai-assisted-quant-research.md).
+
+[R4-B.2](../research/R4B2_DATA_QUALIFICATION.md) audits the immutable pilot without
+new authenticated acquisition. A separately versioned, optional independent-evidence
+receipt resolves three SPY currency fields; all remaining gates and original source
+values are preserved. Pilot admission and R4-C remain blocked. Proxy-execution and
+alternative-study options are proposals requiring separate review, not changes to this
+specification's execution timing, calendar, hypotheses or empirical acceptance criteria.
 
 For future work, this specification overrides contradictory requirements in older docs. Existing safety invariants remain binding unless this document explicitly tightens them. No new functionality is authorized merely because it appears in a legacy roadmap.
 

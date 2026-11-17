@@ -1,7 +1,7 @@
 # Quantitative Trading Research Architecture — v0.7
 
 - **Authority:** [Research Framework Specification v0.7](../app/AI_Assisted_Quant_Research_SPEC_v0.7.md)
-- **Status:** R1–R4-B engineering reviewed; R4-B.1 corrective scope/budget/pilot verified, acceptance pending; empirical R4 remains blocked
+- **Status:** R1–R4-B engineering reviewed; R4-B.2 targeted field resolution verified, acceptance pending; empirical R4 remains blocked
 
 ## 1. System boundary
 
@@ -269,3 +269,19 @@ gates failed. A separate deterministic report retains full-query failures alongs
 diagnostics. No larger candidate, strategy execution, new R3 identity mode or source
 availability reconstruction was introduced. See [contracts](R4B1_IMPLEMENTATION.md),
 [qualification](R4B1_DATA_QUALIFICATION.md) and [verification](R4B1_VERIFICATION.md).
+
+## 12. R4-B.2 independent field evidence
+
+The existing reconciliation module optionally accepts a separately versioned,
+exact-record-bound currency resolution backed by hashed event and policy documents.
+It produces a derived independent record and canonical provenance receipt. It does not
+change the strict provider normalizer, candidate admission, v2 models, acquisition CLI,
+research runner or R3 workflow/ledger contract. Three SPY event currencies are resolved
+in a new private audit; 13 remain unresolved. Raw provider evidence stays immutable.
+
+All 16 events were audited offline against period-applicable evidence, with independent
+two-run strict and partial-evidence reports. There is no new architecture or automatic
+promotion path. [R4-B.2 implementation](R4B2_IMPLEMENTATION.md),
+[qualification](R4B2_DATA_QUALIFICATION.md) and [verification](R4B2_VERIFICATION.md)
+record tested boundaries and the blocked admission decision. Alternative source and
+proxy-execution options require separate approval; R4-C has not begun.

@@ -52,6 +52,12 @@ A synthetic example is not empirical performance evidence.
 - [R4-B.1 verification](research/R4B1_VERIFICATION.md): tests, hashes, numerical compatibility
   and independent-review handoff.
 - [R4-B.1 bounded plan](superpowers/plans/2026-11-17-r4b1-requalification.md).
+- [R4-B.2 implementation](research/R4B2_IMPLEMENTATION.md): optional exact-record currency
+  resolution, preserved raw evidence and unchanged strict admission.
+- [R4-B.2 data qualification](research/R4B2_DATA_QUALIFICATION.md): all 16 applicable events,
+  period-specific primary evidence, three resolved currency fields and owner decision matrix.
+- [R4-B.2 verification](research/R4B2_VERIFICATION.md): offline two-run hashes, regression
+  checks and blocked R4-C handoff; independent acceptance pending.
 
 ## Historical implementation references — not v0.7 goals
 

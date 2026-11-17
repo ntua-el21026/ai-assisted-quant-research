@@ -6,7 +6,7 @@ This repository contains a Python research framework for studying deterministic 
 
 - **Maintainer:** Michail Athanasios Peppas
 - **Project direction:** v0.7 research framework (Option B)
-- **Current status:** **R1–R4-B reviewed engineering; R4-B.1 corrective engineering verified, independent acceptance pending; historical study blocked**
+- **Current status:** **R1–R4-B reviewed engineering; R4-B.2 targeted field resolution verified, independent acceptance pending; historical study blocked**
 
 > **No deployment, live trading or broker-connected paper trading is part of this project scope.** The canonical research path runs locally and offline. The synthetic demonstration verifies software behavior; it is not a historical-market study or an investment recommendation.
 
@@ -57,7 +57,7 @@ replay and reconciliation across separate database and filesystem commits.
 | **R1 — Data and simulation** | Auditable offline snapshot, causal strategy-to-simulation path and verified arithmetic | Implemented; reviewed cooldown correction included |
 | **R2 — Experiments and AI** | Benchmarks, time-aware splits, cost/ablation/uncertainty tests, frozen AI comparison | Independent external engineering review passed at `9b3678b` |
 | **R3 — Local reliability** | Real local Temporal workflow, idempotent checkpoints and fault-recovery tests | Reviewed baseline at `60dd250` |
-| **R4 — Portfolio release** | Reproducible example, available-data results, technical report, limitations and local presentation | R4-A/R4-B engineering accepted; R4-B.1 acceptance and empirical release pending |
+| **R4 — Portfolio release** | Reproducible example, available-data results, technical report, limitations and local presentation | R4-A/R4-B engineering accepted; targeted corrections and empirical release pending |
 
 Implementation is organized into these **four** bounded Codex checkpoints. The detailed task-by-task plan is available below; no deployment step is included.
 
@@ -77,6 +77,13 @@ official Basic documentation and owner-reported Support #397685. SIP, retention 
 public empirical publication questions remain unresolved. Ordinary research and
 synthetic examples still require no provider access. [Verification](docs/research/R4B1_VERIFICATION.md)
 records tests, immutable evidence and independent-review limits; R4-C has not begun.
+
+[R4-B.2](docs/research/R4B2_IMPLEMENTATION.md) audits all 16 applicable distributions
+without new authenticated requests. Three independent SPY currency fields receive
+record-specific, source-hashed resolutions; 13 remain unresolved. Original records and
+strict admission are unchanged. [Qualification and owner options](docs/research/R4B2_DATA_QUALIFICATION.md)
+and [verification](docs/research/R4B2_VERIFICATION.md) keep pilot admission and R4-C
+**BLOCKED**. No historical strategy or larger acquisition has run.
 
 ## Documentation and research design
 

@@ -1,7 +1,7 @@
 # Quantitative Trading Research Protocol
 
 - **Governing specification:** [Research Framework v0.7](../app/AI_Assisted_Quant_Research_SPEC_v0.7.md)
-- **Status:** R1–R4-B engineering reviewed; R4-B.1 corrective engineering verified, acceptance pending. Pilot bars pass internal quality; historical admission/studies remain blocked.
+- **Status:** R1–R4-B engineering reviewed; R4-B.2 targeted correction verified, acceptance pending. Pilot bars pass internal quality; historical admission/studies remain blocked.
 
 ## 1. Scientific objective
 
@@ -52,6 +52,14 @@ calendar-day aggregation and does not establish a 09:30/auction execution conven
 Historical availability, identities, retention and full action reconciliation remain
 unresolved. No threshold, hypothesis, benchmark definition, research split or holdout
 status changes here, and R4-C has not begun.
+
+[R4-B.2 qualification](R4B2_DATA_QUALIFICATION.md) audits all 16 applicable pilot cash
+events without new authenticated requests. A narrowly bounded independent policy
+receipt resolves three SPY currencies; raw records, strict normalization and v2 admission
+are unchanged. Thirteen currency fields and additional action/source/scientific gates
+remain unresolved. IEX venue-price proxy timing, a narrower study or an alternative
+source are owner-review options; none is registered or approved by this diagnostic work.
+No proposed split, threshold, holdout status, benchmark or execution convention changes.
 
 ### AI/news evidence
 
