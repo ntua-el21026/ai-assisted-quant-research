@@ -300,3 +300,30 @@ def test_bounded_transport_rejects_unbounded_injected_transport() -> None:
 
     with pytest.raises(HistoricalAcquisitionError, match="bounded_transport_required"):
         api().BudgetedHistoricalTransport(transport=Unbounded(), budget=make_budget())
+
+
+def test_prior_consumption_is_included_in_session_limits_and_snapshots() -> None:
+    budget = make_budget(
+        initial_attempts=2, initial_received_body_bytes=1457, initial_successful_body_bytes=1457,
+        max_attempts=3,
+    )
+    with patch("urllib.request.build_opener") as build:
+        build.return_value.open.return_value = Opened(b"abc")
+        transport = concrete(budget)
+        transport.get(BARS_ENDPOINT, {}, 10)
+        with pytest.raises(HistoricalAcquisitionError, match="session_attempt_limit"):
+            transport.get(BARS_ENDPOINT, {}, 10)
+        assert build.return_value.open.call_count == 1
+    assert budget.snapshot()["attempts"] == 3
+    assert budget.snapshot()["received_body_bytes"] == 1460
+
+
+@pytest.mark.parametrize("change", [
+    {"initial_attempts": -1}, {"initial_attempts": True}, {"initial_attempts": 101},
+    {"initial_received_body_bytes": -1}, {"initial_successful_body_bytes": 1},
+])
+def test_invalid_prior_counters_do_not_create_a_resettable_budget(
+    change: dict[str, object],
+) -> None:
+    with pytest.raises(HistoricalAcquisitionError, match="invalid_session_budget"):
+        make_budget(**change)

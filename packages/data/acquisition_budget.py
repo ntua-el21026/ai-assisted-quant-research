@@ -56,6 +56,9 @@ class HistoricalSessionBudget:
         monotonic: Callable[[], float] = time.monotonic,
         sleep: Callable[[float], None] = time.sleep,
         event_callback: Callable[[Mapping[str, object]], None] = lambda _: None,
+        initial_attempts: int = 0,
+        initial_received_body_bytes: int = 0,
+        initial_successful_body_bytes: int = 0,
     ) -> None:
         if (
             isinstance(max_attempts, bool)
@@ -72,6 +75,15 @@ class HistoricalSessionBudget:
             or not .35 <= min_interval_seconds <= 60
         ):
             raise HistoricalAcquisitionError("invalid_session_budget")
+        if any(
+            isinstance(value, bool) or not isinstance(value, int) or not 0 <= value <= limit
+            for value, limit in (
+                (initial_attempts, max_attempts),
+                (initial_received_body_bytes, max_received_body_bytes),
+                (initial_successful_body_bytes, initial_received_body_bytes),
+            )
+        ):
+            raise HistoricalAcquisitionError("invalid_session_budget")
         self.max_attempts = max_attempts
         self.max_received_body_bytes = max_received_body_bytes
         self.max_elapsed_seconds = max_elapsed_seconds
@@ -79,9 +91,9 @@ class HistoricalSessionBudget:
         self._clock = monotonic
         self._sleep = sleep
         self._observer = event_callback
-        self._attempts = 0
-        self._received_body_bytes = 0
-        self._successful_body_bytes = 0
+        self._attempts = initial_attempts
+        self._received_body_bytes = initial_received_body_bytes
+        self._successful_body_bytes = initial_successful_body_bytes
         self._active = False
         self._journal_failed = False
         self._last_attempt: float | None = None
