@@ -1,175 +1,151 @@
 # AI-Assisted Quantitative Trading Research Framework
 
-**Offline quantitative research · bounded AI/news evaluation · reproducible systems experiments**
+**Engineering implementation verified; historical empirical research pending.**
 
-This repository contains a Python research framework for studying deterministic US equity/ETF strategies, testing whether a constrained AI news-risk overlay adds value, and examining the reliability of locally orchestrated research workflows. It combines quantitative experimentation with software-engineering correctness, rather than aiming to operate a trading account.
+An offline Python framework that connects provenance-checked datasets, causal features,
+deterministic strategy and risk decisions, next-session simulation, evaluation and
+hash-indexed artifacts. A separate local Temporal/SQLite track verifies retries,
+idempotence, reconciliation and workflow replay against the same research core.
 
-- **Maintainer:** Michail Athanasios Peppas
-- **Project direction:** v0.7 research framework (Option B)
-- **Current status:** **R1–R4-B reviewed engineering; R4-B.2 targeted field resolution verified, independent acceptance pending; historical study blocked**
+The public demonstration is reproducible and synthetic. It includes a hand-checked
+losing trade, explicit rejections and complete cash/equity accounting. The project
+currently supports software-correctness and local-reliability claims; it does not
+establish historical strategy performance or empirical AI benefit.
 
-> **No deployment, live trading or broker-connected paper trading is part of this project scope.** The canonical research path runs locally and offline. The synthetic demonstration verifies software behavior; it is not a historical-market study or an investment recommendation.
+**Start here:** [final technical handoff](docs/research/FINAL_PROJECT_HANDOFF.md) ·
+[reproduce the public example](docs/research/REPRODUCIBILITY.md) ·
+[historical-data feasibility decision](docs/research/FINAL_DATA_FEASIBILITY.md)
 
-## Research questions
+Maintainer: Michail Athanasios Peppas, NTUA Electrical and Computer Engineering.
 
-1. **Strategy robustness:** How do regime, trend, breakout, relative-strength and risk filters compare with transparent benchmarks under time-aware validation and changing costs?
-2. **Bounded AI contribution:** Does frozen, timestamp-valid, negative-only news-risk analysis improve or worsen results compared with identical deterministic decisions and neutral AI?
-3. **Systems correctness:** Can locally orchestrated computations preserve idempotency, auditability and state integrity under retries, replay and injected failures?
+## What the engineering demonstrates
 
-The evaluation is designed to report negative or inconclusive findings as faithfully as positive ones. No profitability threshold is a completion requirement.
+- **Causal decisions and execution:** feature warm-up, information cutoffs, next-eligible
+  session fills, gaps/stops, deterministic simultaneous-order handling and rejected decisions.
+- **Auditable accounting:** cash, positions, fees, slippage, realized/unrealized P&L and
+  terminal holdings, checked against independent numerical fixtures.
+- **Reproducible evaluation:** chronological folds, explicit benchmarks, fixed ablations,
+  cost stresses, undefined metric reasons and fixed-seed uncertainty calculations.
+- **Bounded AI behavior:** frozen timestamp-valid news/output replay, neutral fallback
+  and negative-only effects that cannot create trades or increase deterministic exposure.
+- **Local systems reliability:** actual Temporal SDK workflow execution/replay, SQLite
+  lifecycle records, exactly-once observable committed results and fail-closed recovery
+  across separate database and filesystem publication boundaries.
+- **Historical-data safety:** compatible v1/v2 contracts, isolated split/dividend accounting,
+  explicit read-only acquisition, durable budgets and immutable negative qualification evidence.
 
-## What exists and what remains
+The long-only baseline, relative-strength filter, risk limits and accepted numerical
+behavior are preserved. Positive returns and a minimum trade count are not acceptance criteria.
 
-| Area | Current codebase | v0.7 research completion target |
-| --- | --- | --- |
-| Market data | Compatible v1/v2 contracts; finite private IEX acquisition, economic action scope and reproducible qualification | Pilot bars complete; action/identity/availability and execution-source admission remain blocked |
-| Strategy and risk | Causal features, regime/candidates, full research cooldown, registered filter ablations and numerical safeguards | Historical validation with audited design exposure |
-| Backtesting | Preserved next-session simulator; isolated split/dividend accounting and three explicit analytical return conventions | Authorized v2 strategy integration and historical comparisons |
-| AI/news | Offline as-of frozen replay, provenance, neutral fallback and paired execution bounds | Credible frozen historical news evidence and inconclusive/negative findings retained |
-| Persistence and workflows | Optional local Temporal research workflow, SQLite experiment ledger, retry/replay and verified publication reconciliation | Preserve reviewed local guarantees; no production durability claim |
-| Validation and reporting | Chronological matrix, fixed-seed uncertainty, cost stresses and deterministic nested artifacts; static historical preview | Empirical report and local research-results presentation |
-
-The research CLI connects deterministic strategy/risk logic to simulated accounting. Its R2
-`evaluate` command executes registered folds, benchmarks, ablations, cost stresses, uncertainty
-and frozen AI comparisons. Executed examples are synthetic engineering demonstrations;
-empirical historical findings remain **pending**. Optional R3 orchestration adds local
-SQLite/Temporal recovery without changing ordinary research execution. The legacy explicit-signal
-backtester retains its original timing. The incomplete prior paper-validation record is not v0.7 evidence.
-
-## Research architecture
+## Architecture and technology
 
 ```mermaid
 flowchart LR
-    A["Frozen local dataset"] --> B["Causal signals and risk"]
-    B --> C["Simulated fills and accounting"]
-    C --> D["Benchmarks and research artifacts"]
-    E["Frozen news / AI evidence"] --> B
+    D["Frozen dataset + config"] --> F["Causal features"]
+    F --> S["Strategy + risk decisions"]
+    S --> E["Next-session simulation + accounting"]
+    E --> M["Metrics + benchmarks + hashed artifacts"]
+    A["Optional frozen AI risk evidence"] --> S
+    T["Optional local Temporal + SQLite recovery"] -.-> E
+    T -.-> M
 ```
 
-The R1/R2 pipeline operates without Temporal or network services. A separate optional
-local Temporal/SQLite track executes the same research core and verifies retries,
-replay and reconciliation across separate database and filesystem commits.
+Python 3.12+ and Pydantic provide typed, versioned boundaries; `uv.lock` pins dependencies.
+SQLite supplies local transactional audit state. Temporal's local SDK test environment
+exercises orchestration and replay without a cloud service. Pytest, Ruff and scoped
+mypy checks qualify the implementation. The ordinary research CLI needs no running
+Temporal service or credentials. Legacy operational components are historical context.
 
-### Implementation checkpoints
+## Run the connected synthetic example
 
-| Checkpoint | Evidence required | Status |
-| --- | --- | --- |
-| **R1 — Data and simulation** | Auditable offline snapshot, causal strategy-to-simulation path and verified arithmetic | Implemented; reviewed cooldown correction included |
-| **R2 — Experiments and AI** | Benchmarks, time-aware splits, cost/ablation/uncertainty tests, frozen AI comparison | Independent external engineering review passed at `9b3678b` |
-| **R3 — Local reliability** | Real local Temporal workflow, idempotent checkpoints and fault-recovery tests | Reviewed baseline at `60dd250` |
-| **R4 — Portfolio release** | Reproducible example, available-data results, technical report, limitations and local presentation | R4-A/R4-B engineering accepted; targeted corrections and empirical release pending |
-
-Implementation is organized into these **four** bounded Codex checkpoints. The detailed task-by-task plan is available below; no deployment step is included.
-
-R4 is proceeding in separately authorized phases. **R4-A used only original synthetic
-fixtures and mocked HTTP**: [contracts and limitations](docs/research/R4A_IMPLEMENTATION.md),
-[acquisition interfaces](docs/research/R4A_ACQUISITION.md) and
-[verification](docs/research/R4A_VERIFICATION.md), independently accepted at `0dd0875`.
-[R4-B](docs/research/R4B_IMPLEMENTATION.md) adds finite read-only acquisition and private
-candidates; its engineering was independently accepted at `a6d3a09`.
-[R4-B.1](docs/research/R4B1_IMPLEMENTATION.md) adds explicit economic action scope and
-aggregate budgets. Its SPY/QQQ 2024–2025 IEX pilot has 1,004/1,004 valid bars, while
-action, currency, source-execution and causal evidence block admission. The larger
-candidate and historical strategy study were not run.
-[Qualification](docs/research/R4B1_DATA_QUALIFICATION.md) distinguishes technical access,
-rights and scientific readiness. Personal noncommercial IEX/local storage relies on
-official Basic documentation and owner-reported Support #397685. SIP, retention and
-public empirical publication questions remain unresolved. Ordinary research and
-synthetic examples still require no provider access. [Verification](docs/research/R4B1_VERIFICATION.md)
-records tests, immutable evidence and independent-review limits; R4-C has not begun.
-
-[R4-B.2](docs/research/R4B2_IMPLEMENTATION.md) audits all 16 applicable distributions
-without new authenticated requests. Three independent SPY currency fields receive
-record-specific, source-hashed resolutions; 13 remain unresolved. Original records and
-strict admission are unchanged. [Qualification and owner options](docs/research/R4B2_DATA_QUALIFICATION.md)
-and [verification](docs/research/R4B2_VERIFICATION.md) keep pilot admission and R4-C
-**BLOCKED**. No historical strategy or larger acquisition has run.
-
-## Documentation and research design
-
-- **[Research framework specification v0.7](docs/app/AI_Assisted_Quant_Research_SPEC_v0.7.md):** goals, mandatory boundaries, contracts and release criteria.
-- **[Research protocol](docs/research/RESEARCH_PROTOCOL.md):** hypotheses, temporal splits, benchmarks, ablations, cost models, statistics and claim policy.
-- **[Research architecture](docs/research/ARCHITECTURE.md):** existing components, proposed interfaces and local reliability boundaries.
-- **[Four-checkpoint implementation plan](docs/superpowers/plans/2026-11-16-ai-assisted-quant-research.md):** test-first tasks and review gates for Codex.
-- **[Four Codex prompts](docs/research/CODEX_CHECKPOINT_PROMPTS.md):** one bounded, copy-ready prompt for each reviewed checkpoint.
-- **[Technical documentation index](docs/README.md):** current research documents and clearly marked historical implementation/runbooks.
-
-## Run the offline synthetic reference
-
-These commands run offline after dependency setup. Market/news inputs are original synthetic
-fixtures, including a synthetic weekday calendar and hand-authored AI outputs.
-
-Prerequisites: Python **3.12+** and [uv](https://docs.astral.sh/uv/).
+Initial cloning and dependency installation may need internet access. The experiment
+itself uses only public fixtures and runs offline after setup.
 
 ```bash
 git clone https://github.com/ntua-el21026/ai-assisted-quant-research.git
 cd ai-assisted-quant-research
 uv sync --locked --group dev
-uv run --offline --no-sync pytest tests/unit tests/integration/test_research_cli.py -q
 uv run --offline --no-sync python -m packages.research.cli run \
   --config experiments/configs/baseline.yaml \
   --dataset tests/fixtures/market_snapshot/manifest.json \
-  --output results/r1-example
-uv run --offline --no-sync python -m packages.research.cli evaluate \
-  --config experiments/configs/ablations.yaml \
-  --dataset tests/fixtures/market_snapshot/manifest.json \
-  --output results/r2-example
+  --output results/example
 ```
 
-Use a new output directory for each run; existing outputs are immutable. The command writes
-hash-indexed manifests, decision/fill records, equity, accounting metrics and a generated
-report. Runtime-only timestamps and host details are separated into `runtime.json`.
-See [R1 implementation and verification](docs/research/R1_IMPLEMENTATION.md) for contracts,
-limitations and accounting fixtures. [R2 verification](docs/research/R2_VERIFICATION.md)
-records interfaces, numerical checks, benchmarks and reproducibility hashes. The matrix
-defaults to development folds; `--include-final` explicitly adds the registered synthetic
-final evaluation. This does not establish an untouched historical holdout. The empirical
-research study remains pending.
+Use a new output directory each time; existing results are immutable. The output contains
+`manifest.json`, the effective configuration, decision/fill records in `trades.csv`,
+`equity.csv`, `metrics.json`, explicit comparison status, a generated `report.md`,
+`hashes.json` and separate nondeterministic `runtime.json`.
 
-### Optional local workflow and replay
+The fixed **synthetic** fixture has 210 weekday sessions and 630 invented OHLCV rows.
+Its one closed round trip starts from USD 10,000 and ends at USD **9,980.4831136**, with
+no terminal position. Independent arithmetic checks the loss of USD 19.5168864 and
+fees of USD 0.0328864. These numbers verify modeled execution/accounting and provide
+no historical investment inference. The fixture calendar is not an exchange calendar.
 
-With an already available Temporal SDK test-server executable, run one finite local
-workflow. This command never downloads a server or connects to Temporal Cloud:
+[Reproducibility instructions](docs/research/REPRODUCIBILITY.md) give the executed two-run
+sequence, exact inventory/hash verification, expected output and optional existing
+matrix, corporate-action and local workflow demonstrations. The R2 `evaluate` command
+adds the implemented statistical/benchmark/AI comparisons; the R1-compatible `run`
+format deliberately defers those comparisons. No new backtesting framework is required.
 
-```bash
-uv run --offline --no-sync python -m apps.workers.app.research_local \
-  --experiment-id synthetic-local-example --config experiments/configs/ablations.yaml \
-  --dataset tests/fixtures/market_snapshot/manifest.json --state results/r3-example \
-  --test-server-binary /path/to/existing/temporal-test-server
-```
+## Verification status
 
-Repeat the same request and state directory to reuse the verified committed result.
-Changed inputs/source/environment under the same identity fail explicitly. The command
-shuts down its worker/server, retains an execution history and verifies deterministic
-replay. [R3 verification](docs/research/R3_VERIFICATION.md) documents the lifecycle,
-failure matrix, exact evidence and bounded crash/concurrency assumptions. SQLite and
-artifact publication are separate commits; recovery verifies each boundary.
+Closure verification: **1,521 tests passed, nine gated external-service tests skipped**,
+with three existing Temporal/Pydantic warnings. Repository-wide Ruff, the established
+59-file mypy scope, dependency/lock consistency, frontend-only checks and local Temporal
+recovery/replay passed. Two-run artifacts match byte-for-byte; 238 protected invariant
+files match the accepted references. Commands, environment, hashes, exclusions and
+clean-install evidence are consolidated in [the final handoff](docs/research/FINAL_PROJECT_HANDOFF.md).
 
-## Source organization
+Reproducibility is defined for the same dataset, configuration, code revision and recorded
+environment. Runtime timestamps/host details are excluded. Full source-bound aggregate
+hashes can change with a new revision while protected numerical files remain unchanged.
+Local recovery tests do not prove production, distributed-concurrency or power-loss guarantees.
 
-| Directory | Responsibility |
+## Historical empirical status
+
+**No historical strategy study has executed. The full v0.7 research-completion gate remains open.**
+The final finite review evaluated the existing private Alpaca IEX pilot and three alternative
+sources. It established no sufficiently qualified, already-authorized dataset for a restricted
+multiyear study. No alternate temporal split, strategy threshold, holdout or risk limit was
+registered or changed. A SPY-only substitute would also defeat the existing positive
+relative-strength filter because SPY's relative strength against itself is zero.
+
+The existing pilot's internally valid bars do not resolve corporate-action fields,
+identity, aggregation/execution, historical availability or rights requirements.
+The [source decision](docs/research/FINAL_DATA_FEASIBILITY.md) records the bounded review;
+the [handoff appendix](docs/research/FINAL_PROJECT_HANDOFF.md#historical-research-gates)
+retains the seven scientific/rights gate groups. No proprietary observations, empirical
+charts or uncertain-rights derived statistics are published. Historical AI evidence remains
+unqualified, so no empirical AI-uplift claim is made. The research program remains in
+development; the verified engineering deliverable is ready for portfolio review.
+
+## Technical reports and source map
+
+| Start point | Evidence or implementation |
 | --- | --- |
-| [`packages/data/`](packages/data/) | Typed observations, causal features and validated local snapshots |
-| [`packages/strategy/`](packages/strategy/) / [`packages/risk/`](packages/risk/) | Deterministic selection and risk contracts |
-| [`packages/backtesting/`](packages/backtesting/) | Causal next-session simulator and preserved explicit-signal legacy API |
-| [`packages/ai/`](packages/ai/) | Structured news-risk analysis and restrictive fallback policy |
-| [`packages/ledger/`](packages/ledger/) | Local SQLite repositories and historical audit interfaces |
-| [`apps/workers/`](apps/workers/) | Optional local research workflow and preserved historical Temporal scaffolding |
-| [`tests/`](tests/) | Unit, integration, failure and local orchestration coverage |
-| [`docs/evidence/`](docs/evidence/) | Historical operational observations, **not v0.7 research results** |
+| [Specification v0.7](docs/app/AI_Assisted_Quant_Research_SPEC_v0.7.md) and [protocol](docs/research/RESEARCH_PROTOCOL.md) | Scientific contracts, hypotheses, execution and completion gates |
+| [Architecture](docs/research/ARCHITECTURE.md) | Actual boundaries and local recovery lifecycle |
+| [R1 contracts](docs/research/R1_IMPLEMENTATION.md) / [verification](docs/research/R1_VERIFICATION.md) | Causal data, decisions and simulation |
+| [R2 verification](docs/research/R2_VERIFICATION.md) | Metrics, experiment matrix and frozen AI controls |
+| [R3 verification](docs/research/R3_VERIFICATION.md) | Actual workflows, recovery and replay limits |
+| [R4-A contracts](docs/research/R4A_IMPLEMENTATION.md) | Exact corporate-action and benchmark accounting |
+| [R4-B.2 qualification](docs/research/R4B2_DATA_QUALIFICATION.md) | Preserved private-pilot blockers and field evidence |
+| [Documentation index](docs/README.md) | Detailed checkpoint reports and historical references |
 
-[`packages/research/`](packages/research/) provides the offline CLI, configuration, decisions and artifacts.
-[`experiments/configs/baseline.yaml`](experiments/configs/baseline.yaml) freezes the R1 synthetic baseline.
+`packages/data`, `packages/strategy`, `packages/risk`, `packages/backtesting` and
+`packages/research` contain the offline pipeline. `apps/workers` contains optional local
+orchestration; `tests` contains unit, integration and local Temporal coverage. Private
+inputs and generated results are ignored by default. Public synthetic fixtures remain
+available without provider access.
 
-## Safety, provenance and historical context
+## Scope and license
 
-- The research pipeline must use **frozen local inputs**, deterministic time ordering, versioned configurations and published artifact hashes. No provider credentials are necessary for the reference example.
-- AI is a strictly advisory, non-increasing risk overlay. It cannot create or dispatch orders, expand position size or relax deterministic limits.
-- Synthetic fixtures, licensed historical observations and frozen AI outputs must be clearly distinguished. Data redistribution and survivorship/holdout limitations must be documented.
-- Legacy deployment manifests, broker adapters, paper-operation scripts and readiness documents are retained for historical engineering context; **they are not active deployment instructions or completion gates**.
+No deployment, autonomous trading, live orders or broker-connected paper trading is
+part of this release. Legacy adapters, operational scripts, disabled deployment material
+and [earlier specifications](docs/app/Autonomous_AI_Trading_Bot_SPEC_v0.6.md) remain preserved
+as historical evidence, not instructions to activate them.
 
-The historical [v0.6 specification](docs/app/Autonomous_AI_Trading_Bot_SPEC_v0.6.md) and [earlier milestone README](docs/history/readme-before-portfolio-preparation.md) are preserved for traceability. The v0.7 specification supersedes their operational objectives.
-
-## License
-
-See [LICENSE](LICENSE) for the repository license. Any separately sourced market/news datasets remain governed by their respective licenses.
+Source code is [MIT licensed](LICENSE); original synthetic fixtures declare their own
+license. Provider market/news data and issuer documents retain their separate rights.
+The repository license does not grant redistribution rights over those materials.

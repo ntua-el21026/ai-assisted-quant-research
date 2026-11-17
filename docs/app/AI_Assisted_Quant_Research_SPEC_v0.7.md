@@ -1,7 +1,7 @@
 # AI-Assisted Quantitative Trading Research Framework
 
 - **Specification:** v0.7 (research-scope transition)
-- **Status:** R1–R4-B engineering reviewed; R4-B.2 targeted field resolution verified, independent acceptance pending; historical strategy research/release blocked
+- **Status:** Engineering implementation verified; historical empirical research pending; full v0.7 scientific completion gate open
 - **Owner:** Michail Athanasios Peppas
 - **Target audience:** MSc Computer Science, Data Science, AI/ML and quantitative-finance reviewers
 - **Execution environment:** Local, offline-first Python research software; no deployment
@@ -39,6 +39,14 @@ alternative-study options are proposals requiring separate review, not changes t
 specification's execution timing, calendar, hypotheses or empirical acceptance criteria.
 
 For future work, this specification overrides contradictory requirements in older docs. Existing safety invariants remain binding unless this document explicitly tightens them. No new functionality is authorized merely because it appears in a legacy roadmap.
+
+The separately authorized [final engineering closure](../research/FINAL_PROJECT_HANDOFF.md)
+verifies the delivered implementation and public synthetic example. Its finite
+[source review](../research/FINAL_DATA_FEASIBILITY.md) found no sufficiently qualified,
+already-authorized historical dataset. Conditional restricted-study work therefore
+stopped before a dataset contract, temporal amendment or empirical run was created.
+No scientific admission criterion, strategy threshold, risk limit or original proposed
+split is weakened. This software handoff does not satisfy the real-study gate below.
 
 ## 2. Mission and research questions
 
@@ -215,4 +223,4 @@ The design is delivered through **four Codex implementation checkpoints** after 
 
 Each checkpoint requires tests, a clean commit, evidence, and a short handoff with exactly what remains. The next checkpoint must not assume unverified claims from the previous one. The owner has separately authorized **one repository rename** to `ntua-el21026/ai-assisted-quant-research`, subject to GitHub authentication; R1 must verify its completion. Further renaming, deployment, turning on Actions, live/paper broker writes or removing history remain outside the authorized scope.
 
-The project is **research-complete** only when all mandatory gates above are satisfied, a real historical study has been conducted and accurately qualified, and a reviewer can independently reproduce the public example. The full historical study may require separately licensed inputs; publishing its derived findings and reproducibility manifest does not imply that the underlying provider data can be redistributed. If a permitted dataset cannot be obtained, explicitly report **framework implemented; empirical research pending** instead of using a completed-research label. Until then, describe the project as **in development** or **research framework under implementation**.
+The project is **research-complete** only when all mandatory gates above are satisfied, a real historical study has been conducted and accurately qualified, and a reviewer can independently reproduce the public example. The full historical study may require separately licensed inputs; publishing its derived findings and reproducibility manifest does not imply that the underlying provider data can be redistributed. If a permitted dataset cannot be obtained, explicitly report **engineering implementation verified; historical empirical research pending** instead of using a completed-research label. The scientific research program remains **in development**; a verified engineering closure is a distinct, bounded deliverable.

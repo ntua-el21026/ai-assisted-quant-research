@@ -1,7 +1,7 @@
 # Quantitative Trading Research Architecture — v0.7
 
 - **Authority:** [Research Framework Specification v0.7](../app/AI_Assisted_Quant_Research_SPEC_v0.7.md)
-- **Status:** R1–R4-B engineering reviewed; R4-B.2 targeted field resolution verified, acceptance pending; empirical R4 remains blocked
+- **Status:** Engineering implementation verified; historical empirical research pending; delivered architecture unchanged by final closure
 
 ## 1. System boundary
 
@@ -285,3 +285,17 @@ promotion path. [R4-B.2 implementation](R4B2_IMPLEMENTATION.md),
 [qualification](R4B2_DATA_QUALIFICATION.md) and [verification](R4B2_VERIFICATION.md)
 record tested boundaries and the blocked admission decision. Alternative source and
 proxy-execution options require separate approval; R4-C has not begun.
+
+## 13. Final engineering closure
+
+The [final handoff](FINAL_PROJECT_HANDOFF.md) consolidates fresh full-suite, static,
+locked-install, numerical and local workflow/replay evidence. The
+[public reproduction](REPRODUCIBILITY.md) uses the existing connected pipeline and
+original synthetic fixtures; it introduces no new runtime abstraction or verifier API.
+
+The [finite source comparison](FINAL_DATA_FEASIBILITY.md) found no qualified,
+already-authorized historical input. Conditional empirical phases were not started;
+no restricted contract, adapter, strategy integration or temporal design was added.
+Strict v2 admission and all accepted R1–R4-B.2 interfaces remain unchanged. The
+engineering deliverable is closed for portfolio review while the historical research
+and full v0.7 scientific gate remain pending.

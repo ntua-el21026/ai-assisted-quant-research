@@ -1,13 +1,22 @@
 # Quantitative Trading Research Protocol
 
 - **Governing specification:** [Research Framework v0.7](../app/AI_Assisted_Quant_Research_SPEC_v0.7.md)
-- **Status:** R1–R4-B engineering reviewed; R4-B.2 targeted correction verified, acceptance pending. Pilot bars pass internal quality; historical admission/studies remain blocked.
+- **Status:** Engineering implementation verified; historical empirical research pending. Strict data admission and full scientific completion remain open.
 
 ## 1. Scientific objective
 
 Evaluate the robustness of a deterministic end-of-day US equity/ETF strategy and the incremental effect of a bounded, negative-only AI/news risk overlay, while separately demonstrating correctness and recovery in local simulated workflows.
 
 These are engineering experiments, not investment recommendations or evidence of expected future profits. The hypotheses must be registered in a versioned experiment configuration **before** final evaluation results are examined.
+
+The [final bounded feasibility decision](FINAL_DATA_FEASIBILITY.md) is NO-GO: neither
+the existing pilot nor the three reviewed alternatives supplies a sufficiently
+qualified, already-authorized historical input. The [engineering handoff](FINAL_PROJECT_HANDOFF.md)
+therefore closes software verification and public synthetic reproducibility only.
+Conditional authorization to consider a smaller study did not produce a registered
+amendment: no qualified data GO occurred. The strategy, risk policy, benchmark definitions,
+split proposals, warm-up rules and holdout caveats below are unchanged. No historical
+performance or empirical AI-uplift result has been computed or published.
 
 | ID | Question | Null/baseline | Proposed comparison |
 | --- | --- | --- | --- |

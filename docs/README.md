@@ -1,14 +1,30 @@
 # Technical documentation index
 
-**The AI-assisted quantitative trading research framework (v0.7) is under implementation.** No production deployment, paper-broker operation or live-trading readiness is a current goal. The v0.7 research specification supersedes the operating objectives of older documents, which remain available to explain historical implementation and tests.
+**Engineering implementation verified; historical empirical research pending.**
+The v0.7 scientific completion gate remains open. Production deployment, paper-broker
+operation and live-trading readiness are outside this deliverable. Earlier documents
+remain dated engineering/research evidence; the current handoff separates their role
+from the final portfolio status.
+
+## Start with the engineering closure
+
+- [Final project handoff](research/FINAL_PROJECT_HANDOFF.md): delivered scope, fresh
+  checks, hashes, limitations, source decision and Git delivery evidence.
+- [Public reproducibility guide](research/REPRODUCIBILITY.md): executed offline sequence,
+  deterministic byte verification and independently calculated synthetic expectations.
+- [Final data-feasibility decision](research/FINAL_DATA_FEASIBILITY.md): existing pilot
+  plus three alternatives; empirical NO-GO without new acquisition or a changed study.
+
+No additional R4-B investigation or historical strategy execution is active. The research
+program remains in development; the engineering deliverable is ready for portfolio review.
 
 ## Authoritative research documentation
 
 | Document | Purpose | Status |
 | --- | --- | --- |
 | [Research framework specification v0.7](app/AI_Assisted_Quant_Research_SPEC_v0.7.md) | Research questions, non-goals, safety, interfaces and completion criteria | **Governing specification** |
-| [Research protocol](research/RESEARCH_PROTOCOL.md) | Dataset provenance, causal semantics, time-aware experiments, metrics, uncertainty and reporting | R1–R3 implemented; empirical studies pending |
-| [Research architecture](research/ARCHITECTURE.md) | Actual component inventory, offline research/matrix CLI, planned local Temporal boundary | Planned additions distinguished from existing code |
+| [Research protocol](research/RESEARCH_PROTOCOL.md) | Dataset provenance, causal semantics, time-aware experiments, metrics, uncertainty and reporting | Engineering verified; empirical study pending |
+| [Research architecture](research/ARCHITECTURE.md) | Actual offline research/matrix CLI, local Temporal/SQLite and qualification boundaries | Delivered interfaces and deferred scientific work distinguished |
 | [Design decision](superpowers/specs/2026-11-16-ai-assisted-quant-research-design.md) | Approved balanced AI/ML + systems direction and tradeoffs | Approved scope |
 | [Four-checkpoint implementation plan](superpowers/plans/2026-11-16-ai-assisted-quant-research.md) | Test-first R1–R4 task definitions and verification gates | R1–R3 reviewed baseline; R4 empirical gate pending |
 | [Four Codex prompts](research/CODEX_CHECKPOINT_PROMPTS.md) | Original checkpoint assignments; later work follows explicit staged authorization | R1–R4-B engineering reviewed; R4-B.1 acceptance pending |
