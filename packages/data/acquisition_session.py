@@ -21,7 +21,7 @@ from packages.data.acquisition_budget import (
     BudgetedHistoricalTransport,
     HistoricalSessionBudget,
 )
-from packages.data.acquisition_plan import RegisteredAcquisitionPlan
+from packages.data.acquisition_plan import AcquisitionStage, RegisteredAcquisitionPlan
 from packages.data.alpaca_historical import (
     AlpacaHistoricalAcquirer,
     HistoricalAcquisition,
@@ -32,6 +32,7 @@ from packages.data.alpaca_historical import (
     normalize_historical_bars,
 )
 from packages.data.candidate_publication import publish_candidate
+from packages.data.corporate_actions import CorporateAction
 from packages.data.historical_candidates import (
     CandidateAcquisition,
     CandidateFile,
@@ -69,6 +70,13 @@ class AcquisitionResult:
     successful_body_bytes: int
     pilot_passed: bool
     stopped_code: str | None
+
+
+@dataclass(frozen=True)
+class ActionEvaluation:
+    actions: tuple[CorporateAction, ...]
+    evidence: Mapping[str, bytes]
+    error_code: FailureCode | None = None
 
 
 class _Capture:
@@ -117,6 +125,17 @@ def acquire_registered_candidate(
     clock: Callable[[], datetime] = lambda: datetime.now(UTC),
     monotonic: Callable[[], float] = time.monotonic,
     sleep: Callable[[float], None] = time.sleep,
+    reused_acquisitions: Mapping[str, HistoricalAcquisition] | None = None,
+    supplemental_evidence: Mapping[str, bytes] | None = None,
+    budget_factory: Callable[[PrivateStorage], HistoricalSessionBudget] | None = None,
+    storage_guard: Callable[[int], None] | None = None,
+    action_evaluator: Callable[
+        [AcquisitionStage, HistoricalAcquisition, Mapping[str, str]], ActionEvaluation
+    ]
+    | None = None,
+    pilot_gate: Callable[[tuple[CandidateAcquisition, ...], Mapping[str, bytes]], bool]
+    | None = None,
+    stop_on_pilot_failure: bool = False,
 ) -> AcquisitionResult:
     """Execute one fresh sequential session under one shared durable budget.
 
@@ -126,7 +145,30 @@ def acquire_registered_candidate(
     evidence and requires manual review within the checkpoint's remaining budget.
     """
     plan = registered.plan
-    storage = PrivateStorage(workspace, repository, plan.budget.max_local_bytes)
+    authority_marker = repository / "datasets/private/r4b/.checkpoint-budget-authority.json"
+    if (authority_marker.exists() or authority_marker.is_symlink()) and (
+        budget_factory is None or storage_guard is None
+    ):
+        raise HistoricalAcquisitionError("checkpoint_authority_required")
+    reused = dict(reused_acquisitions or {})
+    for identity, acquisition in reused.items():
+        stage = next((s for s in plan.stages if s.acquisition_id == identity), None)
+        if stage is None or stage.role != "preflight" or acquisition.request != stage.request:
+            raise ValueError("invalid_reused_preflight")
+        to_acquisition_provenance(acquisition, acquisition_id=identity, mocked=kind == "synthetic")
+    supplement = dict(supplemental_evidence or {})
+    for name, body in supplement.items():
+        CandidateFile(
+            path=name,
+            role="evidence",
+            size_bytes=len(body),
+            sha256=hashlib.sha256(body).hexdigest(),
+        )
+    storage = PrivateStorage(
+        workspace, repository, plan.budget.max_local_bytes, storage_guard=storage_guard
+    )
+    for name, body in supplement.items():
+        storage.write_bytes("registered-evidence/" + name, body)
     storage.write_bytes("registered-plan.json", registered.raw_bytes)
     storage.write_bytes(
         "calendar.json",
@@ -169,14 +211,18 @@ def acquire_registered_candidate(
             }
         ),
     )
-    budget = HistoricalSessionBudget(
-        max_attempts=plan.budget.max_attempts,
-        max_received_body_bytes=plan.budget.max_received_body_bytes,
-        max_elapsed_seconds=plan.budget.max_elapsed_seconds,
-        min_interval_seconds=plan.budget.min_interval_seconds,
-        monotonic=monotonic,
-        sleep=sleep,
-        event_callback=storage.append_event,
+    budget = (
+        budget_factory(storage)
+        if budget_factory is not None
+        else HistoricalSessionBudget(
+            max_attempts=plan.budget.max_attempts,
+            max_received_body_bytes=plan.budget.max_received_body_bytes,
+            max_elapsed_seconds=plan.budget.max_elapsed_seconds,
+            min_interval_seconds=plan.budget.min_interval_seconds,
+            monotonic=monotonic,
+            sleep=sleep,
+            event_callback=storage.append_event,
+        )
     )
     capture = _Capture(
         BudgetedHistoricalTransport(transport=transport, budget=budget), storage, clock
@@ -208,11 +254,26 @@ def acquire_registered_candidate(
         normalization_error: str | None = None
         try:
             request = stage.request
-            acquired = (
-                acquirer.fetch_bars(request)
-                if isinstance(request, HistoricalBarsRequest)
-                else acquirer.fetch_actions(request)
-            )
+            if stage.acquisition_id in reused:
+                acquired = reused[stage.acquisition_id]
+                started = acquired.request_started_at
+                for cached_page in acquired.pages:
+                    name = f"pages/{stage.acquisition_id}/{len(capture.pages):04d}.json"
+                    storage.write_bytes("captures/" + name, cached_page.body)
+                    capture.files[name] = cached_page.body
+                    capture.pages.append(
+                        CandidatePage(
+                            file_path=name,
+                            query=cached_page.query,
+                            received_at=cached_page.received_at,
+                        )
+                    )
+            else:
+                acquired = (
+                    acquirer.fetch_bars(request)
+                    if isinstance(request, HistoricalBarsRequest)
+                    else acquirer.fetch_actions(request)
+                )
         except HistoricalAcquisitionError as exc:
             error = exc.code
         finished = acquired.acquired_at if acquired is not None else clock()
@@ -254,13 +315,32 @@ def acquire_registered_candidate(
                             roles[name] = ("normalized_bars", stage.acquisition_id)
                     # Early-year probes lack a qualified calendar, intentionally remain raw.
                 else:
-                    actions = normalize_corporate_actions(
-                        acquired,
-                        security_ids={s: "research:" + s for s in stage.request.symbols},
-                    )
-                    name = f"normalized/{stage.acquisition_id}-actions.json"
-                    files[name] = canonical_json([a.model_dump(mode="json") for a in actions])
-                    roles[name] = ("normalized_actions", stage.acquisition_id)
+                    security_ids = {s: "research:" + s for s in stage.request.symbols}
+                    if action_evaluator is None:
+                        actions = normalize_corporate_actions(acquired, security_ids=security_ids)
+                    else:
+                        try:
+                            evaluated = action_evaluator(stage, acquired, security_ids)
+                        except Exception:
+                            evaluated = ActionEvaluation(
+                                (),
+                                {
+                                    "policy-failure.json": canonical_json(
+                                        {"error": "action_policy_failed"}
+                                    )
+                                },
+                                "action_policy_failed",
+                            )
+                        actions = evaluated.actions
+                        normalization_error = evaluated.error_code
+                        for logical, body in evaluated.evidence.items():
+                            name = f"action-evidence/{stage.acquisition_id}/{logical}"
+                            files[name] = body
+                            roles[name] = ("evidence", stage.acquisition_id)
+                    if normalization_error is None:
+                        name = f"normalized/{stage.acquisition_id}-actions.json"
+                        files[name] = canonical_json([a.model_dump(mode="json") for a in actions])
+                        roles[name] = ("normalized_actions", stage.acquisition_id)
                 if not (
                     isinstance(stage.request, HistoricalBarsRequest)
                     and stage.request.adjustment != "raw"
@@ -295,11 +375,21 @@ def acquire_registered_candidate(
         for page in pages:
             files[page.file_path] = capture.files[page.file_path]
             roles[page.file_path] = ("raw_page", stage.acquisition_id)
+        if pilot_passed and stage.role == "pilot" and pilot_gate is not None:
+            try:
+                pilot_passed = pilot_gate(tuple(records), files)
+            except Exception:
+                pilot_passed = False
+                stopped = "pilot_gate_failed"
         if error is not None:
             # Entitlement/authentication, resource, transport and provider errors close this
             # bounded session. A caller must not silently restart its request allowance.
             stopped = error
-        elif stage.role == "preflight" and normalization_error is not None:
+        elif (
+            normalization_error == "action_policy_failed"
+            or (stage.role == "preflight" and normalization_error is not None)
+            or (stop_on_pilot_failure and stage.role == "pilot" and normalization_error is not None)
+        ):
             stopped = normalization_error
     frozen = clock()
     identities = tuple(
@@ -334,6 +424,7 @@ def acquire_registered_candidate(
             }
         ),
     }
+    evidence.update({"supplemental/" + name: body for name, body in supplement.items()})
     for name, body in evidence.items():
         files["evidence/" + name] = body
         roles["evidence/" + name] = ("evidence", None)
@@ -437,7 +528,12 @@ def acquire_registered_candidate(
     )
 
 
-def qualify_candidate(manifest: Path, output: Path) -> dict[str, object]:
+def qualify_candidate(
+    manifest: Path,
+    output: Path,
+    *,
+    storage_guard: Callable[[int], None] | None = None,
+) -> dict[str, object]:
     """Offline deterministic diagnostics; historical outputs stay in ignored private storage."""
     candidate = load_historical_candidate(manifest)
     if candidate.manifest.kind == "historical":
@@ -455,6 +551,9 @@ def qualify_candidate(manifest: Path, output: Path) -> dict[str, object]:
         if private is None or not output.absolute().is_relative_to(private):
             raise ValueError("private_qualification_output_required")
         repository = private.parent.parent.parent.parent
+        marker = repository / "datasets/private/r4b/.checkpoint-budget-authority.json"
+        if (marker.exists() or marker.is_symlink()) and storage_guard is None:
+            raise ValueError("checkpoint_authority_required")
         ignored = subprocess.run(
             [
                 "git",
@@ -493,6 +592,9 @@ def qualify_candidate(manifest: Path, output: Path) -> dict[str, object]:
         if retained + sum(map(len, files.values())) + 16384 > 1024**3:
             raise ValueError("private_storage_limit")
     import os
+
+    if storage_guard is not None:
+        storage_guard(sum(map(len, files.values())) + 16384)
 
     previous = os.umask(0o077)
     try:

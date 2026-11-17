@@ -41,6 +41,8 @@ from packages.data.historical_models import (
 from packages.data.quality import SnapshotError
 
 FailureCode = Literal[
+    "action_policy_failed",
+    "pilot_gate_failed",
     "missing_credentials",
     "invalid_body_limit",
     "invalid_total_body_limit",

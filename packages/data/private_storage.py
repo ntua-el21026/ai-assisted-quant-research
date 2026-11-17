@@ -10,7 +10,7 @@ import json
 import os
 import stat
 import subprocess
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from pathlib import Path
 from typing import Literal
 
@@ -24,6 +24,7 @@ StorageCode = Literal[
     "private_storage_limit",
     "private_storage_unsafe_path",
     "private_storage_write_failed",
+    "private_storage_authority_required",
 ]
 
 
@@ -73,7 +74,14 @@ def _relative_path(relative: str) -> Path:
 class PrivateStorage:
     """Own one fresh ignored workspace; callers serialize all operations."""
 
-    def __init__(self, workspace: Path, repository: Path, max_bytes: int = _MAX_BYTES) -> None:
+    def __init__(
+        self,
+        workspace: Path,
+        repository: Path,
+        max_bytes: int = _MAX_BYTES,
+        *,
+        storage_guard: Callable[[int], None] | None = None,
+    ) -> None:
         if (
             isinstance(max_bytes, bool)
             or not isinstance(max_bytes, int)
@@ -85,6 +93,9 @@ class PrivateStorage:
         root = workspace.absolute()
         repository = repository.absolute()
         base = repository / "datasets/private/r4b"
+        marker = base / ".checkpoint-budget-authority.json"
+        if (marker.exists() or marker.is_symlink()) and storage_guard is None:
+            raise PrivateStorageError("private_storage_authority_required")
         try:
             relative = root.relative_to(repository)
             if root == base or not root.is_relative_to(base) or not repository.is_dir():
@@ -120,6 +131,7 @@ class PrivateStorage:
         self._max_bytes = max_bytes
         self._log_identity: tuple[int, int] | None = None
         self._published: set[Path] = set()
+        self._storage_guard = storage_guard
 
     @property
     def root(self) -> Path:
@@ -148,6 +160,11 @@ class PrivateStorage:
             raise PrivateStorageError("private_storage_write_failed") from None
 
     def _reserve(self, additional_bytes: int) -> None:
+        if self._storage_guard is not None:
+            try:
+                self._storage_guard(additional_bytes)
+            except Exception:
+                raise PrivateStorageError("private_storage_limit") from None
         if self.bytes_retained + additional_bytes > self._max_bytes:
             raise PrivateStorageError("private_storage_limit")
 

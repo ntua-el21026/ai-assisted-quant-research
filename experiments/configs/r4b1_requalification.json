@@ -1,0 +1,50 @@
+{
+  "candidate_scope": {
+    "end": "2025-12-31",
+    "feature_basis": "raw",
+    "feature_history_start": "2020-01-01",
+    "opening_balances_independent": true,
+    "opening_orders_empty": true,
+    "opening_positions_empty": true,
+    "opening_receivables_empty": true,
+    "opening_state": "flat_cash",
+    "raw_execution": true,
+    "start": "2020-01-01"
+  },
+  "checkpoint": "R4-B.1",
+  "flagged_event_evidence_path": "datasets/private/r4b/issuer-semantics-20261117-v1/comparison/flagged-event-v1.json",
+  "flagged_event_evidence_sha256": "7b6c2517143bd3a461d9efd20556514b6b2a79e8ca620dd90f559c177b320ea1",
+  "independent_actions_path": "datasets/private/r4b/issuer-evidence-20261117/independent-actions.json",
+  "independent_actions_sha256": "867e50207cd5f1a3630299d284793697db4485831a21cdc9882acafcc820227f",
+  "issuer_indexes": [
+    {
+      "path": "datasets/private/r4b/issuer-evidence-20261117/evidence-index.json",
+      "sha256": "f4bdcf82b5bd1c6ef0277748ad600c91d3aea0b45230074cc2bc90390388b719"
+    },
+    {
+      "path": "datasets/private/r4b/issuer-semantics-20261117-v1/evidence-index.json",
+      "sha256": "ab918d905bb11506800d996ec5aadd511faf55a4499597976df5df3cd0a1f92a"
+    }
+  ],
+  "original_manifest_path": "datasets/private/r4b/session-20261117/frozen/evidence/manifest.json",
+  "original_manifest_sha256": "8f9ed18dd45602979ca7ff1b35b6de332908ff75f26b325130ddffe0fba1335e",
+  "original_qualification_path": "datasets/private/r4b/session-20261117/qualification-first/qualification.json",
+  "original_qualification_sha256": "0a64c25cc9e9b179715da631ceb381e2beac01ef4f62b2f2e1fd9440f93b3621",
+  "pilot_scope": {
+    "end": "2025-12-31",
+    "feature_basis": "raw",
+    "feature_history_start": "2024-01-01",
+    "opening_balances_independent": true,
+    "opening_orders_empty": true,
+    "opening_positions_empty": true,
+    "opening_receivables_empty": true,
+    "opening_state": "flat_cash",
+    "raw_execution": true,
+    "start": "2024-01-01"
+  },
+  "plan_path": "experiments/configs/r4b1_acquisition.json",
+  "plan_sha256": "5c4744d6dd0dd73a6ff590bd6727b05cc9ea7ad14c11a03a015007866e816a88",
+  "schema_version": "historical-requalification-policy/v1",
+  "seed_events_path": "datasets/private/r4b/session-20261117/runtime/budget.jsonl",
+  "seed_events_sha256": "19efd26e6ccb5f995e49b08db1682600ad1066f88eacbdcce6d384bedbced925"
+}

@@ -1,0 +1,148 @@
+{
+  "account_plan": "Basic",
+  "account_type": "paper_only",
+  "budget": {
+    "max_attempts": 100,
+    "max_elapsed_seconds": 900,
+    "max_local_bytes": 1073741824,
+    "max_received_body_bytes": 262144000,
+    "min_interval_seconds": 0.35,
+    "timeout_seconds": 20
+  },
+  "calendar_path": "r4b_calendar_2020_2025.json",
+  "calendar_sha256": "181922ef62e8e73c6edb9641abc776c4b7f67c680e00288ce27159947e2b400f",
+  "candidate_end": "2025-12-31",
+  "candidate_start": "2020-01-01",
+  "checkpoint": "R4-B",
+  "entitlement_sources": [
+    "https://docs.alpaca.markets/us/docs/paper-trading",
+    "https://docs.alpaca.markets/us/docs/about-market-data-api",
+    "owner-reported Alpaca Support #397685"
+  ],
+  "feed": "iex",
+  "plan_id": "r4b1-iex-etf-20261117-v1",
+  "provider": "alpaca",
+  "rights_statement": "Owner-reported Support #397685 permits personal noncommercial research/backtesting and local storage within account entitlements. IEX only; no public vendor observations or empirical visualization/statistics release; no perpetual/post-account retention grant is inferred.",
+  "schema_version": "historical-acquisition-plan/v1",
+  "selection_rationale": "R4-B.1 retains the original six primary requests and windows. Reuse hash-pinned original preflight pages; acquire only the 2024-2025 pilot initially. No diagnostic or larger query may run after a failed applicable pilot/known-action gate. This is data qualification, not strategy evaluation or a new study split.",
+  "stages": [
+    {
+      "acquisition_id": "preflight-bars",
+      "request": {
+        "adjustment": "raw",
+        "asof": "-",
+        "end": "2025-01-10",
+        "feed": "iex",
+        "limit": 100,
+        "max_pages": 2,
+        "provider": "alpaca",
+        "start": "2025-01-06",
+        "symbols": [
+          "QQQ",
+          "SPY"
+        ],
+        "timeframe": "1Day"
+      },
+      "request_kind": "bars",
+      "role": "preflight"
+    },
+    {
+      "acquisition_id": "preflight-actions",
+      "request": {
+        "data_quality": "all",
+        "end": "2024-03-31",
+        "limit": 1000,
+        "max_pages": 4,
+        "provider": "alpaca",
+        "start": "2024-01-01",
+        "symbols": [
+          "QQQ",
+          "SPY"
+        ],
+        "types": "all"
+      },
+      "request_kind": "actions",
+      "role": "preflight"
+    },
+    {
+      "acquisition_id": "pilot-bars",
+      "request": {
+        "adjustment": "raw",
+        "asof": "-",
+        "end": "2025-12-31",
+        "feed": "iex",
+        "limit": 1000,
+        "max_pages": 4,
+        "provider": "alpaca",
+        "start": "2024-01-01",
+        "symbols": [
+          "QQQ",
+          "SPY"
+        ],
+        "timeframe": "1Day"
+      },
+      "request_kind": "bars",
+      "role": "pilot"
+    },
+    {
+      "acquisition_id": "pilot-actions",
+      "request": {
+        "data_quality": "all",
+        "end": "2026-11-16",
+        "limit": 1000,
+        "max_pages": 4,
+        "provider": "alpaca",
+        "start": "2024-01-01",
+        "symbols": [
+          "QQQ",
+          "SPY"
+        ],
+        "types": "all"
+      },
+      "request_kind": "actions",
+      "role": "pilot"
+    },
+    {
+      "acquisition_id": "candidate-bars",
+      "request": {
+        "adjustment": "raw",
+        "asof": "-",
+        "end": "2025-12-31",
+        "feed": "iex",
+        "limit": 1000,
+        "max_pages": 8,
+        "provider": "alpaca",
+        "start": "2020-01-01",
+        "symbols": [
+          "QQQ",
+          "SPY"
+        ],
+        "timeframe": "1Day"
+      },
+      "request_kind": "bars",
+      "role": "candidate"
+    },
+    {
+      "acquisition_id": "candidate-actions",
+      "request": {
+        "data_quality": "all",
+        "end": "2026-11-16",
+        "limit": 1000,
+        "max_pages": 4,
+        "provider": "alpaca",
+        "start": "2020-01-01",
+        "symbols": [
+          "QQQ",
+          "SPY"
+        ],
+        "types": "all"
+      },
+      "request_kind": "actions",
+      "role": "candidate"
+    }
+  ],
+  "symbols": [
+    "QQQ",
+    "SPY"
+  ]
+}

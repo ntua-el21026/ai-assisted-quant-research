@@ -8,7 +8,7 @@ from pathlib import Path
 
 from packages.data.acquisition_plan import load_acquisition_plan, load_alpaca_credentials
 from packages.data.acquisition_session import acquire_registered_candidate, qualify_candidate
-from packages.data.alpaca_historical import UrllibHistoricalTransport
+from packages.data.alpaca_historical import HistoricalAcquisitionError, UrllibHistoricalTransport
 from packages.research.artifacts import canonical_json
 
 
@@ -20,7 +20,7 @@ def _deadline(signum: int, frame: object) -> None:
     raise _Deadline()
 
 
-def main(argv: list[str] | None = None) -> int:
+def main(argv: list[str] | None = None, *, repository: Path | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
     plan = commands.add_parser("plan", help="Offline authorization/calendar/budget validation")
@@ -53,7 +53,10 @@ def main(argv: list[str] | None = None) -> int:
             else:
                 # Verify path/ignore policy before any authenticated request. Credentials
                 # are parsed only by this branch, never discovered from the environment.
-                repository = Path(__file__).resolve().parents[2]
+                repository = repository or Path(__file__).resolve().parents[2]
+                marker = repository / "datasets/private/r4b/.checkpoint-budget-authority.json"
+                if marker.exists() or marker.is_symlink():
+                    raise HistoricalAcquisitionError("checkpoint_authority_required")
                 credentials = load_alpaca_credentials(args.credentials_file)
                 print('{"credentials_available":true}', flush=True)
                 transport = UrllibHistoricalTransport(credentials.api_key, credentials.secret_key)
