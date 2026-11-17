@@ -110,6 +110,14 @@ def test_current_ordinary_cash_is_applicable_but_proves_no_historical_announceme
     assert not report.announcement_availability_established
 
 
+def test_applicable_missing_currency_has_an_explicit_validation_finding():
+    report = _classify({"cash_dividends": [_cash(currency=None)]})
+    findings = {finding.code: finding for finding in report.findings}
+    assert findings["applicable_cash_currency_unverified"].count == 1
+    assert findings["applicable_cash_currency_unverified"].status == "RESTRICTED"
+    assert report.blocked
+
+
 @pytest.mark.parametrize("pay_date", ["2023-12-22", "2024-04-12", "2025-01-17"])
 def test_prior_cash_has_no_inherited_entitlement_under_explicit_fresh_flat_raw_contract(pay_date):
     report = _classify(

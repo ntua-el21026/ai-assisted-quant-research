@@ -397,6 +397,8 @@ def classify_action_scope(
                         update={"scope": "unverified", "support": "unverified", "reason": reason}
                     )
     for record in records:
+        if record.scope == "applicable" and record.category == _CASH and record.currency is None:
+            issues[("applicable_cash_currency_unverified", "RESTRICTED")] += 1
         status: Status = (
             "FAIL"
             if record.reason.startswith(("invalid_", "duplicate_", "conflicting_"))
