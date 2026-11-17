@@ -11,7 +11,7 @@
 | [Research architecture](research/ARCHITECTURE.md) | Actual component inventory, offline research/matrix CLI, planned local Temporal boundary | Planned additions distinguished from existing code |
 | [Design decision](superpowers/specs/2026-11-16-ai-assisted-quant-research-design.md) | Approved balanced AI/ML + systems direction and tradeoffs | Approved scope |
 | [Four-checkpoint implementation plan](superpowers/plans/2026-11-16-ai-assisted-quant-research.md) | Test-first R1–R4 task definitions and verification gates | R1–R3 reviewed baseline; R4 empirical gate pending |
-| [Four Codex prompts](research/CODEX_CHECKPOINT_PROMPTS.md) | Original checkpoint assignments; later work follows explicit staged authorization | R1–R4-A reviewed; R4-B acceptance pending |
+| [Four Codex prompts](research/CODEX_CHECKPOINT_PROMPTS.md) | Original checkpoint assignments; later work follows explicit staged authorization | R1–R4-B engineering reviewed; R4-B.1 acceptance pending |
 | [Root contributor/agent guide](../AGENTS.md) | Repository safety constraints, instructions and current authority | Current |
 | [Main README](../README.md) | Portfolio-facing introduction and truthful implementation status | Current |
 
@@ -25,8 +25,9 @@
 R1–R3 have tests and executed synthetic/local systems paths. The owner identifies
 `60dd250` as their reviewed R1–R3 baseline. R4-A's synthetic-only historical-data
 and corporate-action foundation was independently accepted at `0dd0875`.
-R4-B engineering acceptance and R4 empirical work remain pending; its private preflight
-candidate is blocked from historical strategy execution.
+R4-B engineering was independently accepted at `a6d3a09`. R4-B.1's bounded pilot has
+complete raw bar coverage but failed action/scientific admission. Its independent
+acceptance and historical strategy research remain pending.
 See [R1 contracts](research/R1_IMPLEMENTATION.md), [R1 verification](research/R1_VERIFICATION.md),
 [R2 verification](research/R2_VERIFICATION.md) and [R3 verification](research/R3_VERIFICATION.md).
 A synthetic example is not empirical performance evidence.
@@ -44,6 +45,13 @@ A synthetic example is not empirical performance evidence.
   corporate-action, rights and scientific restrictions.
 - [R4-B verification](research/R4B_VERIFICATION.md): commands, hashes, compatibility and review handoff.
 - [R4-B bounded plan](superpowers/plans/2026-11-17-r4b-historical-acquisition.md).
+- [R4-B.1 implementation](research/R4B1_IMPLEMENTATION.md): explicit action applicability,
+  aggregate budgets, immutable reuse and strict acquisition gates.
+- [R4-B.1 data qualification](research/R4B1_DATA_QUALIFICATION.md): issuer contradictions,
+  the acquired IEX pilot, precision/aggregation evidence and blocked admission.
+- [R4-B.1 verification](research/R4B1_VERIFICATION.md): tests, hashes, numerical compatibility
+  and independent-review handoff.
+- [R4-B.1 bounded plan](superpowers/plans/2026-11-17-r4b1-requalification.md).
 
 ## Historical implementation references — not v0.7 goals
 

@@ -1,5 +1,10 @@
 # R4-B historical acquisition and qualification
 
+**Acceptance update:** the owner independently accepted R4-B engineering at
+`a6d3a0960e5924ab2f2969d02a1620e87b007101`. Its dataset remained blocked. The following
+records that checkpoint; [R4-B.1](R4B1_IMPLEMENTATION.md) adds separately authorized
+corrective scope/budget handling and pilot evidence without changing this history.
+
 R4-B adds an optional, finite read-only acquisition boundary and deterministic offline
 candidate qualification. It does not execute a strategy, register new study periods,
 or enable R4-C. The accepted starting point is

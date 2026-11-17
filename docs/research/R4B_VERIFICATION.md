@@ -1,5 +1,10 @@
 # R4-B implementation and verification — 2026-11-17
 
+**Acceptance update:** the owner independently accepted R4-B engineering at
+`a6d3a0960e5924ab2f2969d02a1620e87b007101`; historical dataset qualification remained
+BLOCKED. Results below are the original checkpoint evidence. Subsequent corrective
+work is in [R4-B.1 verification](R4B1_VERIFICATION.md).
+
 **Engineering verification: PASS for the bounded implemented path, including a verified
 negative preflight. Dataset-to-R4-C: BLOCKED. Independent R4-B acceptance is pending.**
 No pilot/larger historical dataset or historical strategy evaluation was executed.

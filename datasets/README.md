@@ -55,3 +55,12 @@ or incomplete evidence; it is not an admitted v2 snapshot. Offline qualification
 changes the frozen input. The observed preflight candidate is blocked by an unsupported
 action flag and unresolved evidence. See [R4-B contracts](../docs/research/R4B_IMPLEMENTATION.md)
 and [qualification](../docs/research/R4B_DATA_QUALIFICATION.md).
+
+R4-B.1 reuses that original preflight, adds explicit economic scope and acquires the
+2024–2025 SPY/QQQ IEX pilot into a new immutable private candidate. All 1,004 bars pass
+internal checks; relevant actions and scientific admission remain blocked. The old
+candidate/qualification and all source materials remain unchanged. After aggregate
+authority initialization, private writers require its global guard and acquisition
+cannot reset the original allowance. See [R4-B.1 qualification](../docs/research/R4B1_DATA_QUALIFICATION.md)
+and [verification](../docs/research/R4B1_VERIFICATION.md). No candidate is silently admitted
+as v2 or passed to historical strategy execution.

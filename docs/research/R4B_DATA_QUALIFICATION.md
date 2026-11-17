@@ -1,5 +1,9 @@
 # R4-B data qualification — 2026-11-17
 
+**Historical checkpoint record:** R4-B engineering was subsequently accepted at
+`a6d3a09`; this failed dataset/qualification is preserved. Later pilot acquisition and
+action-scope findings are reported separately in [R4-B.1 qualification](R4B1_DATA_QUALIFICATION.md).
+
 **Dataset-to-R4-C verdict: BLOCKED.** The bounded preflight established authenticated
 IEX response access for this account and sample, not a qualified historical study
 dataset. The special-dividend classification failure is preserved; no pilot, larger

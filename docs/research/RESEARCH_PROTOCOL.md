@@ -1,7 +1,7 @@
 # Quantitative Trading Research Protocol
 
 - **Governing specification:** [Research Framework v0.7](../app/AI_Assisted_Quant_Research_SPEC_v0.7.md)
-- **Status:** R1–R4-A reviewed engineering baseline; R4-B acquisition/qualification awaits acceptance. The private preflight candidate is blocked; historical studies remain pending.
+- **Status:** R1–R4-B engineering reviewed; R4-B.1 corrective engineering verified, acceptance pending. Pilot bars pass internal quality; historical admission/studies remain blocked.
 
 ## 1. Scientific objective
 
@@ -41,6 +41,17 @@ neither window was acquired. A `historical-candidate/v1` envelope retains negati
 without weakening strict v2 admission. Observed acquisition times are never backdated
 to historical decision cutoffs. No protocol dates, strategy, benchmarks, parameters,
 holdout status or final-period performance have been changed or inspected.
+
+R4-B engineering was independently accepted at `a6d3a09`. Separately authorized
+[R4-B.1](R4B1_DATA_QUALIFICATION.md) acquired the original 2024–2025 IEX pilot and
+distinguished prior cash events under an explicit fresh-capital/no-inherited-entitlement,
+raw-only data-quality context. That context does not authorize a new study period,
+carry-in portfolio or shortened warm-up. Relevant actions remain unqualified; the
+larger 2020–2025 candidate was not acquired. Provider daily OHLCV has field-specific
+calendar-day aggregation and does not establish a 09:30/auction execution convention.
+Historical availability, identities, retention and full action reconciliation remain
+unresolved. No threshold, hypothesis, benchmark definition, research split or holdout
+status changes here, and R4-C has not begun.
 
 ### AI/news evidence
 

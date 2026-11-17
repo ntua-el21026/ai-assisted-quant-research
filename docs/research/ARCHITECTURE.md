@@ -1,7 +1,7 @@
 # Quantitative Trading Research Architecture — v0.7
 
 - **Authority:** [Research Framework Specification v0.7](../app/AI_Assisted_Quant_Research_SPEC_v0.7.md)
-- **Status:** R1–R4-A reviewed baseline; R4-B private acquisition/qualification awaits review; empirical R4 remains blocked
+- **Status:** R1–R4-B engineering reviewed; R4-B.1 corrective scope/budget/pilot verified, acceptance pending; empirical R4 remains blocked
 
 ## 1. System boundary
 
@@ -249,3 +249,23 @@ executes strategy decisions or changes the R3 experiment identity contract.
 The actual IEX preflight stopped on an unsupported special dividend. All evidence stays
 private; no pilot, larger candidate or strategy study followed. See [implementation](R4B_IMPLEMENTATION.md),
 [qualification](R4B_DATA_QUALIFICATION.md) and [verification](R4B_VERIFICATION.md).
+
+## 11. R4-B.1 economic scope and bounded requalification
+
+The optional requalification CLI loads pinned old/independent evidence, reuses original
+preflight pages and runs the registered pilot under a checkpoint-wide authority. That
+authority retains prior attempts/body bytes and checks all private file contents;
+interrupted or contradictory authority state fails closed. After initialization,
+legacy acquisition/publication cannot bypass the shared guard.
+
+`action_scope.py` separates observed records, economic applicability and support.
+Prior cash can be excluded only under the explicit fresh-flat/raw/no-inherited-state
+contract; all source records and reasons remain traceable. The original special flag
+and contradictory payment evidence remain unsupported inside 2020–2025. Derived views
+do not replace original provider provenance or change strict v2 admission.
+
+The pilot acquired all 1,004 expected raw bars, but relevant action/currency and scientific
+gates failed. A separate deterministic report retains full-query failures alongside scoped
+diagnostics. No larger candidate, strategy execution, new R3 identity mode or source
+availability reconstruction was introduced. See [contracts](R4B1_IMPLEMENTATION.md),
+[qualification](R4B1_DATA_QUALIFICATION.md) and [verification](R4B1_VERIFICATION.md).

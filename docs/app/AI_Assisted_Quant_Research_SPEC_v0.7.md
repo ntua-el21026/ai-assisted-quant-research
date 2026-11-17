@@ -1,7 +1,7 @@
 # AI-Assisted Quantitative Trading Research Framework
 
 - **Specification:** v0.7 (research-scope transition)
-- **Status:** R1–R4-A reviewed engineering baseline; R4-B acquisition/qualification awaits acceptance; historical strategy research/release blocked
+- **Status:** R1–R4-B engineering reviewed; R4-B.1 corrective engineering verified, independent acceptance pending; historical strategy research/release blocked
 - **Owner:** Michail Athanasios Peppas
 - **Target audience:** MSc Computer Science, Data Science, AI/ML and quantitative-finance reviewers
 - **Execution environment:** Local, offline-first Python research software; no deployment
@@ -21,6 +21,12 @@ IEX acquisition and offline candidate qualification; its preflight stopped on an
 unsupported special-dividend classification. No pilot, larger dataset or historical
 strategy evaluation followed. Strict v2 admission, registered research hypotheses,
 periods and numerical acceptance criteria are preserved.
+R4-B engineering was independently accepted at `a6d3a09`. The separately authorized
+[R4-B.1 correction](../research/R4B1_IMPLEMENTATION.md) distinguishes economic action
+scope and enforces aggregate limits. It acquires the original IEX pilot with complete
+bar coverage while preserving failed action/scientific gates. No larger dataset or
+historical strategy experiment follows; strict v2 admission and this research protocol
+remain unchanged.
 Historical studies and overall release remain incomplete. See
 [the architecture](../research/ARCHITECTURE.md), [the research protocol](../research/RESEARCH_PROTOCOL.md),
 [R3 verification](../research/R3_VERIFICATION.md) and [the implementation plan](../superpowers/plans/2026-11-16-ai-assisted-quant-research.md).
