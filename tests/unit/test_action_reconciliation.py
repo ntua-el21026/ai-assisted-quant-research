@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import importlib
 import json
 from datetime import UTC, date, datetime
@@ -294,3 +295,168 @@ def test_reused_provider_action_id_cannot_certify_two_distinct_events() -> None:
     assert report.matched_count == 0
     assert "provider_action_identity_conflict" in _codes(report)
     assert "private-provider-split" not in report.model_dump_json()
+
+
+def _currency_proof(record=None, **changes):
+    from packages.research.artifacts import canonical_json
+
+    record = record or _independent("cash_dividend", currency=None)
+    values = {
+        "record_sha256": hashlib.sha256(canonical_json(record.model_dump(mode="json"))).hexdigest(),
+        "currency": "USD",
+        "policy_source_sha256": hashlib.sha256(
+            b"invented explicit distribution policy"
+        ).hexdigest(),
+        "policy_reference": "synthetic currency policy, section 2",
+        "policy_publication_date": "2024-01-02",
+        "coverage_start": "2024-01-02",
+        "coverage_end": "2024-12-31",
+        "observed_at": "2026-11-17T12:00:00Z",
+        "interpretation": "Invented policy explicitly applies to this synthetic security.",
+    }
+    return _module().IndependentCurrencyResolution(**(values | changes))
+
+
+def _currency_documents(record):
+    return {
+        record.source_sha256: b"invented issuer event",
+        hashlib.sha256(
+            b"invented explicit distribution policy"
+        ).hexdigest(): b"invented explicit distribution policy",
+    }
+
+
+def _currency_record(**changes):
+    return _independent(
+        "cash_dividend",
+        currency=None,
+        source_sha256=hashlib.sha256(b"invented issuer event").hexdigest(),
+        **changes,
+    )
+
+
+def test_currency_resolution_is_exact_record_bound_immutable_and_not_admission() -> None:
+    record = _currency_record()
+    before = record.model_dump_json()
+    proof = _currency_proof(record)
+    resolve = _module().resolve_independent_currency
+    derived, receipt = resolve(record, proof, evidence_documents=_currency_documents(record))
+    repeated, repeated_receipt = resolve(
+        record, proof, evidence_documents=dict(reversed(list(_currency_documents(record).items())))
+    )
+    assert receipt == repeated_receipt
+    assert derived == repeated
+    assert record.model_dump_json() == before
+    assert record.currency is None and derived.currency == "USD"
+    assert derived.amount == record.amount and derived.pay_date == record.pay_date
+    assert derived.ex_date == record.ex_date and derived.security_id == record.security_id
+    assert derived.source_sha256 == hashlib.sha256(receipt).hexdigest()
+    assert derived.source_reference == "independent-currency-resolution/v1:" + derived.source_sha256
+    body = json.loads(receipt)
+    assert body["schema_version"] == "independent-currency-resolution/v1"
+    assert body["original_record"] == record.model_dump(mode="json")
+    assert body["admitted_v2"] is False
+    assert body["historical_availability_established"] is False
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("symbol", "OTHER"),
+        ("security_id", "synthetic:002"),
+        ("ex_date", date(2024, 3, 12)),
+        ("pay_date", date(2024, 3, 18)),
+        ("amount", Decimal("1.25000000000000000001")),
+    ],
+)
+def test_currency_resolution_cannot_apply_to_a_different_event_or_revision(field, value) -> None:
+    record = _currency_record()
+    changed = record.model_copy(update={field: value})
+    with pytest.raises(ValueError, match="currency_resolution_record_mismatch"):
+        _module().resolve_independent_currency(
+            changed, _currency_proof(record), evidence_documents=_currency_documents(record)
+        )
+
+
+@pytest.mark.parametrize(
+    "which,mutation",
+    [
+        ("policy", "missing"),
+        ("policy", "corrupt"),
+        ("event", "missing"),
+        ("event", "corrupt"),
+    ],
+)
+def test_currency_resolution_requires_original_event_and_exact_policy_bytes(
+    which, mutation
+) -> None:
+    record = _currency_record()
+    proof = _currency_proof(record)
+    documents = _currency_documents(record)
+    key = proof.policy_source_sha256 if which == "policy" else record.source_sha256
+    if mutation == "missing":
+        del documents[key]
+    else:
+        documents[key] = b"changed evidence"
+    with pytest.raises(ValueError, match="currency_resolution_evidence_invalid"):
+        _module().resolve_independent_currency(record, proof, evidence_documents=documents)
+
+
+@pytest.mark.parametrize(
+    "changes",
+    [
+        {"coverage_start": "2024-03-12"},
+        {"coverage_end": "2024-03-14"},
+        {"policy_publication_date": "2024-03-12"},
+    ],
+)
+def test_currency_resolution_requires_event_and_payment_inside_contemporaneous_policy(changes):
+    record = _currency_record()
+    with pytest.raises(ValueError, match="currency_resolution_policy_not_applicable"):
+        _module().resolve_independent_currency(
+            record,
+            _currency_proof(record, **changes),
+            evidence_documents=_currency_documents(record),
+        )
+
+
+@pytest.mark.parametrize("currency", ["USD", "EUR"])
+def test_currency_resolution_never_overwrites_an_existing_currency(currency):
+    record = _currency_record().model_copy(update={"currency": currency})
+    with pytest.raises(ValueError, match="currency_resolution_requires_unknown_cash_currency"):
+        _module().resolve_independent_currency(
+            record, _currency_proof(record), evidence_documents=_currency_documents(record)
+        )
+
+
+@pytest.mark.parametrize(
+    "changes",
+    [
+        {"currency": "usd"},
+        {"currency": ""},
+        {"currency": "US"},
+        {"observed_at": "2026-11-17T12:00:00"},
+        {"observed_at": "2023-01-01T00:00:00Z"},
+        {"coverage_start": "2025-01-01"},
+        {"record_sha256": "invalid"},
+        {"pay_date": "2024-03-18"},
+        {"special": False},
+        {"amount_tolerance": "0.01"},
+    ],
+)
+def test_currency_resolution_rejects_invalid_provenance_or_unregistered_field_overrides(changes):
+    with pytest.raises(ValidationError):
+        _currency_proof(_currency_record(), **changes)
+
+
+def test_currency_resolution_preserves_exact_amount_and_requires_payment_and_cash_kind():
+    record = _currency_record(amount=Decimal("1.250000000000000000000000001"))
+    derived, _ = _module().resolve_independent_currency(
+        record, _currency_proof(record), evidence_documents=_currency_documents(record)
+    )
+    assert derived.amount.as_tuple() == record.amount.as_tuple()
+    for changed in [record.model_copy(update={"pay_date": None}), _independent("split")]:
+        with pytest.raises(ValueError, match="currency_resolution_requires_unknown_cash_currency"):
+            _module().resolve_independent_currency(
+                changed, _currency_proof(changed), evidence_documents=_currency_documents(record)
+            )

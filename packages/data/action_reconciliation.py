@@ -10,12 +10,12 @@ from __future__ import annotations
 
 import hashlib
 from collections import Counter, defaultdict
-from collections.abc import Sequence
-from datetime import date
+from collections.abc import Mapping, Sequence
+from datetime import date, datetime
 from fractions import Fraction
-from typing import Literal
+from typing import Literal, Self
 
-from pydantic import Field
+from pydantic import Field, field_validator, model_validator
 
 from packages.data.corporate_actions import (
     CashDividendAction,
@@ -23,7 +23,7 @@ from packages.data.corporate_actions import (
     ExactDecimal,
     SplitAction,
 )
-from packages.data.historical_models import SHA_PATTERN, HistoricalModel
+from packages.data.historical_models import SHA_PATTERN, HistoricalModel, utc
 from packages.research.artifacts import canonical_json
 
 Status = Literal["PASS", "RESTRICTED", "FAIL"]
@@ -48,6 +48,93 @@ class IndependentActionRecord(HistoricalModel):
     denominator: int | None = Field(default=None, strict=True)
     source_reference: str = Field(min_length=1)
     source_sha256: str = Field(pattern=SHA_PATTERN)
+
+
+class IndependentCurrencyResolution(HistoricalModel):
+    """One caller-interpreted contemporaneous policy, bound to one exact record.
+
+    Hash verification proves evidence integrity, not the truth of its interpretation.
+    Coverage must be justified by that policy; it is never inferred from quote currency.
+    Observation time is acquisition time, not historical announcement availability.
+    """
+
+    schema_version: Literal["independent-currency-resolution/v1"] = (
+        "independent-currency-resolution/v1"
+    )
+    record_sha256: str = Field(pattern=SHA_PATTERN)
+    currency: str = Field(pattern=r"^[A-Z]{3}$")
+    policy_source_sha256: str = Field(pattern=SHA_PATTERN)
+    policy_reference: str = Field(min_length=1)
+    policy_publication_date: date
+    coverage_start: date
+    coverage_end: date
+    observed_at: datetime
+    interpretation: str = Field(min_length=1)
+
+    @field_validator("observed_at")
+    @classmethod
+    def observation_aware(cls, value: datetime) -> datetime:
+        return utc(value)
+
+    @model_validator(mode="after")
+    def ordered_provenance(self) -> Self:
+        if (
+            self.coverage_end < self.coverage_start
+            or self.observed_at.date() < self.policy_publication_date
+        ):
+            raise ValueError("currency_resolution_provenance_invalid")
+        return self
+
+
+def resolve_independent_currency(
+    record: IndependentActionRecord,
+    resolution: IndependentCurrencyResolution,
+    *,
+    evidence_documents: Mapping[str, bytes],
+) -> tuple[IndependentActionRecord, bytes]:
+    """Return a derived independent record and its canonical, private source receipt.
+
+    Only unknown cash currency can change. The original record/policy are embedded
+    in a separately versioned receipt; its hash becomes the derived source identity.
+    No provider record, normalizer, action flags or admission gate is modified.
+    """
+    original = record.model_dump(mode="json")
+    if hashlib.sha256(canonical_json(original)).hexdigest() != resolution.record_sha256:
+        raise ValueError("currency_resolution_record_mismatch")
+    if record.kind != "cash_dividend" or record.currency is not None or record.pay_date is None:
+        raise ValueError("currency_resolution_requires_unknown_cash_currency")
+    if not (
+        resolution.policy_publication_date <= record.ex_date
+        and resolution.coverage_start
+        <= record.ex_date
+        <= record.pay_date
+        <= resolution.coverage_end
+        and record.pay_date <= resolution.observed_at.date()
+    ):
+        raise ValueError("currency_resolution_policy_not_applicable")
+    for digest in {record.source_sha256, resolution.policy_source_sha256}:
+        body = evidence_documents.get(digest)
+        if not isinstance(body, bytes) or hashlib.sha256(body).hexdigest() != digest:
+            raise ValueError("currency_resolution_evidence_invalid")
+    receipt = canonical_json(
+        {
+            "schema_version": "independent-currency-resolution/v1",
+            "original_record": original,
+            "resolution": resolution.model_dump(mode="json"),
+            "admitted_v2": False,
+            "historical_availability_established": False,
+        }
+    )
+    digest = hashlib.sha256(receipt).hexdigest()
+    derived = IndependentActionRecord.model_validate(
+        original
+        | {
+            "currency": resolution.currency,
+            "source_sha256": digest,
+            "source_reference": "independent-currency-resolution/v1:" + digest,
+        }
+    )
+    return derived, receipt
 
 
 class ReconciliationFinding(HistoricalModel):
